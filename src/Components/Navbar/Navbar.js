@@ -3,7 +3,7 @@ import logo from "../../assets/Logo.svg"
 import linkArrow from "../../assets/linkArrow.svg"
 const Navbar = () => {
   return (
-    <div className='flex justify-between h-[50px] px-5 items-center'>
+    <div className='flex justify-between h-[50px] px-5 items-center pt-3'>
         <div>
         <img src={logo} className='w-[30px]'/>
         </div>
