@@ -6,6 +6,7 @@ import Splash from "./Screens/Splash";
 import Layout from "./Layout/Layout";
 import Login from "./Screens/Login";
 import Home from "./Screens/Home";
+import NewCollection from "./Screens/NewCollection";
 const Popup = () => {
   return (
     <>
@@ -13,7 +14,8 @@ const Popup = () => {
         
         {/* <Splash /> */}
         {/* <Login/> */}
-        <Home/>
+        {/* <Home/> */}
+        <NewCollection/>
       </Layout>
     </>
   );
