@@ -1,0 +1,19 @@
+{
+  "name": "linkcollect-extension",
+  "version": "1.0.0",
+  "description": "More than a BookMarking tool",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/linkcollect/LinkCollect-Extension.git"
+  },
+  "author": "LinkCollect",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/linkcollect/LinkCollect-Extension/issues"
+  },
+  "homepage": "https://github.com/linkcollect/LinkCollect-Extension#readme"
+}
