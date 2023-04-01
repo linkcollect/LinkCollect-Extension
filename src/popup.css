@@ -4,5 +4,6 @@
 body{
     height: "300px";
     width: "400px";
-    background-color: blue;
+    background: none;
+    color: #ffff;
 }
