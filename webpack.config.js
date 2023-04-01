@@ -41,6 +41,10 @@ module.exports = {
         ],
         test: /\.css$/i,
       },
+      {
+        test: /\.(png|jp(e*)g|svg|gif)$/,
+        type: "asset",
+      }
     ],
   },
   plugins: [
