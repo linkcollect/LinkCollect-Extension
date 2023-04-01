@@ -1,6 +1,6 @@
 import React from 'react'
 import logo from "../assets/Logo.svg"
-const Home = () => {
+const Splash = () => {
   return (
     <div className='p-[2rem] flex flex-col justify-center items-center h-[80%]'>
         <img className='w-[150px]' src={logo}/>
@@ -17,4 +17,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default Splash
