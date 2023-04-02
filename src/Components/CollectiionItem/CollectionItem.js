@@ -10,7 +10,7 @@ const CollectionItem = ({thumbnail,name,count,copyLinkHandler,shareLinkHandler,a
         <img src={thumbnail || logo}/>
         <div className='flex flex-col ml-2 '>
           <p className='text-[17px]'>{name}</p>
-          <p className='text-lightText'>{count}{" "}Bookmarks</p>
+          <p className='text-lightText text-xs'>{count}{" "}Bookmarks</p>
         </div>
       </div>
       <div className='flex gap-2'>
