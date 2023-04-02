@@ -7,6 +7,7 @@ import Layout from "./Layout/Layout";
 import Login from "./Screens/Login";
 import Home from "./Screens/Home";
 import NewCollection from "./Screens/NewCollection";
+import Bookmarks from "./Screens/Bookmarks";
 const Popup = () => {
   return (
     <>
@@ -15,7 +16,8 @@ const Popup = () => {
         {/* <Splash /> */}
         {/* <Login/> */}
         {/* <Home/> */}
-        <NewCollection/>
+        {/* <NewCollection/> */}
+        <Bookmarks/>
       </Layout>
     </>
   );
