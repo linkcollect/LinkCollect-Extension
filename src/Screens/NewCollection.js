@@ -1,6 +1,6 @@
 import React from "react";
 import Input from "../Components/Input/Input";
-
+import BackArrow from "../assets/angleArrow.svg"
 
 
 const NewCollection = () => {
@@ -11,7 +11,11 @@ const NewCollection = () => {
     console.log(e.target.value)
   }  
   return (
-    <div className="p-[2rem] flex flex-col justify-center items-center h-[80%]">
+    <>
+    <div className="pt-4 pl-6">
+      <a className="border-2 border-lightText rounded bg-blackbgTwo flex w-[25px] p-1 pl-[0.3rem]"><img  src={BackArrow}/></a>
+    </div>
+    <div className="p-3 px-5 flex flex-col justify-center items-center h-[60%]">
       <div className="w-full">
         <Input
          label="Collection Name"
@@ -30,6 +34,7 @@ const NewCollection = () => {
         <button className="py-[10px] px-[36px] bg-primary text-[17px] w-full font-normal mt-3 rounded-md">Create Collection</button>
       </div>
     </div>
+    </>
   );
 };
 
