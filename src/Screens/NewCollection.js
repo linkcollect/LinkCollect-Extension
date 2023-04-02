@@ -13,7 +13,7 @@ const NewCollection = () => {
   return (
     <>
     <div className="pt-4 pl-6">
-      <a className="border-2 border-lightText rounded bg-blackbgTwo flex w-[25px] p-1 pl-[0.3rem]"><img  src={BackArrow}/></a>
+      <a className="border-2 border-lightText rounded bg-blackbgTwo flex w-[25px] p-1 pl-[0.3rem] cursor-pointer"><img  src={BackArrow}/></a>
     </div>
     <div className="p-3 px-5 flex flex-col justify-center items-center h-[60%]">
       <div className="w-full">
