@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import logo from "../../assets/Branding/logo2.svg";
 import avatar from "../../assets/avatar.svg";
-import SideMenu from "../SideMenu/SideMenu";
+import SideMenu from "../Menu/SideMenu";
 
 
 const Navbar = () => {
