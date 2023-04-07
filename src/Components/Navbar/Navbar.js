@@ -7,7 +7,7 @@ import SideMenu from "../SideMenu/SideMenu";
 const Navbar = () => {
   const [show, setShow] = useState(false);
   return (
-    <div className="flex justify-between h-[80px] items-center px-3 shadow-md">
+    <div className="flex justify-between h-[80px] items-center px-3 shadow-md border-b border-bgGrey">
       <div>
         <img src={logo} className="w-[40%]" />
       </div>
