@@ -1,7 +1,7 @@
 import React from 'react'
 import logo from "../../assets/Logo.svg"
 import CopyIcon from "../../assets/Icons/copy.svg"
-import AddIcon from "../../assets/add.svg"
+import AddIcon from "../../assets/Icons/add.svg"
 import ShareIcon from "../../assets/Icons/arrow-share.svg"
 const CollectionItem = ({thumbnail,name,count,copyLinkHandler,shareLinkHandler,addHandler}) => {
   return (
