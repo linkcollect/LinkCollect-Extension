@@ -16,7 +16,6 @@ const Splash = () => {
             </p>
          <button className='py-[10px] px-[36px] mt-[50px] bg-primary text-[14px] font-medium rounded-md'>Get Started</button>
         </div>
-      <div className='text-primary block absolute bottom-[-230px] font-light'>Powered by Linkcollect.io</div>
       </div>
     </div>
   )
