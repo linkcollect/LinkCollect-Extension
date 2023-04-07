@@ -12,8 +12,8 @@ const Popup = () => {
   return (
     <>
       <Layout>
-        
         {/* <Splash /> */}
+        
         {/* <Login/> */}
         {/* <Home/> */}
         {/* <NewCollection/> */}
