@@ -39,7 +39,8 @@ const SideMenu = () => {
 ]
 
   return (
-    <div className="fixed z-[99] overflow-hidden h-full top-[81px] right-0">
+    <div className="fixed z-[99] overflow-hidden drop-shadow-md h-full top-[81px] right-0">
+      
       <div className="w-[15rem] h-full bg-bgPrimary pt-2">
         <ul className="text-[16px]">
           {menuList.map(menu=><MenuItem name={menu.name} icon={menu.icon}/>)}
