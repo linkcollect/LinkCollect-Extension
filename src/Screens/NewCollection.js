@@ -1,39 +1,45 @@
 import React from "react";
-import Input from "../Components/Input/Input";
-import BackArrow from "../assets/angleArrow.svg"
+import Input, {Select} from "../Components/Input/Input";
+import BackArrow from "../assets/Icons/arrow.svg";
 
 
 const NewCollection = () => {
-  const onInput = (e)=>{
-    console.log(e.target.value)
-  }  
-  const onInputFile = (e)=>{
-    console.log(e.target.value)
-  }  
+  const onInput = (e) => {
+    console.log(e.target.value);
+  };
+  const onInputFile = (e) => {
+    console.log(e.target.value);
+  };
   return (
     <>
-    <div className="pt-4 pl-6">
-      <a className="border-2 border-lightText rounded bg-blackbgTwo flex w-[24px] h-[24px] p-1 pl-[0.35rem] cursor-pointer"><img  src={BackArrow}/></a>
-    </div>
-    <div className="p-3 px-5 flex flex-col justify-center items-center h-[60%]">
-      <div className="w-full">
-        <Input
-         label="Collection Name"
-         placeholder="Name your collection"
-         type="text"
-         onInputHandler={onInput}
-         inputClass = "textClass"
-        />
-        <Input
-         label="Collection Thumnail"
-         placeholder="Upload image"
-         type="file"
-         onInputHandler={onInputFile}
-         inputClass = "fileClass"
-        />
-        <button className="py-[10px] px-[36px] bg-primary text-[17px] w-full font-normal mt-3 rounded-md">Create Collection</button>
+    {/* Need to create a shadow warppr later */}
+      <div className="pt-4 pl-6 bg-bgPrimary border-b border-bgGrey px-4 pb-4 drop-shadow-md">
+        <a className="cursor-pointer flex gap-3 [&>img]:rotate-[90deg] [&>img]:w-[22px]">
+          <img src={BackArrow} /> <p className="text-textPrimary font-bold text-xl">Create Collection</p>
+        </a>
       </div>
-    </div>
+      <div className="bg-bgPrimary bg-bgSecondary p-3 px-5 flex flex-col justify-center items-center h-[60%]">
+        <div className="w-full">
+          <Input
+            label="Collection Name"
+            placeholder="Name your collection"
+            type="text"
+            onInputHandler={onInput}
+            inputClass="textClass"
+          />
+          <Select options={[{name:"Private",value:"private"}, {name:"Public",value:"public"}]}/>
+          <Input
+            label="Collection Thumnail"
+            placeholder="Upload image"
+            type="file"
+            onInputHandler={onInputFile}
+            inputClass="fileClass"
+          />
+          <button className="py-[10px] px-[36px] bg-primary text-[17px] w-full font-normal mt-3 rounded-md">
+            Create Collection
+          </button>
+        </div>
+      </div>
     </>
   );
 };

@@ -1,22 +1,29 @@
 import React from "react";
 
 const classMapper = {
-    fileClass : `block w-full text-sm text-slate-500 bg-blackbgOne border border-lightText rounded-md py-2 px-3
-    file:mr-4 file:py-0 file:px-4
-    file:rounded-full file:border-0
-    file:text-[12px] file:font-light
-    file:bg-blackbgTwo file:text-lightText
+  fileClass: `block w-full text-sm text-textPrimary bg-bgSecodary border border-bgGrey rounded-md py-2 px-3
+    file:mr-4 file:py-0 file:px-4 file:py-1
+    file:rounded-md file:border-0
+    file:text-[16px] file:font-light
+    file:bg-secodary file:text-primary
     hover:file:bg-violet-100
     file:cursor-pointer
     `,
-    textClass : "mt-1 px-3 py-2 bg-blackbgOne border border-lightText placeholder-lightText focus:outline-none block w-full rounded-md sm:text-sm"
-}
+  textClass:
+    "mt-1 px-3 py-2 bg-bgSecodary border border-bgGrey placeholder-textPrimary focus:outline-none block w-full rounded-md sm:text-sm",
+};
 
-
-const Input = ({name,type,label,placeholder,onInputHandler,inputClass}) => {
+const Input = ({
+  name,
+  type,
+  label,
+  placeholder,
+  onInputHandler,
+  inputClass,
+}) => {
   return (
     <label className="block my-4">
-      <span className="after:content-['*'] after:ml-0.5 after:text-white block text-[20px] font-normal mb-1">
+      <span className="text-textSecondary block text-[20px] font-light mb-1">
         {label}
       </span>
       <input
@@ -25,9 +32,30 @@ const Input = ({name,type,label,placeholder,onInputHandler,inputClass}) => {
         className={classMapper[inputClass]}
         placeholder={placeholder}
         onChange={onInputHandler}
-        
       />
     </label>
+  );
+};
+
+export const Select = ({ options }) => {
+  return (
+    <>
+      <label
+        for="privacy"
+        class="block mb-2 font-light text-textSecondary block text-[20px]"
+      >
+        Privacy
+      </label>
+      <select
+        id="pravacy"
+        class="bg-bgSecodary border border-bgGrey text-textPrimary text-normal rounded-lg focus:ring-textSecondary focus:border-textSecondary block w-full p-3"
+      >
+        <option selected>Choose a country</option>
+        {options.map((opt)=>(
+          <option value={opt.value}>{opt.name}</option>
+        ))}
+      </select>
+    </>
   );
 };
 
