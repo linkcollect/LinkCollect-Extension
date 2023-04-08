@@ -1,4 +1,4 @@
-import { AUTH_SUCCESS , AUTH_START , AUTH_FAILURE } from "../constants/authConstants"
+import { AUTH_SUCCESS , AUTH_START , AUTH_FAILURE, AUTH_LOGOUT } from "../constants/authConstants"
 export const authStart = () =>({
     type:AUTH_START,
 })
@@ -9,4 +9,8 @@ export const authSuccess = (data) => ({
 
 export const authFailure = (error) => ({
     type: AUTH_FAILURE
+})
+
+export const authLogout = () =>({
+    type: AUTH_LOGOUT
 })

@@ -1,4 +1,4 @@
-import { AUTH_SUCCESS, AUTH_START, AUTH_FAILURE } from "../constants/authConstants";
+import { AUTH_SUCCESS, AUTH_START, AUTH_FAILURE, AUTH_LOGOUT } from "../constants/authConstants";
 const initilaState = {
     token:"",
     user:{},
@@ -26,6 +26,8 @@ const authReducer = (state=initilaState,action) => {
             loading:false,
             error:true
         }
+        case AUTH_LOGOUT:
+            return {...initilaState}
         default:
             return state
     }
