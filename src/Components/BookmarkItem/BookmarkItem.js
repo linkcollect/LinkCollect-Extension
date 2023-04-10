@@ -9,7 +9,7 @@ const BookmarkItem = ({thumbnail,name,url,copyLinkHandler,shareLinkHandler,delet
         <div className='flex'>
         <img src={thumbnail || logo}/>
         <div className='flex flex-col ml-2 '>
-          <p className='text-[17px] text-textPrimary'>{name}</p>
+          <p className='text-[14px] font-bold text-textPrimary'>{name}</p>
           <p className='text-lightText text-xs text-textPrimary'>{url}</p>
         </div>
       </div>
