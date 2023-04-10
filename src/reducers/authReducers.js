@@ -1,7 +1,7 @@
 import { AUTH_SUCCESS, AUTH_START, AUTH_FAILURE, AUTH_LOGOUT } from "../constants/authConstants";
 const initilaState = {
     token:"",
-    user:{},
+    user:"",
     loading:false,
     error:false
 }
@@ -17,7 +17,8 @@ const authReducer = (state=initilaState,action) => {
         case AUTH_SUCCESS : 
             return  {
                 ...state,
-                token:data,
+                token:data.token,
+                userId:data.userId,
                 loading:false,
             }
         case AUTH_FAILURE :
