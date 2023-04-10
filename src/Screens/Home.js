@@ -1,28 +1,12 @@
 import React, { useEffect, useState } from "react";
 import addIcon from "../assets/Icons/add-tab.svg";
 import CollectionItem from "../Components/CollectiionItem/CollectionItem";
-import noCollectionItem from "../assets/Icons/no-collection.svg";
 import SearchBox from "../Components/SearchBox/SearchBox";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 // import { getAllCollectionsWithoutTimelines } from "../api/collectionService";
+import NoResult from "../Components/NoResult/NoResult";
 
-const EmptyCollections = ({navigator}) => {
-  return (
-    <div className="flex h-[70%] flex-col justify-around items-center">
-      <button onClick={navigator} className="py-[10px] px-[9px] w-[200px] flex justify-center bg-primary text-[17px] font-lg font-bold rounded-md flex items-center">
-        {" "}
-        <img src={addIcon} className="mr-2" /> Create Collection{" "}
-      </button>
-      <div className="flex flex-col items-center gap-5">
-        <img src={noCollectionItem} />
-        <p className="font-light text-textPrimary text-xl">
-          No collection Found!
-        </p>
-      </div>
-    </div>
-  );
-};
 
 const Home = () => {
   const [empty, setEmpty] = useState(false);
@@ -42,7 +26,7 @@ const Home = () => {
     // }
   },[])
   if (collections.length===0) {
-    return <EmptyCollections navigator={createCollectionRedicector}/>;
+    return <NoResult title="Add Collection" noResultName="collections" navigator={createCollectionRedicector}/>;
   }
 
   return (
