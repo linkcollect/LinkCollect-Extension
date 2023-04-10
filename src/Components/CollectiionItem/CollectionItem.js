@@ -3,11 +3,11 @@ import logo from "../../assets/Logo.svg"
 import CopyIcon from "../../assets/Icons/copy.svg"
 import AddIcon from "../../assets/Icons/add.svg"
 import ShareIcon from "../../assets/Icons/arrow-share.svg"
-const CollectionItem = ({thumbnail,name,count,copyLinkHandler,shareLinkHandler,addHandler}) => {
+const CollectionItem = ({image,name,count,copyLinkHandler,shareLinkHandler,addHandler}) => {
   return (
     <div className='bg-bgPrimary rounded-md border border-secodary  p-2 flex justify-between mb-2'>
       <div className='flex'>
-        <img src={thumbnail || logo}/>
+        <img src={image || logo}/>
         <div className='flex flex-col ml-4 '>
           <p className='text-[17px] text-textPrimary font-bold'>{name}</p>
           <p className='text-textPrimary text-xs'>{count}{" "}Bookmarks</p>

@@ -10,7 +10,7 @@ const classMapper = {
     file:cursor-pointer
     `,
   textClass:
-    "mt-1 px-3 py-2 bg-bgSecodary border border-bgGrey placeholder-textPrimary focus:outline-none block w-full rounded-md sm:text-sm",
+    "mt-1 px-3 py-2 bg-bgSecodary border border-bgGrey text-textPrimary placeholder-textPrimary focus:outline-none block w-full rounded-md sm:text-sm",
 };
 
 const Input = ({
@@ -37,7 +37,7 @@ const Input = ({
   );
 };
 
-export const Select = ({ options }) => {
+export const Select = ({ name,onInputHandler,options }) => {
   return (
     <>
       <label
@@ -49,8 +49,10 @@ export const Select = ({ options }) => {
       <select
         id="pravacy"
         class="bg-bgSecodary border border-bgGrey text-textPrimary text-normal rounded-lg focus:ring-textSecondary focus:border-textSecondary block w-full p-3"
+        onChange={onInputHandler}
+        name={name}
       >
-        <option selected>Choose a country</option>
+        <option selected>Choose a privacy</option>
         {options.map((opt)=>(
           <option value={opt.value}>{opt.name}</option>
         ))}
