@@ -10,6 +10,7 @@ module.exports = {
       bgSecodary:"#f9f9f9",
       bgGrey:"#f1f1f1",
       primary:"#6166f1",
+      lightPrimary:"#8084f3",
       secodary: "#dedff1",
       textPrimary:"#232438",
       textSecondary:"#636472",
