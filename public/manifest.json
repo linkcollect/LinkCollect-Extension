@@ -3,13 +3,13 @@
     "version": "0.1.0",
     "description": "More than A Bookmark",
     "permissions": ["storage", "tabs","scripting","activeTab"],
-    "host_permissions": ["https://*.youtube.com/*","https://*.twitter.com/*","https://*.linkedin.com/*"],
+    "host_permissions": ["https://*.youtube.com/*","https://*.twitter.com/*","https://*.linkedin.com/*","http://*/*","http://*/*"],
     "background": {
       "service_worker": "background.js"
     },
     "content_scripts": [
       {
-        "matches": ["https://*.youtube.com/*","https://*.twitter.com/*","https://*.linkedin.com/*"],
+        "matches": ["https://*.youtube.com/*","https://*.twitter.com/*","https://*.linkedin.com/*","http://*/*","http://*/*"],
         "js": ["contentScript.js"]
       }
     ],

@@ -6,18 +6,20 @@ import logoout from "../../assets/Icons/logout.svg";
 
 
 const MenuItem =  ({name,icon,onCLickHandler}) =>{
+  console.log(onCLickHandler)
     return (
         <li className="flex items-center pb-2 h-[50px] pl-3 border-b border-secodary">
-            <button>
+            <button onClick={onCLickHandler} className="flex items-center w-full">
               <img src={icon} className="w-[17px]" />
-            </button>
             <p className="text-textPrimary pl-2 text-xl font-light">{name}</p>
+            </button>
         </li>
     )
 }
 
 
-const SideMenu = () => {
+const SideMenu = ({onLogout}) => {
+  
 
     const menuList =  [{
         name:"Open in Web",
@@ -33,9 +35,10 @@ const SideMenu = () => {
     },
     {
         name:"Logout",
-        icon:logoout
+        icon:logoout,
+        onCLickHandler:onLogout
     }
-
+    
 ]
 
   return (
@@ -43,7 +46,7 @@ const SideMenu = () => {
       
       <div className="w-[15rem] h-full bg-bgPrimary pt-2">
         <ul className="text-[16px]">
-          {menuList.map(menu=><MenuItem name={menu.name} icon={menu.icon}/>)}
+          {menuList.map(menu=><MenuItem key={menu.name} name={menu.name} icon={menu.icon} onCLickHandler={menu.onCLickHandler}/>)}
         </ul>
       </div>
     </div>
