@@ -14,7 +14,8 @@ import reducers from "./reducers";
 import {Provider} from "react-redux";
 import { authStart, authSuccess } from "./actions/authActions";
 import { createStore } from "redux";
-
+import { setJwtInRequestHeader } from "./api/httpService";
+import jwt_decode from "jwt-decode";
   
 
 const Popup = () => {
@@ -25,14 +26,17 @@ const Popup = () => {
     chrome.storage.local.get(['token'],async (res)=>{
       dispatch(authStart())
       console.log("hello",res.token)
-      dispatch(authSuccess(res.token))
+      const {user:userId }= jwt_decode(res.token);
+      dispatch(authSuccess({token:res.token,userId:userId}));
+      
      })
    },[])
 
    useEffect(() => {
     function init() {
       if (authState.token) {
-        console.log(authState.token)
+        console.log(authState.token);
+        setJwtInRequestHeader(authState.token);
       }
     }
 
