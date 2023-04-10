@@ -12,12 +12,9 @@ import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import reducers from "./reducers";
 import {Provider} from "react-redux";
-import { authFailure, authStart, authSuccess } from "./actions/authActions";
+import { authStart, authSuccess } from "./actions/authActions";
 import { createStore } from "redux";
-import { setJwtInRequestHeader } from "./api/httpService";
-import {getUserById} from "./api/authService"
-import jwt from "jsonwebtoken"
- 
+
   
 
 const Popup = () => {
@@ -28,8 +25,6 @@ const Popup = () => {
     chrome.storage.local.get(['token'],async (res)=>{
       dispatch(authStart())
       console.log("hello",res.token)
-      // const {user: userId} = jwt.decode(res.token);
-      // const user = await getUserById()
       dispatch(authSuccess(res.token))
      })
    },[])
@@ -38,7 +33,6 @@ const Popup = () => {
     function init() {
       if (authState.token) {
         console.log(authState.token)
-        // setJwtInRequestHeader(authtoken);
       }
     }
 
@@ -69,7 +63,7 @@ const Popup = () => {
           />
           {authState.token && (
             <>
-              <Route path="/collection" element={<Home />} />
+              <Route path="/collection" element={<Home/>} />
               <Route path="/:collectionId" element={<Bookmarks />} />
               <Route path="/new-collection" element={<NewCollection />} />
             </>
