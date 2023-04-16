@@ -22,21 +22,21 @@ const CollectionItem = ({
   const copyImageRef = useRef();
   const bookMarkImage = useRef();
   const onCopy = () => {
-    console.log(id);
+    console.log(collectionId);
     setCopyText("Copied")
     if(copyImageRef) copyImageRef.current.src=approve;
-    copyLinkHandler(id);
+    copyLinkHandler(collectionId);
     setTimeout(()=>{
       copyImageRef.current.src=CopyIcon
       setCopyText("Copy Link");
 
-    },2500);
+    },1500);
   };
 
 
   const addBookMarkHandler = async (e) =>{
     setIsAdding(true);
-    await addHandler(id);
+    await addHandler(collectionId);
     setIsAdding(false);
     console.log(bookmark)
     if(bookmark)  bookmark.current.src=approveWhite;
@@ -47,7 +47,8 @@ const CollectionItem = ({
 
 
   return (
-    <Link to={"/"+collectionId} state={{ name: name }} className="bg-bgPrimary rounded-md border border-secodary  p-2 flex justify-between">
+    <div className="bg-bgPrimary rounded-md border border-secodary  p-2 flex justify-between" >
+    <Link to={"/"+collectionId}>
       <div className="flex">
         <img src={image || logo} />
         <div className="flex flex-col ml-4 ">
@@ -55,6 +56,7 @@ const CollectionItem = ({
           <p className="text-textPrimary text-[12px]">{count} Bookmarks</p>
         </div>
       </div>
+    </Link>
       <div className="flex gap-2">
         <Tooltip name={copyText}>
           <button
@@ -83,7 +85,7 @@ const CollectionItem = ({
           </button>
         </Tooltip>
       </div>
-    </Link>
+    </div>
   );
 };
 
