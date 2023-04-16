@@ -22,7 +22,7 @@ const Input = ({
   inputClass,
 }) => {
   return (
-    <label className="block my-4">
+    <label className="block my-2">
       <span className="text-textSecondary block text-[20px] font-light mb-1">
         {label}
       </span>
@@ -37,7 +37,7 @@ const Input = ({
   );
 };
 
-export const Select = ({ name,onInputHandler,options }) => {
+export const Select = ({ name,onInputHandler,options,value }) => {
   return (
     <>
       <label
@@ -51,8 +51,8 @@ export const Select = ({ name,onInputHandler,options }) => {
         class="bg-bgSecodary border border-bgGrey text-textPrimary text-normal rounded-lg focus:ring-textSecondary focus:border-textSecondary block w-full p-3"
         onChange={onInputHandler}
         name={name}
+        value={value}
       >
-        <option selected>Choose a privacy</option>
         {options.map((opt)=>(
           <option value={opt.value}>{opt.name}</option>
         ))}
