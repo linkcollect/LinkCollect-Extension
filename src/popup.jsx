@@ -24,10 +24,12 @@ const Popup = () => {
   console.log(authState);
    useEffect(()=>{
     chrome.storage.local.get(['token'],async (res)=>{
+      if(res.token){
       dispatch(authStart())
       console.log("hello",res.token)
       const {user:userId }= jwt_decode(res.token);
       dispatch(authSuccess({token:res.token,userId:userId}));
+      }
       
      })
    },[])
@@ -68,8 +70,8 @@ const Popup = () => {
           {authState.token && (
             <>
               <Route path="/collection" element={<Home/>} />
-              <Route path="/:collectionId" element={<Bookmarks />} />
-              <Route path="/new-collection" element={<NewCollection />} />
+              <Route path="/:collectionId" element={<Bookmarks/>} />
+              <Route path="/new-collection" element={<NewCollection/>} />
             </>
           )}
         </Routes>
