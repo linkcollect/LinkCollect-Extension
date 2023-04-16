@@ -27,6 +27,10 @@ export function deleteCollection(collectionId) {
   return http.delete(`${apiEndpoint}/${collectionId}`);
 }
 
+export function togglePrivacy(collectionId) {
+  return http.post(`${apiEndpoint}/togglePrivacy/${collectionId}`)
+}
+
 // Special API call
 // Without timelines
 export function getAllCollectionsWithoutTimelines() {
