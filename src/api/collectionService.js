@@ -11,8 +11,10 @@ export function getAllCollections() {
 }
 
 // With Timelines
-export function getCollection(collectionId) {
-  return http.get(`${apiEndpoint}/${collectionId}`);
+export function getCollection(collectionId,userId) {
+  return http.get(`${apiEndpoint}/${collectionId}`,{
+    user:userId
+  });
 }
 
 export function createCollection(collectionData) {
