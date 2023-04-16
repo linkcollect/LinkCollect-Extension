@@ -12,6 +12,7 @@ module.exports = {
       primary:"#6166f1",
       lightPrimary:"#8084f3",
       secodary: "#dedff1",
+      secodaryLight:"#e8e9f8",
       textPrimary:"#232438",
       textSecondary:"#636472",
       textLight:"#f6f6f6",
