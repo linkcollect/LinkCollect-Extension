@@ -11,7 +11,11 @@ import { getCurrentTab } from "../utils/chromeAPI";
 import { createTimeline } from "../api/timelineService";
 
 const Home = () => {
+  // gloabl collections
   const [collections, SetCollections] = useState([]);
+  
+  // Filterd/search collection that will be shown
+  const [filteredCollection,setFiltererdCollection] = useState([]);
   const [loading, setLoadeing] = useState(false);
   const auth = useSelector((state) => state.auth);
   const navigate = useNavigate();
@@ -28,6 +32,7 @@ const Home = () => {
       const res = await getAllCollectionsWithoutTimelines();
       console.log(res.data.data);
       SetCollections(res.data.data);
+      setFiltererdCollection(res.data.data);
       setLoadeing(false)
     };
     getCollections(auth.token);
@@ -60,6 +65,17 @@ const Home = () => {
     }
   }
 
+  const onSearchHandler = (e) =>{
+    // As we need to search in global collections
+    const tempCollections = [...collections]
+    console.log(tempCollections[0].title.toLowerCase().includes(e.target.value.toLowerCase()))
+    let newfilteredCollection=tempCollections;
+    if(e.target.value!==""){
+      newfilteredCollection = tempCollections.filter(collection=>collection.title.toLowerCase().includes(e.target.value.toLowerCase()));
+    }
+    setFiltererdCollection(newfilteredCollection)
+  }
+
   if (!loading && collections.length === 0) {
     return (
       <NoResult
@@ -75,14 +91,14 @@ const Home = () => {
   return (
     <div>
       <div className="py-3 bg-bgPrimary border-b border-bgGrey px-4 drop-shadow-md">
-        <SearchBox />
+        <SearchBox onSearch={onSearchHandler}/>
       </div>
       {!loading? 
       <div className=" bg-bgSecodary h-[680px]">
         <div className="flex justify-between items-center pt-4 px-3">
           <p className="text-[18px] text-textPrimary">
             Collections
-            <span className="ml-2 rounded-full py-[2px] bg-success p-2">{collections.length}</span>
+            <span className="ml-2 rounded-full py-[2px] bg-success p-2">{filteredCollection.length}</span>
           </p>
           <button
             onClick={createCollectionRedicector}
@@ -93,7 +109,7 @@ const Home = () => {
           </button>
         </div>
         <div className="mt-4 flex flex-col gap-2 h-[49%] overflow-y-auto overflow-x-hidden px-3 w-full">
-          {collections.map((collection) => (
+          {filteredCollection.map((collection) => (
             <CollectionItem
               name={collection.title}
               count={collection.timelines.length}
