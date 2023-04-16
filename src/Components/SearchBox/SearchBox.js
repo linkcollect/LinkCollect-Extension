@@ -1,6 +1,6 @@
 import React from "react";
 import filterMenu from "../../assets/Icons/filter--menu.svg"
-const SearchBox = ({onChnageHandler}) => {
+const SearchBox = ({onSearch}) => {
   return (
     <form class="flex items-center">
       <label for="simple-search" class="sr-only">
@@ -25,9 +25,9 @@ const SearchBox = ({onChnageHandler}) => {
         <input
           type="text"
           id="simple-search"
-          class="bg-bgPrimary border border-bgGrey text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          class="bg-bgPrimary border border-bgGrey text-textPrimary text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Search"
-          onChange={onChnageHandler}
+          onChange={onSearch}
         />
       </div>
       <button
