@@ -7,6 +7,13 @@
     "background": {
       "service_worker": "background.js"
     },
+    "icons":{
+       "16":"logo.png", 
+       "19":"logo.png", 
+       "32":"logo.png", 
+       "48":"logo.png", 
+       "128":"logo.png" 
+    },
     "content_scripts": [
       {
         "matches": ["https://*.youtube.com/*","https://*.twitter.com/*","https://*.linkedin.com/*","http://*/*","http://*/*"],
@@ -22,7 +29,7 @@
       }
     ],
     "action": {
-      "default_title": "PinnBorad",
+      "default_title": "LinkCollect",
       "default_popup": "popup.html"
     },
     "manifest_version": 3

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import BackArrow from "../assets/Icons/arrow.svg";
@@ -14,9 +14,10 @@ import Tooltip from "../Components/Tooltip/Tooltip";
 
 import { getCurrentTab } from "../utils/chromeAPI";
 
-import { getCollection, togglePrivacy } from "../api/collectionService";
+import { deleteCollection, getCollection, togglePrivacy } from "../api/collectionService";
 import { deleteTimeline, createTimeline } from "../api/timelineService";
 import { useSelector } from "react-redux";
+import PageLoader from "../Components/Loader/PageLoader";
 
 const Bookmarks = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -25,7 +26,9 @@ const Bookmarks = () => {
   const [collection, setCollection] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
-  const auth = useSelector((state) => state.auth.userId);
+  const popupref = useRef();
+  const menuRef= useRef();
+  const auth = useSelector((state) => state.auth);
 
   useEffect(() => {
     setIsLoading(true);
@@ -67,7 +70,7 @@ const Bookmarks = () => {
       const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
       const getTab = await getCurrentTab();
       console.log(getTab);
-      const timeline = { link: getTab.url, note: getTab.title, time };
+      const timeline = { link: getTab.url, title: getTab.title,favicon:getTab.favIconUrl, time };
       // DB Add
       const { data } = await createTimeline(collection._id, timeline);
 
@@ -86,27 +89,45 @@ const Bookmarks = () => {
   // Collection copy
   const collectionCopyHandler = () => {
     navigator.clipboard.writeText(
-      `http://localhost:3000/collections/${collectionId}`
+      `http://linkcollect.io/${auth.user.username}/${collectionId}`
     );
   };
 
-  // COllection privacy update
-  const prvaciyTogglerHandler = async () => {
-    // UI update
-    const tempCollection ={...collection};
-    tempCollection.isPublic = !tempCollection.isPublic;
-    setCollection(tempCollection);
-    //DB update
-    const { data } = await togglePrivacy(collectionId);
-    console.log(data);
+  // Delete collection
+  const collectionDeleter = async () =>{
+    setShowMenu(false);
+    setIsLoading(true);
+    try{
+      await deleteCollection(collectionId);
+      setIsLoading(false)
+      navigation("/collection")
+    }catch(e){
+      console.log(e)
+      setIsLoading(false);
+    }
+  }
 
-  };
+  // opening all tabs at one go
+  const openAllLinks = ()=>  {
+    for(var i=0;i<collection.timelines.length;i++){
+      chrome.tabs.create({ url:collection.timelines[i].link });
+    }
+  }
 
   const backScreenHandler = (e) => {
     e.preventDefault();
     navigation(-1);
   };
-console.log("render")
+
+  // Need to think more bettor solution
+  // Popup menu close functiinality if users clocked outside of it
+    window.addEventListener("click",e=>{
+      if(e.target !== popupref.current && e.target !== menuRef.current){
+        console.log("Close")
+        setShowMenu(false);
+      }
+    })
+
   return (
     <>
       {/* Back button container */}
@@ -121,21 +142,14 @@ console.log("render")
           </p>
         </button>
       </div>
-      {isLoading ? (
-        <div className="flex w-full h-[70vh] justify-center items-center">
-          <Loader />
-        </div>
-      ) : collection.timelines && collection.timelines.length > 0 ? (
-        <div className="h-[88%]">
-          {/* Collection Heading */}
-          <div className="bg-primary p-2 flex justify-between items-center pr-4 my-3 mx-3 rounded-md">
+      {!isLoading && <div className="bg-primary p-2 flex justify-between items-center pr-4 my-3 mx-3 rounded-md">
             <div className="flex">
               <div className="flex flex-col justify-center ml-3 ">
                 <p className="text-[14px] font-medium text-bgPrimary">
                   {collection.title}
                 </p>
                 <p className="text-bgPrimary text-xs">
-                  {collection.timelines.length} Bookmarks
+                  {collection.timelines?.length || 0} Bookmarks
                 </p>
               </div>
             </div>
@@ -144,21 +158,32 @@ console.log("render")
                 className="cursor-pointer"
                 onClick={() => setShowMenu((preState) => !preState)}
               >
-                <img src={dots} />
+                <img src={dots} ref={menuRef}/>
               </div>
               <div className="absolute text-[#ffff] top-[30px] left-[-170px] z-[999999]">
                 {showMenu && (
                   <PopupMenu
+                    ref={popupref}
                     onCopyCollection={collectionCopyHandler}
-                    onPrivacyToggle={prvaciyTogglerHandler}
-                    isPublic={collection.isPublic}
-                    collectionLink={`http://localhost:3000/collections/${collectionId}`}
-
+                    collectionLink={`http://linkcollect.io/${auth.user.username}/${collectionId}`}
+                    collectionId={collectionId}
+                    title={collection.title}
+                    privacy={collection.isPublic}
+                    onDelete={collectionDeleter}
+                    onOpenAllLink={openAllLinks}
                   />
                 )}
               </div>
             </div>
-          </div>
+      </div>}
+      {isLoading ? (
+        <div className="flex w-full h-[70vh] justify-center items-center">
+          <PageLoader/>
+        </div>
+      ) : collection.timelines && collection.timelines.length > 0 ? (
+        <div className="h-[88%]">
+          {/* Collection Heading */}
+          
 
           {/* Collection list */}
           <div className="h-[60%] w-full px-3 overflow-y-auto">
@@ -166,8 +191,9 @@ console.log("render")
               <BookmarkItem
                 key={timeline._id}
                 id={timeline._id}
-                name={timeline.note}
+                name={timeline.title}
                 url={timeline.link}
+                favicon={timeline.favicon}
                 onDelete={deleleteBookmark}
               />
             ))}
@@ -190,7 +216,7 @@ console.log("render")
           </div>
         </div>
       ) : (
-        <NoResult title="Add bookmarks" noResultName="bookmarks" />
+        <NoResult title="Add bookmarks" noResultName="bookmarks" onAdd={addBookMarkHandler} bookMark={true} loading={isAdding}/>
       )}
     </>
   );

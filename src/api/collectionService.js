@@ -21,6 +21,10 @@ export function createCollection(collectionData) {
   return http.post(`${apiEndpoint}`, collectionData);
 }
 
+export function togglePrivacy(collectionId) {
+  return http.post(`${apiEndpoint}/togglePrivacy/${collectionId}`)
+}
+
 export function updateCollection(collectionId, collectionData) {
   return http.patch(`${apiEndpoint}/${collectionId}`, collectionData);
 }
@@ -29,12 +33,13 @@ export function deleteCollection(collectionId) {
   return http.delete(`${apiEndpoint}/${collectionId}`);
 }
 
-export function togglePrivacy(collectionId) {
-  return http.post(`${apiEndpoint}/togglePrivacy/${collectionId}`)
-}
 
 // Special API call
 // Without timelines
 export function getAllCollectionsWithoutTimelines() {
   return http.get(`${apiEndpoint}/without-timelines`);
+}
+
+export function getAllByUsername(username) {
+  return http.get(`${apiEndpoint}/user/${username}`);
 }

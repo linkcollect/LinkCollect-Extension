@@ -20,6 +20,7 @@ const Input = ({
   placeholder,
   onInputHandler,
   inputClass,
+  value
 }) => {
   return (
     <label className="block my-2">
@@ -32,6 +33,7 @@ const Input = ({
         className={classMapper[inputClass]}
         placeholder={placeholder}
         onChange={onInputHandler}
+        value={value}
       />
     </label>
   );

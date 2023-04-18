@@ -2,7 +2,7 @@ import React from "react";
 import filterMenu from "../../assets/Icons/filter--menu.svg"
 const SearchBox = ({onSearch}) => {
   return (
-    <form class="flex items-center">
+    <div class="flex items-center">
       <label for="simple-search" class="sr-only">
         Search
       </label>
@@ -30,14 +30,7 @@ const SearchBox = ({onSearch}) => {
           onChange={onSearch}
         />
       </div>
-      <button
-        type="submit"
-        class="p-3 ml-2 text-sm border border-bgGrey rounded-lg border border-seconadry  focus:ring-4 focus:outline-none focus:ring-primary"
-      >
-        <img src={filterMenu}/>
-        
-      </button>
-    </form>
+    </div>
   );
 };
 

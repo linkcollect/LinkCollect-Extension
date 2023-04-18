@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import logo from "../../assets/Logo.svg";
+import logo from "../../assets/Icons/folder.png";
 import CopyIcon from "../../assets/Icons/copy.svg";
 import AddIcon from "../../assets/Icons/add.svg";
 import ShareIcon from "../../assets/Icons/arrow-share.svg";
@@ -8,6 +8,7 @@ import Tooltip from "../Tooltip/Tooltip";
 import Loader from "../Loader/Loader";
 import approve from "../../assets/Icons/approve.svg"
 import approveWhite from "../../assets/approve-white.svg"
+import { useSelector } from "react-redux";
 const CollectionItem = ({
   image,
   name,
@@ -21,6 +22,7 @@ const CollectionItem = ({
   const [isAdding,setIsAdding] = useState(false);
   const copyImageRef = useRef();
   const bookMarkImage = useRef();
+  const auth = useSelector(state=>state.auth);
   const onCopy = () => {
     console.log(collectionId);
     setCopyText("Copied")
@@ -47,17 +49,19 @@ const CollectionItem = ({
 
 
   return (
-    <div className="bg-bgPrimary rounded-md border border-secodary  p-2 flex justify-between" >
+    <div className="relative">
     <Link to={"/"+collectionId}>
+    <div className="bg-bgPrimary rounded-md border border-secodary  p-2 flex justify-between w-full" >
       <div className="flex">
-        <img src={image || logo} />
+        <img className="w-[40px]" src={image!="undefined" && image!== undefined ?  image : logo} />
         <div className="flex flex-col ml-4 ">
           <p className="text-[14px] text-textPrimary font-bold">{name}</p>
           <p className="text-textPrimary text-[12px]">{count} Bookmarks</p>
         </div>
       </div>
+    </div>
     </Link>
-      <div className="flex gap-2">
+    <div className="flex gap-2 absolute right-[8px] top-[10px]">
         <Tooltip name={copyText}>
           <button
             className="bg-textLight rounded-full py-2 px-[8px] flex justify-center items-center"
@@ -69,7 +73,7 @@ const CollectionItem = ({
         <Tooltip name="Open Collection">
           <Link
             className="bg-textLight rounded-full py-2 px-[8px] flex justify-center items-center"
-            to={`http://localhost:3000/collections/${collectionId}`}
+            to={`http://linkcollect.io/${auth.user.username}/${collectionId}`}
             target="_blank"
           >
             <img src={ShareIcon} className="w-[23px]" />
@@ -84,7 +88,7 @@ const CollectionItem = ({
             {!isAdding ? <img src={AddIcon} ref={bookMarkImage} className="w-[23px]" /> : <Loader/>}
           </button>
         </Tooltip>
-      </div>
+    </div>
     </div>
   );
 };

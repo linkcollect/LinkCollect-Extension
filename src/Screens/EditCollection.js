@@ -1,29 +1,28 @@
 import React, {useState} from "react";
 import Input, {Select} from "../Components/Input/Input";
 import BackArrow from "../assets/Icons/arrow.svg";
-import { useNavigate } from "react-router-dom";
-import { createCollection } from "../api/collectionService";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { updateCollection } from "../api/collectionService";
 import Loader from "../Components/Loader/Loader";
 
 
-const NewCollection = () => {
+const EditCollection = () => {
   const navigate = useNavigate();
+  const loction = useLocation();
+  const {collectionId} = useParams();
   const [data,setData] = useState({
-    title:"",
-    privacy:"public",
-    description:""
+    title:loction.state.title,
+    privacy:loction.state.privacy?"public":"private",
   })
-  const [image,setImage] = useState();
+  console.log(loction)
+
   const [loading,setLoading] = useState(false);
   const onInput = (e) => {
     e.preventDefault();
     setData(state=>({...state,[e.target.name]:e.target.value}));
   };
-  const onInputFile = (e) => {
-    e.preventDefault();
-    setImage(e.target.files[0])
-    console.log(e.target.value[0]);
-  };
+
+
 
 
 
@@ -40,11 +39,8 @@ const NewCollection = () => {
     try{
       const form = new FormData();
       form.append("title",data.title);
-      form.append("description",data.description);
       form.append("privacy",data.privacy);
-      if(image!=="")
-        form.append("image",image);
-      const {collectionData} = await createCollection(form);
+      const {collectionData} = await updateCollection(collectionId,form);
       navigate(-1)
     }catch(e){
       console.log(e);
@@ -59,7 +55,7 @@ const NewCollection = () => {
     {/* Need to create a shadow warppr later */}
       <div className="pt-4 pl-6 bg-bgPrimary border-b border-bgGrey px-4 pb-4 drop-shadow-md">
         <button onClick={backButtonHnadler} className="cursor-pointer flex items-center gap-3 [&>img]:rotate-[90deg] [&>img]:w-[22px]">
-          <img src={BackArrow} /> <p className="text-textPrimary font-bold text-xl">Create Collection</p>
+          <img src={BackArrow} /> <p className="text-textPrimary font-bold text-xl">Editing Collection</p>
         </button>
       </div>
       <div className="bg-bgPrimary bg-bgSecondary p-3 px-5 flex flex-col justify-center items-center h-[70%]">
@@ -73,23 +69,7 @@ const NewCollection = () => {
             name="title"
             value={data.title}
           />
-          <Input
-            label="Description"
-            placeholder="A resource for learning.."
-            type="text"
-            onInputHandler={onInput}
-            inputClass="textClass"
-            name="description"
-            value={data.description}
-          />
           <Select name="privacy" value={data.privacy} onInputHandler={onInput} options={[{name:"Private",value:"private"}, {name:"Public",value:"public"}]}/>
-          <Input
-            label="Collection Thumnail"
-            placeholder="Upload image"
-            type="file"
-            onInputHandler={onInputFile}
-            inputClass="fileClass"
-          />
           <button type="button" className="py-[10px] px-[36px] bg-primary text-[17px] w-full font-normal mt-3 rounded-md disabled:bg-lightPrimary disabled:cursor-not-allowed flex justify-center" disabled={loading} onClick={handleSubmit} >
             {!loading ? "Create Collection" : 
             // Need to add the svg in seprate file
@@ -102,4 +82,4 @@ const NewCollection = () => {
   );
 };
 
-export default NewCollection;
+export default EditCollection;

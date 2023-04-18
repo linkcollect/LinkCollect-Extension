@@ -8,3 +8,9 @@ export const getOrigin = (weblink) =>{
     const url = new URL(weblink);
       return url.host
 }
+
+export const sortByLatestUpdated = (data)=>{
+    const sorteData = data.sort((data1,data2)=>new Date(data2.updatedAt)-new Date(data1.updatedAt));
+    console.log(sorteData)
+    return sorteData;
+}

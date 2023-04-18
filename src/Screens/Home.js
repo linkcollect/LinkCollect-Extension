@@ -7,8 +7,10 @@ import { useNavigate } from "react-router-dom";
 import { getAllCollectionsWithoutTimelines } from "../api/collectionService";
 import NoResult from "../Components/NoResult/NoResult";
 import Loader from "../Components/Loader/Loader";
+import PageLoader from "../Components/Loader/PageLoader";
 import { getCurrentTab } from "../utils/chromeAPI";
 import { createTimeline } from "../api/timelineService";
+import { sortByLatestUpdated } from "../utils/utilty";
 
 const Home = () => {
   // gloabl collections
@@ -30,9 +32,9 @@ const Home = () => {
     setLoadeing(true);
     const getCollections = async () => {
       const res = await getAllCollectionsWithoutTimelines();
-      console.log(res.data.data);
-      SetCollections(res.data.data);
-      setFiltererdCollection(res.data.data);
+      const sorteData = sortByLatestUpdated(res.data.data);
+      SetCollections(sorteData);
+      setFiltererdCollection(sorteData);
       setLoadeing(false)
     };
     getCollections(auth.token);
@@ -40,7 +42,7 @@ const Home = () => {
 
   const handleCopy = (collectionId ) => {
     console.log(collectionId)
-    navigator.clipboard.writeText(`http://localhost:3000/collections/${collectionId}`);
+    navigator.clipboard.writeText(`http://linkcollect.io/${auth.user.username}/${collectionId}`);
   };
 
 
@@ -49,16 +51,16 @@ const Home = () => {
       const time = new Date('14 Jun 2017 00:00:00 PDT').toUTCString();
       const getTab = await getCurrentTab();
       console.log(getTab)
-      const timeline = {link: getTab.url, note: getTab.title, time }
+      const timeline = {link: getTab.url, title: getTab.title,favicon:getTab.favIconUrl, time }
       // DB Add
       const {data} = await createTimeline(collectionId, timeline);
-
+      console.log(data);
       // Instant state update
       const collectionIndex = collections.findIndex(collection=>collection._id === collectionId);
       const updatedCollections = [...collections];
       updatedCollections[collectionIndex].timelines.push(data._id);
       SetCollections(updatedCollections);
-      console.log(data)
+      setFiltererdCollection(updatedCollections);
     } catch (error) {
       // Need to provide a error message
       console.log(error);
@@ -81,7 +83,7 @@ const Home = () => {
       <NoResult
         title="Add Collection"
         noResultName="collections"
-        navigator={createCollectionRedicector}
+        onAdd={createCollectionRedicector}
       />
     );
   }
@@ -118,12 +120,13 @@ const Home = () => {
               id={collection._id}
               copyLinkHandler={handleCopy}
               addHandler={addHandler}
+              image={collection.image}
             />
           ))}
         </div>
       </div> : 
       <div className="flex w-full h-[70vh] justify-center items-center">
-        <Loader/>
+        <PageLoader/>
       </div>
       }
     </div>

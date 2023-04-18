@@ -12,7 +12,7 @@ import approveWhite from "../../assets/approve-white.svg"
 
 import { getOrigin, nameShortner } from "../../utils/utilty";
 
-const BookmarkItem = ({ id, thumbnail, name, url, onDelete }) => {
+const BookmarkItem = ({ id, favicon, name, url, onDelete }) => {
   const [isDelting, setIsDeleting] = useState(false);
   const [copyText,setCopyText] = useState("Copy Link")
   const copyImageRef = useRef()
@@ -39,7 +39,9 @@ const BookmarkItem = ({ id, thumbnail, name, url, onDelete }) => {
   return (
     <div className="bg-bgPrimary p-2 flex justify-between border-b border-bgGrey">
       <div className="flex">
-        <img src={thumbnail || logo} />
+        
+        <img src={favicon || logo} className="w-[30px]" />
+    
         <div className="flex flex-col w-[120px] ml-2 ">
           <p className="text-[12px] w-full font-bold text-textPrimary">
             {nameShortner(name)}
