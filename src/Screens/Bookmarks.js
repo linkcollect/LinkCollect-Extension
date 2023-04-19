@@ -14,7 +14,7 @@ import { ToolTip2 } from "../Components/Tooltip/Tooltip";
 
 import { getCurrentTab } from "../utils/chromeAPI";
 
-import { deleteCollection, getCollection, togglePrivacy } from "../api/collectionService";
+import { deleteCollection, getCollection } from "../api/collectionService";
 import { deleteTimeline, createTimeline } from "../api/timelineService";
 import { useSelector } from "react-redux";
 import PageLoader from "../Components/Loader/PageLoader";
@@ -90,7 +90,7 @@ const Bookmarks = () => {
   // Collection copy
   const collectionCopyHandler = () => {
     navigator.clipboard.writeText(
-      `http://linkcollect.io/${auth.user.username}/${collectionId}`
+      `http://linkcollect.io/${auth.user.username}/c/${collectionId}`
     );
   };
 
@@ -166,7 +166,7 @@ const Bookmarks = () => {
                   <PopupMenu
                     ref={popupref}
                     onCopyCollection={collectionCopyHandler}
-                    collectionLink={`http://linkcollect.io/${auth.user.username}/${collectionId}`}
+                    collectionLink={`http://linkcollect.io/${auth.user.username}/c/${collectionId}`}
                     collectionId={collectionId}
                     title={collection.title}
                     privacy={collection.isPublic}

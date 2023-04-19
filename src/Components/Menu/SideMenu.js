@@ -3,6 +3,7 @@ import command from "../../assets/Icons/command.svg";
 import openLink from "../../assets/Icons/openLink.svg";
 import help from "../../assets/Icons/help.svg";
 import logoout from "../../assets/Icons/logout.svg";
+import { useSelector } from "react-redux";
 
 const MenuItem = ({ name, icon, onCLickHandler, link }) => {
   console.log(onCLickHandler);
@@ -20,12 +21,12 @@ const MenuItem = ({ name, icon, onCLickHandler, link }) => {
 
 const SideMenu = React.forwardRef(({ onLogout, isOpen, navref }) => {
   console.log(isOpen);
-
+  const auth = useSelector(state=>state.auth);
   const menuList = [
     {
       name: "Open in Web",
       icon: openLink,
-      link: "https://www.linkcollect.io/",
+      link: `https://www.linkcollect.io/${auth.user.username}`,
     },
     {
       name: "View Commands",

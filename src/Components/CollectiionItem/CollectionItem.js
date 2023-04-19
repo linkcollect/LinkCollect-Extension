@@ -74,7 +74,7 @@ const CollectionItem = ({
         <Tooltip name="Open Collection">
           <Link
             className="bg-textLight rounded-full py-2 px-[8px] flex justify-center items-center"
-            to={`http://linkcollect.io/${auth.user.username}/${collectionId}`}
+            to={`http://linkcollect.io/${auth.user.username}/c/${collectionId}`}
             target="_blank"
           >
             <img src={ShareIcon} className="w-[23px]" />

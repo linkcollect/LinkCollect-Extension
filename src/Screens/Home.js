@@ -47,7 +47,7 @@ const Home = () => {
 
   const handleCopy = (collectionId ) => {
     console.log(collectionId)
-    navigator.clipboard.writeText(`http://linkcollect.io/${auth.user.username}/${collectionId}`);
+    navigator.clipboard.writeText(`http://linkcollect.io/${auth.user.username}/c/${collectionId}`);
   };
 
 
