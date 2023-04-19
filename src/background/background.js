@@ -30,14 +30,14 @@ chrome.tabs.onUpdated.addListener((tabId, _, tab) => {
 // });
 
 // Chnage: contextmenu way
-// chrome.runtime.onInstalled.addListener(async () => {
-  // await chrome.storage.local.set({"tab-session":0})
+chrome.runtime.onInstalled.addListener(async () => {
+  await chrome.storage.local.set({"tab-session":0})
   chrome.contextMenus.create({
      id: "linkcollect-12",
      title: "Save to Linkcollect",
      contexts: ["page"],
   });
-// });
+});
 
 
 chrome.contextMenus.create({
