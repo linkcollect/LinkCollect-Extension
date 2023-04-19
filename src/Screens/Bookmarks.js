@@ -202,7 +202,7 @@ const Bookmarks = () => {
 
           {/* Add bookmark */}
           <div className="flex justify-center border-t-2 border-t-secodaryLight p-3">
-            <ToolTip2 name="Bookmark the cirrent tab in one click" top="full" right="-100px">
+            <ToolTip2 name="Bookmark the current tab in one click" top="full" right="-100px">
               <button
                 className="bg-primary rounded-full py-2 px-[8px] flex justify-center items-center"
                 onClick={addBookMarkHandler}
