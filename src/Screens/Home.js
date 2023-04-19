@@ -8,7 +8,7 @@ import { getAllCollectionsWithoutTimelines } from "../api/collectionService";
 import NoResult from "../Components/NoResult/NoResult";
 import Loader from "../Components/Loader/Loader";
 import PageLoader from "../Components/Loader/PageLoader";
-import { getCurrentTab } from "../utils/chromeAPI";
+import { getCurrentTab, upadteLatestCollection } from "../utils/chromeAPI";
 import { createTimeline } from "../api/timelineService";
 import { sortByLatestUpdated } from "../utils/utilty";
 
@@ -37,6 +37,7 @@ const Home = () => {
         SetCollections(sorteData);
         setFiltererdCollection(sorteData);
         setLoadeing(false)
+        await upadteLatestCollection(sorteData[0]._id,sorteData[0].title)
         
       } catch (error) {
         setLoadeing(false);
@@ -63,6 +64,7 @@ const Home = () => {
       updatedCollections[collectionIndex].timelines.push(data._id);
       SetCollections(updatedCollections);
       setFiltererdCollection(updatedCollections);
+      await upadteLatestCollection(updatedCollections[collectionIndex]._id,updatedCollections[collectionIndex].title)
     } catch (error) {
       // Need to provide a error message
       console.log(error);

@@ -17,13 +17,13 @@ import { authStart, authSuccess } from "./actions/authActions";
 import { createStore } from "redux";
 import { setJwtInRequestHeader } from "./api/httpService";
 import jwt_decode from "jwt-decode";
-import PageLoader from "./Components/Loader/PageLoader";
 
 const Popup = () => {
   const dispatch = useDispatch();
   const authState = useSelector((state) => state.auth);
   useEffect(() => {
     chrome.storage.local.get(["token"], async (res) => {
+      
       if (res.token) {
         dispatch(authStart());
         const response = jwt_decode(res.token);
@@ -47,6 +47,7 @@ const Popup = () => {
     init();
   }, [authState.token]);
 
+  
 
   if (authState.loading) {
     return "Loading..";

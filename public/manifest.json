@@ -1,8 +1,9 @@
+
 {
     "name": "LinkCollect",
     "version": "0.1.0",
     "description": "More than A Bookmark",
-    "permissions": ["storage", "tabs","scripting","activeTab"],
+    "permissions": ["storage", "tabs","scripting","activeTab","contextMenus","notifications"],
     "host_permissions": ["https://*.youtube.com/*","https://*.twitter.com/*","https://*.linkedin.com/*","http://*/*","http://*/*"],
     "background": {
       "service_worker": "background.js"
