@@ -22,7 +22,6 @@ const NewCollection = () => {
   const onInputFile = (e) => {
     e.preventDefault();
     setImage(e.target.files[0])
-    console.log(e.target.value[0]);
   };
 
 
@@ -34,7 +33,6 @@ const NewCollection = () => {
 
   const handleSubmit =  async (e) => {
     e.preventDefault();
-    console.log(data)
     if(data.title==="" || data.title.length>40 || data.description.length>240) return
     setLoading(true);
     try{
@@ -46,11 +44,10 @@ const NewCollection = () => {
         form.append("image",image);
       const {collectionData} = await createCollection(form);
       navigate(-1)
-    }catch(e){
-      console.log(e);
+    }catch(error){
+      console.log(error);
     }
     setLoading(false);
-    console.log(data);
   }
   
 

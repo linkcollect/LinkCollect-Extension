@@ -22,14 +22,11 @@ import PageLoader from "./Components/Loader/PageLoader";
 const Popup = () => {
   const dispatch = useDispatch();
   const authState = useSelector((state) => state.auth);
-  console.log(authState);
   useEffect(() => {
     chrome.storage.local.get(["token"], async (res) => {
       if (res.token) {
         dispatch(authStart());
-        console.log("hello", res.token);
         const response = jwt_decode(res.token);
-        console.log(response);
         dispatch(
           authSuccess({
             token: res.token,
@@ -43,7 +40,6 @@ const Popup = () => {
   useEffect(() => {
     function init() {
       if (authState.token) {
-        console.log(authState.token);
         setJwtInRequestHeader(authState.token);
       }
     }
@@ -51,7 +47,6 @@ const Popup = () => {
     init();
   }, [authState.token]);
 
-  console.log(authState);
 
   if (authState.loading) {
     return "Loading..";

@@ -33,17 +33,14 @@ const Bookmarks = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    console.log(isLoading);
     try {
       async function gettingCollection() {
         const { data } = await getCollection(collectionId);
-        console.log(data);
         setCollection(data.data);
         setIsLoading(false);
       }
       gettingCollection();
     } catch (error) {
-      console.log(error);
       setIsLoading(false);
     }
   }, []);
@@ -70,7 +67,6 @@ const Bookmarks = () => {
     try {
       const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
       const getTab = await getCurrentTab();
-      console.log(getTab);
       const timeline = { link: getTab.url, title: getTab.title,favicon:getTab.favIconUrl, time };
       // DB Add
       const { data } = await createTimeline(collection._id, timeline);
@@ -78,7 +74,6 @@ const Bookmarks = () => {
       // Instant state update
       const tempCollection = collection;
       tempCollection.timelines.push(data.data);
-      console.log(tempCollection);
       setCollection(tempCollection);
     } catch (error) {
       // Need to provide a error message
@@ -102,8 +97,8 @@ const Bookmarks = () => {
       await deleteCollection(collectionId);
       setIsLoading(false)
       navigation("/collection")
-    }catch(e){
-      console.log(e)
+    }catch(error){
+      console.log(error)
       setIsLoading(false);
     }
   }
@@ -124,7 +119,6 @@ const Bookmarks = () => {
   // Popup menu close functiinality if users clocked outside of it
     window.addEventListener("click",e=>{
       if(e.target !== popupref.current && e.target !== menuRef.current){
-        console.log("Close")
         setShowMenu(false);
       }
     })

@@ -46,7 +46,6 @@ const Home = () => {
   }, []);
 
   const handleCopy = (collectionId ) => {
-    console.log(collectionId)
     navigator.clipboard.writeText(`http://linkcollect.io/${auth.user.username}/c/${collectionId}`);
   };
 
@@ -55,11 +54,9 @@ const Home = () => {
     try {
       const time = new Date('14 Jun 2017 00:00:00 PDT').toUTCString();
       const getTab = await getCurrentTab();
-      console.log(getTab)
       const timeline = {link: getTab.url, title: getTab.title,favicon:getTab.favIconUrl, time }
       // DB Add
       const {data} = await createTimeline(collectionId, timeline);
-      console.log(data);
       // Instant state update
       const collectionIndex = collections.findIndex(collection=>collection._id === collectionId);
       const updatedCollections = [...collections];
@@ -75,7 +72,6 @@ const Home = () => {
   const onSearchHandler = (e) =>{
     // As we need to search in global collections
     const tempCollections = [...collections]
-    console.log(tempCollections[0].title.toLowerCase().includes(e.target.value.toLowerCase()))
     let newfilteredCollection=tempCollections;
     if(e.target.value!==""){
       newfilteredCollection = tempCollections.filter(collection=>collection.title.toLowerCase().includes(e.target.value.toLowerCase()));

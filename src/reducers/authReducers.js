@@ -15,7 +15,6 @@ const authReducer = (state=initilaState,action) => {
                 error:false
             }
         case AUTH_SUCCESS : 
-            console.log(data.user)
             return  {
                 ...state,
                 token:data.token,

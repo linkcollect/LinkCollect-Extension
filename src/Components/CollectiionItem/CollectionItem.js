@@ -25,7 +25,6 @@ const CollectionItem = ({
   const bookMarkImage = useRef();
   const auth = useSelector(state=>state.auth);
   const onCopy = () => {
-    console.log(collectionId);
     setCopyText("Copied")
     if(copyImageRef) copyImageRef.current.src=approve;
     copyLinkHandler(collectionId);
@@ -41,7 +40,6 @@ const CollectionItem = ({
     setIsAdding(true);
     await addHandler(collectionId);
     setIsAdding(false);
-    console.log(bookmark)
     if(bookmark)  bookmark.current.src=approveWhite;
     setTimeout(()=>{
       bookmark.current.src=AddIcon

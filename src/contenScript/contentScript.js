@@ -8,5 +8,4 @@ chrome.runtime.onMessage.addListener((request)=>{
   }
 })
 
-console.log("Hello")
 

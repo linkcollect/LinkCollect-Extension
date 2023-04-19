@@ -1,7 +1,6 @@
 import React from "react";
 
 const ToggleButton = ({isPublic,onPrvaciyUpdate}) => {
-  console.log(isPublic)
   return (
     <label class="relative inline-flex items-center cursor-pointer">
       <input type="checkbox" value="" class="sr-only peer" checked={isPublic} onChange={onPrvaciyUpdate}/>

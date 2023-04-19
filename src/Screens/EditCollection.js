@@ -14,7 +14,6 @@ const EditCollection = () => {
     title:loction.state.title,
     privacy:loction.state.privacy?"public":"private",
   })
-  console.log(loction)
 
   const [loading,setLoading] = useState(false);
   const onInput = (e) => {
@@ -33,7 +32,6 @@ const EditCollection = () => {
 
   const handleSubmit =  async (e) => {
     e.preventDefault();
-    console.log(data.title.length)
     if(data.title==="" || data.title.length>40 ) return
     setLoading(true);
     try{
@@ -42,11 +40,10 @@ const EditCollection = () => {
       form.append("privacy",data.privacy);
       const {collectionData} = await updateCollection(collectionId,form);
       navigate(-1)
-    }catch(e){
-      console.log(e);
+    }catch(error){
+      console.log(error);
     }
     setLoading(false);
-    console.log(data);
   }
   
 

@@ -16,7 +16,6 @@ const Navbar = () => {
   
   const logoutHandler  = (e) =>{
     e.preventDefault();
-    console.log("log")
     chrome.storage.local.remove(['token'],()=>{
       dispatch(authLogout());
       navigate("/")
@@ -24,7 +23,6 @@ const Navbar = () => {
   }
 
   window.addEventListener('click',e=>{
-    console.log(e.target,profileRef.current)
     if(e.target !== profileRef.current && e.target !== navaref.current) {
       setShow(false);
     }

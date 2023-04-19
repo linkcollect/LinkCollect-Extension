@@ -6,7 +6,6 @@ import logoout from "../../assets/Icons/logout.svg";
 import { useSelector } from "react-redux";
 
 const MenuItem = ({ name, icon, onCLickHandler, link }) => {
-  console.log(onCLickHandler);
   return (
     <a href={link} target="_blank">
       <li className="flex items-center pb-2 h-[50px] pl-3 border-b border-secodary">
@@ -20,7 +19,6 @@ const MenuItem = ({ name, icon, onCLickHandler, link }) => {
 };
 
 const SideMenu = React.forwardRef(({ onLogout, isOpen, navref }) => {
-  console.log(isOpen);
   const auth = useSelector(state=>state.auth);
   const menuList = [
     {
