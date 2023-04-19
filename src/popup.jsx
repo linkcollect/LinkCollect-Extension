@@ -27,6 +27,7 @@ const Popup = () => {
       if (res.token) {
         dispatch(authStart());
         const response = jwt_decode(res.token);
+        await chrome.storage.local.set({username:response.username})
         dispatch(
           authSuccess({
             token: res.token,

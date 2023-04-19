@@ -34,6 +34,7 @@ const Home = () => {
       try {
         const res = await getAllCollectionsWithoutTimelines();
         const sorteData = sortByLatestUpdated(res.data.data);
+        console.log(sorteData)
         SetCollections(sorteData);
         setFiltererdCollection(sorteData);
         setLoadeing(false)

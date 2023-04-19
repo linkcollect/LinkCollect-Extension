@@ -11,6 +11,7 @@ const Splash = () => {
       //update the state and redirect to the home
       
     }else{
+      // PROD CHANGE : url : https://linkcollect.io/login
       chrome.tabs.create({
         url:"http://localhost:3000/"
       })
