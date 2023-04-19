@@ -69,20 +69,20 @@ const saveCurrentTab =  async () => {
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
   const structuredTimeLine = structureTimeline(tabs[0]);
   console.log(structureTimeline)
-  // try { 
-  //   const res = await fetch(`${api}/${data.collection.id}/timelines/create-multiple`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-type": "application/json",
-  //       Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
-  //     },
-  //     body: JSON.stringify(structuredTimeLine),
+  try { 
+    const res = await fetch(`${api}/${data.collection.id}/timelines`, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+      },
+      body: JSON.stringify(structuredTimeLine),
       
-  //   })
-  //   createNotification(`Added all tabs to ${data.collection.name}`,"See in the Linkcollect extension")
-  // } catch (error) {
-  //   createNotification(`Unable to add!`,"May be try again later!!")    
-  // }
+    })
+    createNotification(`Added all tabs to ${data.collection.name}`,"See in the Linkcollect extension")
+  } catch (error) {
+    createNotification(`Unable to add!`,"May be try again later!!")    
+  }
   
 }
 
@@ -93,37 +93,40 @@ const saveAlltabs =  async () => {
   const tabs = await chrome.tabs.query({});
   const username = await chrome.storage.local.get(["username"]);
   const currentTabSession = await chrome.storage.local.get(["tab-session"]);
-  console.log(username,currentTabSession,token,data)
-  const structuredTimelines = structureTimeline(tabs);
-  // try { 
-  //   //1. Need to create new collection
-  //   const form = new FormData();
-  //   form.append("title",currentTabSession);
-  //   form.append("description",data.description);
-  //   form.append("privacy",data.privacy);
-  //   const collection = await fetch(`${api}/${data.collection.id}/timelines/create-multiple`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-type": "application/json",
-  //       Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
-  //     },
-  //     body: JSON.stringify(structuredTimelines),
+  console.log(username,currentTabSession["tab-session"],token,data)
+  const structuredTimelines = tabs.map(structureTimeline);
+  try { 
+    //1. Need to create new collection
+    let tabSessionNum =currentTabSession["tab-session"]+1;
+    const form = new FormData();
+    console.log(tabSessionNum)
+    form.append("title",`tabs session ${tabSessionNum}`);
+    const collection = await fetch(`${api}`, {
+      method: "POST",
+      headers: {
+        // "Content-type": "application/x-www-form-urlencoded",
+         Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+      },
+      body: form,
       
-  //   })
+    })
+    const collectionData = await collection.json();
 
-  //   const res = await fetch(`${api}/${data.collection.id}/timelines/create-multiple`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-type": "application/json",
-  //       Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
-  //     },
-  //     body: JSON.stringify(structuredTimelines),
+    const res = await fetch(`${api}/${collectionData.data._id}/timelines/create-multiple`, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+      },
+      body: JSON.stringify(structuredTimelines),
       
-  //   })
-  //   createNotification(`Added all tabs to ${data.collection.name}`,"See in the Linkcollect extension")
-  // } catch (error) {
-  //   createNotification(`Unable to add!`,"May be try again later!!")    
-  // }
+    })
+    console.log(res)
+    await chrome.storage.local.set({"tab-session":tabSessionNum})
+    createNotification(`Added all tabs to ${collectionData.data.title}`,"See in the Linkcollect extension")
+  } catch (error) {
+    createNotification(`Unable to add!`,"May be try again later!!")    
+  }
   
 }
 
