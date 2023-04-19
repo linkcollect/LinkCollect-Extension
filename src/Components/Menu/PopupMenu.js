@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import deleteI from "../../assets/Icons/delete.svg"
 import openLink from "../../assets/Icons/openLink.svg"
 import openTabs from "../../assets/Icons/opentabs.svg"
-const PopupMenu =React.forwardRef( ({ title,privacy,collectionId,onCopyCollection, collectionLink , onDelete,onOpenAllLink}) => {
+const PopupMenu =React.forwardRef( ({ title,privacy,collectionId,onCopyCollection, collectionLink , onDelete,onOpenAllLink},ref) => {
   const copyImageRef = useRef();
   const copyLinkHandler = () => {
     if (copyImageRef) copyImageRef.current.src = approve;

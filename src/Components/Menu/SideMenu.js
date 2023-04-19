@@ -18,7 +18,7 @@ const MenuItem = ({ name, icon, onCLickHandler, link }) => {
   );
 };
 
-const SideMenu = React.forwardRef(({ onLogout, isOpen, navref }) => {
+const SideMenu = React.forwardRef(({ onLogout, isOpen },ref) => {
   const auth = useSelector(state=>state.auth);
   const menuList = [
     {
