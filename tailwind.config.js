@@ -16,7 +16,8 @@ module.exports = {
       textPrimary:"#232438",
       textSecondary:"#636472",
       textLight:"#f6f6f6",
-      success:"#62b560"
+      success:"#62b560",
+      danger:"#ff0000"
 
     }
   },

@@ -5,6 +5,7 @@ import approve from "../../assets/Icons/approve.svg";
 import edit from  "../../assets/Icons/edit.svg"
 import { Link } from "react-router-dom";
 import deleteI from "../../assets/Icons/delete.svg"
+import openLink from "../../assets/Icons/openLink.svg"
 import openTabs from "../../assets/Icons/opentabs.svg"
 const PopupMenu =React.forwardRef( ({ title,privacy,collectionId,onCopyCollection, collectionLink , onDelete,onOpenAllLink}) => {
   const copyImageRef = useRef();
@@ -29,7 +30,7 @@ const PopupMenu =React.forwardRef( ({ title,privacy,collectionId,onCopyCollectio
         </li>
         <Link to={collectionLink} target="_blank" className="flex justify-between pb-2 items-center cursor-pointer">
           <p>View in web</p>
-          <img src={OpenLink} />
+          <img src={openLink} />
         </Link>
         <Link to={"/edit-collection/"+collectionId} state={{
           title:title,
@@ -40,7 +41,7 @@ const PopupMenu =React.forwardRef( ({ title,privacy,collectionId,onCopyCollectio
         </Link>
         <li className="flex justify-between pb-2 cursor-pointer"  onClick={onOpenAllLink} >
             <p>Open all tabs</p>
-            <img src={openTabs} />
+            <img src={openTabs}/>
         </li>
         <li className="flex justify-between pb-2 cursor-pointer"  onClick={deleteHandler} >
             <p>Delete Collection</p>

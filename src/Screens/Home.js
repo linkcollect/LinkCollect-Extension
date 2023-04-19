@@ -31,11 +31,16 @@ const Home = () => {
     }
     setLoadeing(true);
     const getCollections = async () => {
-      const res = await getAllCollectionsWithoutTimelines();
-      const sorteData = sortByLatestUpdated(res.data.data);
-      SetCollections(sorteData);
-      setFiltererdCollection(sorteData);
-      setLoadeing(false)
+      try {
+        const res = await getAllCollectionsWithoutTimelines();
+        const sorteData = sortByLatestUpdated(res.data.data);
+        SetCollections(sorteData);
+        setFiltererdCollection(sorteData);
+        setLoadeing(false)
+        
+      } catch (error) {
+        setLoadeing(false);
+      }
     };
     getCollections(auth.token);
   }, []);

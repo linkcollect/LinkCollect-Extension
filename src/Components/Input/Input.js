@@ -20,12 +20,14 @@ const Input = ({
   placeholder,
   onInputHandler,
   inputClass,
-  value
+  value,
+  required
 }) => {
   return (
-    <label className="block my-2">
-      <span className="text-textSecondary block text-[20px] font-light mb-1">
-        {label}
+    <label className="block">
+      <span className="text-textSecondary flex justify-between items-end  block text-[20px] font-light mb[3px]">
+        <p>{label}</p>
+        {type!=="file" && <small className="text-xs"><span className={`${value?.length>required ? "text-danger":""}`}>{value?.length}</span>/{required}</small>}
       </span>
       <input
         type={type}
@@ -44,7 +46,7 @@ export const Select = ({ name,onInputHandler,options,value }) => {
     <>
       <label
         for="privacy"
-        class="block mb-2 font-light text-textSecondary block text-[20px]"
+        class="block mb-[3px] font-light text-textSecondary block text-[20px]"
       >
         Privacy
       </label>

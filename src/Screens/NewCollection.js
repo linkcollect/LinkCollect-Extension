@@ -35,7 +35,7 @@ const NewCollection = () => {
   const handleSubmit =  async (e) => {
     e.preventDefault();
     console.log(data)
-    if(data.title=== "" ) return
+    if(data.title==="" || data.title.length>40 || data.description.length>240) return
     setLoading(true);
     try{
       const form = new FormData();
@@ -72,7 +72,9 @@ const NewCollection = () => {
             inputClass="textClass"
             name="title"
             value={data.title}
+            required={40}
           />
+          {data.title.length > 40 && <small className="text-xs text-danger ml-[11px] mt-[2px]">Name length should be less than 40</small>}
           <Input
             label="Description"
             placeholder="A resource for learning.."
@@ -81,7 +83,9 @@ const NewCollection = () => {
             inputClass="textClass"
             name="description"
             value={data.description}
+            required={240}
           />
+          {data.description.length > 240 && <small className="text-xs text-danger ml-[11px]">Name length should be less than 240</small>}
           <Select name="privacy" value={data.privacy} onInputHandler={onInput} options={[{name:"Private",value:"private"}, {name:"Public",value:"public"}]}/>
           <Input
             label="Collection Thumnail"

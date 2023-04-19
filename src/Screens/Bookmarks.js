@@ -10,7 +10,7 @@ import BookmarkItem from "../Components/BookmarkItem/BookmarkItem";
 import PopupMenu from "../Components/Menu/PopupMenu";
 import NoResult from "../Components/NoResult/NoResult";
 import Loader from "../Components/Loader/Loader";
-import Tooltip from "../Components/Tooltip/Tooltip";
+import { ToolTip2 } from "../Components/Tooltip/Tooltip";
 
 import { getCurrentTab } from "../utils/chromeAPI";
 
@@ -18,6 +18,7 @@ import { deleteCollection, getCollection, togglePrivacy } from "../api/collectio
 import { deleteTimeline, createTimeline } from "../api/timelineService";
 import { useSelector } from "react-redux";
 import PageLoader from "../Components/Loader/PageLoader";
+import { nameShortner } from "../utils/utilty";
 
 const Bookmarks = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -142,11 +143,11 @@ const Bookmarks = () => {
           </p>
         </button>
       </div>
-      {!isLoading && <div className="bg-primary p-2 flex justify-between items-center pr-4 my-3 mx-3 rounded-md">
+          {!isLoading && <div className="bg-primary p-2 flex justify-between items-center pr-4 my-3 mx-3 rounded-md">
             <div className="flex">
               <div className="flex flex-col justify-center ml-3 ">
                 <p className="text-[14px] font-medium text-bgPrimary">
-                  {collection.title}
+                  {collection.title && nameShortner(collection.title,30)}
                 </p>
                 <p className="text-bgPrimary text-xs">
                   {collection.timelines?.length || 0} Bookmarks
@@ -201,7 +202,7 @@ const Bookmarks = () => {
 
           {/* Add bookmark */}
           <div className="flex justify-center border-t-2 border-t-secodaryLight p-3">
-            <Tooltip name="Add bookmark">
+            <ToolTip2 name="Bookmark the cirrent tab in one click" top="full" right="-100px">
               <button
                 className="bg-primary rounded-full py-2 px-[8px] flex justify-center items-center"
                 onClick={addBookMarkHandler}
@@ -212,7 +213,7 @@ const Bookmarks = () => {
                   <Loader />
                 )}
               </button>
-            </Tooltip>
+            </ToolTip2>
           </div>
         </div>
       ) : (

@@ -9,6 +9,7 @@ import Loader from "../Loader/Loader";
 import approve from "../../assets/Icons/approve.svg"
 import approveWhite from "../../assets/approve-white.svg"
 import { useSelector } from "react-redux";
+import { nameShortner } from "../../utils/utilty";
 const CollectionItem = ({
   image,
   name,
@@ -55,7 +56,7 @@ const CollectionItem = ({
       <div className="flex">
         <img className="w-[40px]" src={image!="undefined" && image!== undefined ?  image : logo} />
         <div className="flex flex-col ml-4 ">
-          <p className="text-[14px] text-textPrimary font-bold">{name}</p>
+          <p className="text-[14px] text-textPrimary font-bold">{nameShortner(name,15)}</p>
           <p className="text-textPrimary text-[12px]">{count} Bookmarks</p>
         </div>
       </div>
@@ -79,7 +80,7 @@ const CollectionItem = ({
             <img src={ShareIcon} className="w-[23px]" />
           </Link>
         </Tooltip>
-        <Tooltip name="Add bookmark">
+        <Tooltip name="Bookmark Current Tab">
           <button
             className="bg-primary rounded-full py-2 px-[8px] flex justify-center items-center"
             onClick={addBookMarkHandler}

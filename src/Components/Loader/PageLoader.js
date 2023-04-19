@@ -15,13 +15,13 @@ const names = [
 ];
 
 const PageLoader = () => {
-  const [name, setnewName] = useState("");
+  const [name, setnewName] = useState("wasting your valuable time");
   const shuffle = useCallback(() => {
     const index = Math.floor(Math.random() * names.length);
     setnewName(names[index]);
   }, []);
   useEffect(() => {
-    const intervalID = setInterval(shuffle, 200);
+    const intervalID = setInterval(shuffle, 1000);
     return () => clearInterval(intervalID);
   }, [shuffle]);
 

@@ -7,8 +7,8 @@ import Loader from "../Loader/Loader";
 import CopyIcon from "../../assets/Icons/copyLight.svg";
 import DeleteIcon from "../../assets/Icons/delete.svg";
 import ShareIcon from "../../assets/Icons/arrow-share.svg";
-import logo from "../../assets/Logo.svg";
 import approveWhite from "../../assets/approve-white.svg"
+import logo4 from "../../assets/Branding/Logo4.svg"
 
 import { getOrigin, nameShortner } from "../../utils/utilty";
 
@@ -40,11 +40,11 @@ const BookmarkItem = ({ id, favicon, name, url, onDelete }) => {
     <div className="bg-bgPrimary p-2 flex justify-between border-b border-bgGrey">
       <div className="flex">
         
-        <img src={favicon || logo} className="w-[30px]" />
+        <img src={favicon || logo4} className="w-[30px] h-[30px]" />
     
-        <div className="flex flex-col w-[120px] ml-2 ">
+        <div className="flex flex-col ml-2 ">
           <p className="text-[12px] w-full font-bold text-textPrimary">
-            {nameShortner(name)}
+            {nameShortner(name,26)}
           </p>
           <p className="text-lightText text-xs text-textPrimary">
             {getOrigin(url)}
@@ -66,7 +66,7 @@ const BookmarkItem = ({ id, favicon, name, url, onDelete }) => {
             to={url}
             target="_blank"
           >
-            <img src={ShareIcon} className="w-[20px]" />
+            <img src={ShareIcon} className="w-[22px]" />
           </Link>
         </Tooltip>
         <Tooltip name="Delete the Bookmark">
