@@ -59,7 +59,7 @@ const NewCollection = () => {
           <img src={BackArrow} /> <p className="text-textPrimary font-bold text-xl">Create Collection</p>
         </button>
       </div>
-      <div className="bg-bgPrimary bg-bgSecondary p-3 px-5 flex flex-col justify-center items-center h-[70%]">
+      <div className="bg-bgPrimary bg-bgSecondary p-3 px-5 flex flex-col justify-between items-center h-[73%]">
         <div className="w-full">
           <Input
             label="Collection Name"
@@ -91,13 +91,13 @@ const NewCollection = () => {
             onInputHandler={onInputFile}
             inputClass="fileClass"
           />
+        </div>
           <button type="button" className="py-[10px] px-[36px] bg-primary text-[17px] w-full font-normal mt-3 rounded-md disabled:bg-lightPrimary disabled:cursor-not-allowed flex justify-center" disabled={loading} onClick={handleSubmit} >
             {!loading ? "Create Collection" : 
             // Need to add the svg in seprate file
             <Loader/>
             }
           </button>
-        </div>
       </div>
     </>
   );

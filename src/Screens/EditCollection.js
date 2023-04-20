@@ -55,7 +55,7 @@ const EditCollection = () => {
           <img src={BackArrow} /> <p className="text-textPrimary font-bold text-xl">Editing Collection</p>
         </button>
       </div>
-      <div className="bg-bgPrimary bg-bgSecondary p-3 px-5 flex flex-col justify-between items-center h-[70%]">
+      <div className="bg-bgPrimary bg-bgSecondary p-3 px-5 flex flex-col justify-between items-center h-[73%]">
         <div className="w-full">
           <Input
             label="Collection Name"
@@ -69,12 +69,12 @@ const EditCollection = () => {
           />
           {data.title.length > 40 && <small className="text-xs text-danger ml-[11px] mt-[2px]">Name length should be less than 40</small>}
           <Select name="privacy" value={data.privacy} onInputHandler={onInput} options={[{name:"Private",value:"private"}, {name:"Public",value:"public"}]}/>
+        </div>
           <button type="button" className="py-[10px] px-[36px] bg-primary text-[17px] w-full font-normal mt-3 rounded-md disabled:bg-lightPrimary disabled:cursor-not-allowed flex justify-center" disabled={loading} onClick={handleSubmit} >
             {!loading ? "Create Collection" : 
             <Loader/>
             }
           </button>
-        </div>
       </div>
     </>
   );
