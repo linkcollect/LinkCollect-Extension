@@ -127,6 +127,13 @@ const saveAlltabs = async () => {
   } catch (error) {
     createNotification(`Unable to add!`, "May be try again later!!");
   }
+  chrome.tabs.query({ active: true, currentWindow: true },(tabs)=>{
+    const activeTab = tabs[0];
+    console.log(activeTab);
+    chrome.tabs.sendMessage(activeTab.id, {
+      message: "ALL_TABS_SAVED",
+    });
+  })
 };
 
 const createNotification = (title, message) => {
