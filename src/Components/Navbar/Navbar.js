@@ -30,9 +30,9 @@ const Navbar = () => {
 
   return (
     <div className="flex justify-between h-[80px] items-center px-3 border-b border-bgGrey">
-      <div>
+      <a href="https://linkcollect.io/" target="_blank" className="cursor-pointer">
         <img src={logo} className={`w-[40%] ${show ? 'translate-x-full' : 'translate-x-0'} ease-in-out duration-500`} />
-      </div>
+      </a>
 
       <div className="">
           <div className="w-[40px] rounded-full overflow-hidden cursor-pointer" onClick={()=>setShow(prevState=>!prevState)}>

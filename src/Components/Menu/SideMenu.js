@@ -29,12 +29,12 @@ const SideMenu = React.forwardRef(({ onLogout, isOpen },ref) => {
     {
       name: "View Commands",
       icon: command,
-      link: "https://www.linkcollect.io/commands",
+      link: "https://linkcollect.super.site/commands",
     },
     {
       name: "Help",
       icon: help,
-      link: "https://www.linkcollect.io/help",
+      link: "https://linkcollect.super.site/help",
     },
     {
       name: "Logout",
