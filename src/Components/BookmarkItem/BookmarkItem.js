@@ -47,7 +47,7 @@ const BookmarkItem = ({ id, favicon, name, url, onDelete }) => {
             {nameShortner(name,26)}
           </p>
           <p className="text-lightText text-xs text-textPrimary">
-            {getOrigin(url)}
+            {nameShortner(getOrigin(url),22)}
           </p>
         </div>
       </div>
