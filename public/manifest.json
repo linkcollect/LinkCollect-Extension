@@ -22,20 +22,20 @@
   },
   "commands": {
     "save-current-tab": {
-      "suggested_key": "Ctrl+Shift+L",
+      "suggested_key": "Alt+C",
       "description": "Inject a script on the page"
     },
     "save-all-tabs": {
-      "suggested_key": "Ctrl+Shift+K",
+      "suggested_key": "Alt+A",
       "description": "Inject a script on the page"
     }
   },
   "icons": {
-    "16": "logo.png",
-    "19": "logo.png",
-    "32": "logo.png",
-    "48": "logo.png",
-    "128": "logo.png"
+    "16": "favicon.png",
+    "19": "favicon.png",
+    "32": "favicon.png",
+    "48": "favicon.png",
+    "128": "favicon.png"
   },
   "content_scripts": [
     {
@@ -51,7 +51,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["assets/bookmark.png","logo.png"],
+      "resources": ["assets/bookmark.png"],
       "matches": [
         "https://*.youtube.com/*",
         "https://*.twitter.com/*",
