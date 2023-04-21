@@ -105,9 +105,11 @@ const Bookmarks = () => {
 
   // opening all tabs at one go
   const openAllLinks = ()=>  {
-    for(var i=0;i<collection.timelines.length;i++){
-      chrome.tabs.create({ url:collection.timelines[i].link });
-    }
+    var linksToOpen = collection.timelines.map(tl=>tl.link);
+      console.log(linksToOpen)
+      chrome.windows.create({url: linksToOpen}, function(window) {
+        console.log(window)
+      });
   }
 
   const backScreenHandler = (e) => {
