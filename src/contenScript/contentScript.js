@@ -6,15 +6,13 @@ const failedUrl = chrome.runtime.getURL("failed.png");
 
 const ContentScript = () => {
   const toastWrapper = {
-    padding: "4px 12px",
+    padding: "1px 16px",
     display: "flex",
-    width: "225px",
     color: "#6166F1",
     justifyContent: "center",
-    gap: "24px",
+    gap: "11px",
     alignItems: "center",
-    fontSize: "16px",
-    fontFamily: "'Lexend'",
+    fontSize: "20px",
     borderRadius: "20px",
     boxShadow: "0px 2px 13px 0px rgba(43,30,43,1)",
     position: "fixed",
@@ -27,21 +25,19 @@ const ContentScript = () => {
     transition: "all 0.3s ease-in",
   };
   const imageSizer = {
-    width: "20px",
-    height: "20px",
+    width: "28px",
+    height: "28px",
   };
 
   const failWrapper = {
-    padding: "4px 12px",
+    padding: "1px 16px",
     display: "flex",
-    // width: "225px",
     color: "#6166F1",
     justifyContent: "center",
-    gap: "24px",
+    gap: "11px",
     alignItems: "center",
-    fontSize: "16px",
+    fontSize: "21px",
     fontColor:"red",
-    fontFamily: "'Lexend'",
     borderRadius: "20px",
     boxShadow: "0px 2px 13px 0px rgba(43,30,43,1)",
     position: "fixed",
@@ -75,9 +71,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       : "from the extension"
   );
   if (request.message === "LOGIN_SUCCESS") {
-    token = localStorage.getItem("token");
+    const token = localStorage.token;
+
     if (token) {
       chrome.storage.local.set({ token: token });
+      console.log(token);
       sendResponse({resMsg:"Done!"})
     }
     return;
@@ -98,6 +96,16 @@ document.body.appendChild(hostFile);
 //Using Shadow root
 const host = document.getElementById("linkcollect-extenstion-content");
 const root = host.attachShadow({ mode: "open" });
+
+const style = document.createElement('style');
+style.innerText=`
+  @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap')
+  div{
+    font-family: 'Lexend', sans-serif;
+  }
+  `
+root.appendChild(style)
+
 const div = document.createElement("div");
 div.id = "toast-id";
 root.appendChild(div);

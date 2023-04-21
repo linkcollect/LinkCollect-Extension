@@ -67,7 +67,7 @@ chrome.commands.onCommand.addListener(async (command) => {
 
 // API Action creator based on event
 const acionDistaptcher = async (item) => {
-  let name = item.menuItemId;
+  let name = item.menuItemId ||  item;
   switch (name) {
     case "save-current-tab":
       await saveCurrentTab();
