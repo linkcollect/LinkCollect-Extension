@@ -8,6 +8,7 @@ const ContentScript = () => {
   const toastWrapper = {
     padding: "1px 16px",
     display: "flex",
+    height: "47px",
     color: "#6166F1",
     justifyContent: "center",
     gap: "11px",
@@ -21,7 +22,7 @@ const ContentScript = () => {
     top: "10px",
     left: "14px",
     fontWeight: "500",
-    transform: "translateX(-390px)",
+    transform: "translateX(0px)",
     transition: "all 0.3s ease-in",
   };
   const imageSizer = {
@@ -32,6 +33,7 @@ const ContentScript = () => {
   const failWrapper = {
     padding: "1px 16px",
     display: "flex",
+    height: "47px",
     color: "#6166F1",
     justifyContent: "center",
     gap: "11px",
@@ -46,7 +48,7 @@ const ContentScript = () => {
     top: "10px",
     left: "14px",
     fontWeight: "500",
-    transform: "translateX(-390px)",
+    transform: "translateX(0px)",
     transition: "all 0.3s ease-in",
   };
   return (
