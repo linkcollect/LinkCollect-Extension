@@ -22,7 +22,7 @@ const ContentScript = () => {
     top: "10px",
     left: "14px",
     fontWeight: "500",
-    transform: "translateX(0px)",
+    transform: "translateX(-390px)",
     transition: "all 0.3s ease-in",
   };
   const imageSizer = {
@@ -48,7 +48,7 @@ const ContentScript = () => {
     top: "10px",
     left: "14px",
     fontWeight: "500",
-    transform: "translateX(0px)",
+    transform: "translateX(-390px)",
     transition: "all 0.3s ease-in",
   };
   return (
