@@ -100,7 +100,7 @@ const saveCurrentTab = async () => {
 //Save all tabs
 const saveAlltabs = async () => {
   const token = await chrome.storage.local.get(["token"]);
-  const tabs = await chrome.tabs.query({});
+  const tabs = await chrome.tabs.query({currentWindow: true});
   const currentTabSession = await chrome.storage.local.get(["tab-session"]);
   const structuredTimelines = tabs
     .filter(filteredTimeline)
