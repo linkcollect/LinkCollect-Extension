@@ -62,12 +62,12 @@ const acionDistaptcher = async (name) => {
 
 // Saving the current tab to the latest collection
 const saveCurrentTab = async () => {
-  const data = await chrome.storage.local.get(["collection"]);
+  const collection = await chrome.storage.local.get(["collection"]);
   const token = await chrome.storage.local.get(["token"]);
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
   const structuredTimeLine = structureTimeline(tabs[0]);
   try {
-    const res = await fetch(`${api}/${data.collection.id}/timelines`, {
+    const res = await fetch(`${api}/${collection.collection.id}/timelines`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -75,13 +75,15 @@ const saveCurrentTab = async () => {
       },
       body: JSON.stringify(structuredTimeLine),
     });
-    createNotification(
-      `Added all tabs to ${data.collection.collectionName}`,
-      "See in the Linkcollect extension"
-    );
+    const data = await res.json();
+    if (data.status >= 300 && data.status < 500) {
+      throw Error();
+    }
   } catch (error) {
-    createNotification(`Unable to add!`, "May be try again later!!");
+    console.log(error);
+    var hasError = true;
   }
+  sendMessage(hasError || false, !hasError ? "Link saved" : "Unable to save");
 };
 
 //Save all tabs
@@ -89,7 +91,8 @@ const saveAlltabs = async () => {
   const token = await chrome.storage.local.get(["token"]);
   const tabs = await chrome.tabs.query({});
   const currentTabSession = await chrome.storage.local.get(["tab-session"]);
-  const structuredTimelines = tabs.map(structureTimeline);
+  const structuredTimelines = tabs.filter(filteredTimeline).map(structureTimeline);
+  console.log(structuredTimelines);
   try {
     //1. Need to create new collection
     let tabSessionNum = currentTabSession["tab-session"] + 1;
@@ -106,6 +109,10 @@ const saveAlltabs = async () => {
     });
     const collectionData = await collection.json();
 
+    if (collectionData.status >= 300 && collectionData.status < 500) {
+      throw Error();
+    }
+
     // 2. Now add all tabs
     const res = await fetch(
       `${api}/${collectionData.data._id}/timelines/create-multiple`,
@@ -118,39 +125,65 @@ const saveAlltabs = async () => {
         body: JSON.stringify(structuredTimelines),
       }
     );
-    console.log(res);
+    const data = await res.json();
+    if (data.status >= 300 && data.status < 500) {
+      throw Error();
+    }
+
     await chrome.storage.local.set({ "tab-session": tabSessionNum });
-    createNotification(
-      `Added all tabs to ${collectionData.data.title}`,
-      "See in the Linkcollect extension"
-    );
   } catch (error) {
-    createNotification(`Unable to add!`, "May be try again later!!");
+    var hasError = true;
   }
-  chrome.tabs.query({ active: true, currentWindow: true },(tabs)=>{
-    const activeTab = tabs[0];
-    console.log(activeTab);
-    chrome.tabs.sendMessage(activeTab.id, {
-      message: "ALL_TABS_SAVED",
-    });
-  })
+  sendMessage(
+    hasError || false,
+    !hasError ? "All tabs saved" : "Unable to save"
+  );
 };
 
-const createNotification = (title, message) => {
-  chrome.notifications.create({
-    title: title,
-    message: message,
-    iconUrl: "./logo.png",
-    type: "basic",
+const sendMessage = (hasError = false, userMessage) => {
+  console.log("Hello");
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const activeTab = tabs[0];
+    chrome.tabs.sendMessage(
+      activeTab.id,
+      {
+        message: "ALL_TABS_SAVED",
+        hasError: hasError,
+        userMessage: userMessage,
+      },
+      (response) => {
+        if (!chrome.runtime.lastError) {
+          // if you have any response
+          console.log(response);
+        } else {
+          // if your document doesn’t have any response, it’s fine but you should actually handle
+          // it and we are doing this by carefully examining chrome.runtime.lastError
+          console.log(response);
+        }
+      }
+    );
   });
 };
 
-const structureTimeline = (tab) => {
+const structureTimeline =(tab) =>{
   const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
-  return {
-    link: tab.url,
-    title: tab.title,
-    favicon: tab.favIconUrl,
-    time,
-  };
+    return {
+  
+        link: tab.url,
+        title: tab.title,
+        favicon: tab.favIconUrl,
+        time,
+    };
+}
+
+const filteredTimeline  = (tab) => {
+  
+  if (
+    /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g.test(
+      tab.url
+    )
+  )
+    return {
+      tab,
+    };
 };

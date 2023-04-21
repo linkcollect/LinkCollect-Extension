@@ -3,6 +3,8 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const autoprefixer = require("autoprefixer");
 const tailwindcss = require("tailwindcss");
+
+
 module.exports = {
   entry: {
     popup: "./src/popup.jsx",
@@ -44,7 +46,7 @@ module.exports = {
       {
         test: /\.(png|jp(e*)g|svg|gif)$/,
         type: "asset",
-      }
+      },
     ],
   },
   plugins: [
@@ -52,6 +54,6 @@ module.exports = {
       template: "./src/popup.html",
       filename: "popup.html",
     }),
-    new CopyPlugin({ patterns: [{ from: "public" },{from:path.resolve("./src/assets")}] }),
+    new CopyPlugin({ patterns: [{ from: "public" },{from:path.resolve("./src/assets")},{from:path.resolve("./src/contenScript")}] }),
   ],
 };
