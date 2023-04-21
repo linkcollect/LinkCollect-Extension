@@ -45,7 +45,6 @@ const NewCollection = () => {
       const {collectionData} = await createCollection(form);
       navigate(-1)
     }catch(error){
-      console.log(error);
     }
     setLoading(false);
   }

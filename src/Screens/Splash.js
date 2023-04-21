@@ -8,12 +8,10 @@ const Splash = () => {
   const startLoginHanlder = () =>{
     chrome.storage.local.get(["token"],(result)=>{
     if(result.token!=undefined){
-      //update the state and redirect to the home
       
     }else{
-      // PROD CHANGE : url : https://linkcollect.io/login
       chrome.tabs.create({
-        url:"http://localhost:3000/"
+        url:"https://linkcollect.io/"
       })
     }
     });

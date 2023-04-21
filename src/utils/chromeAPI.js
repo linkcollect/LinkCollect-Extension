@@ -11,9 +11,7 @@ export const upadteLatestCollection =async (id,collectionName) =>{
 }
 
 export const sendMessage = (hasError = false, userMessage) => {
-    console.log("Hello");
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        console.log(tabs)
       const activeTab = tabs[0];
       chrome.tabs.sendMessage(
         activeTab.id,

@@ -59,32 +59,23 @@ const ContentScript = () => {
       </div>
       <div id="toast-content-success" style={toastWrapper}>
         <img src={imageUrl} style={imageSizer} />
-        <p>All Tabs Saved</p>
+        <p>Saved To linkCollect</p>
       </div>
     </>
   );
 };
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log("Running content script", request);
-  console.log(
-    sender.tab
-      ? "from a content script:" + sender.tab.url
-      : "from the extension"
-  );
   if (request.message === "LOGIN_SUCCESS") {
     const token = localStorage.token;
 
     if (token) {
       chrome.storage.local.set({ token: token });
-      console.log(token);
       sendResponse({resMsg:"Done!"})
     }
     return;
   }
-  console.log("Alert");
   if (request.message === "ALL_TABS_SAVED") {
-    console.log("Worked");
     showToast(request.hasError,request.userMessage);
     sendResponse({resMsg:"Done!"})
   }
@@ -119,7 +110,6 @@ const showToast = (hasError=false,msg) => {
   const shadowRoot = toastId.shadowRoot;
   const getInnerRoot = shadowRoot.getElementById("toast-id");
   const idName = hasError ? "#toast-content-failure" : "#toast-content-success"; 
-  console.log(idName)
   const toastComponent = getInnerRoot.querySelector(idName);
   toastComponent.querySelector('p').innerText=msg
   toastComponent.style.transform = "translateX(0px)";

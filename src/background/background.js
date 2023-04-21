@@ -1,25 +1,21 @@
 // PROD: API URL CHANGE
-const api = "http://localhost:7000/api/v1/collections";
+const api = "https://api.linkcollect.io/api/v1/collections";
 
 chrome.tabs.onUpdated.addListener((tabId, _, tab) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const activeTab = tabs[0];
-    console.log(activeTab);
     // Change : Need to change the click while uploading
-    // PROD Change : url https://linkcollect.io/ ==> now, when other pages upadte other url https://linkcollect.io/username
-    if (activeTab?.url === "http://localhost:3000/") {
-      console.log("Hello");
+    // PROD Change : url https://linkcollect.io/ ==> now, when other pages upadte other url https://linkcollect.io/usernamer
+    const url = new URL(activeTab?.url);
+    if (url.hostname === "linkcollect.io") {
       chrome.tabs.sendMessage(tabId, {
         message: "LOGIN_SUCCESS",
       },
       (response) => {
         if (!chrome.runtime.lastError) {
-          // if you have any response
-          console.log(response);
+          // console.log(response);
         } else {
-          // if your document doesn’t have any response, it’s fine but you should actually handle
-          // it and we are doing this by carefully examining chrome.runtime.lastError
-          console.log(response);
+          // console.log(response);
         }
       });
     }
@@ -30,7 +26,7 @@ chrome.runtime.onInstalled.addListener(async () => {
   await chrome.storage.local.set({ "tab-session": 0 });
   chrome.contextMenus.create({
     id: "linkcollect-12",
-    title: "Save to Linkcollect",
+    title: "Save to LinkCollect",
     contexts: ["page"],
   });
 
@@ -41,14 +37,14 @@ chrome.runtime.onInstalled.addListener(async () => {
   });
 
   chrome.contextMenus.create({
-    title: "Save All tabs",
+    title: "Save All Tabs (of this window)",
     parentId: "linkcollect-12",
     id: "save-all-tabs",
     contexts: ["page"],
   });
 
   chrome.contextMenus.create({
-    title: "Save this tab to recent collection",
+    title: "Save This Tab To Recent Collection",
     parentId: "linkcollect-12",
     id: "save-current-tab",
     contexts: ["page"],
@@ -101,10 +97,9 @@ const saveCurrentTab = async () => {
       throw Error();
     }
   } catch (error) {
-    console.log(error);
     var hasError = true;
   }
-  sendMessage(hasError || false, !hasError ? "Link saved" : "Unable to save");
+  sendMessage(hasError || false, !hasError ? "Link Saved" : "Unable To Save");
 };
 
 //Save all tabs
@@ -115,12 +110,10 @@ const saveAlltabs = async () => {
   const structuredTimelines = tabs
     .filter(filteredTimeline)
     .map(structureTimeline);
-  console.log(structuredTimelines);
   try {
     //1. Need to create new collection
     let tabSessionNum = currentTabSession["tab-session"] + 1;
     const form = new FormData();
-    console.log(tabSessionNum);
     form.append("title", `tabs session ${tabSessionNum}`);
     const collection = await fetch(`${api}`, {
       method: "POST",
@@ -159,7 +152,7 @@ const saveAlltabs = async () => {
   }
   sendMessage(
     hasError || false,
-    !hasError ? "All tabs saved" : "Unable to save"
+    !hasError ? "All Tabs Saved" : "Unable To Save"
   );
 };
 
@@ -182,15 +175,13 @@ const saveLinkToRecent = async (item) => {
       throw Error();
     }
   } catch (error) {
-    console.log(error);
     var hasError = true;
   }
-  sendMessage(hasError || false, !hasError ? "Link saved" : "Unable to save");
+  sendMessage(hasError || false, !hasError ? "Link Saved" : "Unable To Save");
 };
 
 // Message Creatort to show the toast message in the browser
 const sendMessage = (hasError = false, userMessage) => {
-  console.log("Hello");
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const activeTab = tabs[0];
     chrome.tabs.sendMessage(
@@ -203,11 +194,11 @@ const sendMessage = (hasError = false, userMessage) => {
       (response) => {
         if (!chrome.runtime.lastError) {
           // if you have any response
-          console.log(response);
+          // console.log(response);
         } else {
           // if your document doesn’t have any response, it’s fine but you should actually handle
-          // it and we are doing this by carefully examining chrome.runtime.lastError
-          console.log(response);
+          // // it and we are doing this by carefully examining chrome.runtime.lastError
+          // console.log(response);
         }
       }
     );

@@ -41,7 +41,7 @@ const EditCollection = () => {
       const {collectionData} = await updateCollection(collectionId,form);
       navigate(-1)
     }catch(error){
-      console.log(error);
+      
     }
     setLoading(false);
   }

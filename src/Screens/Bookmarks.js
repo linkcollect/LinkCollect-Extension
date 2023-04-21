@@ -57,7 +57,7 @@ const Bookmarks = () => {
       );
       setCollection(tempCollection);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -77,8 +77,13 @@ const Bookmarks = () => {
       setCollection(tempCollection);
     } catch (error) {
       // Need to provide a error message
-      console.log(error);
+      // console.log(error);
+      var hasError=true;
     }
+    sendMessage(
+      hasError || false,
+      !hasError ? "Link Saved" : "Unable To Save"
+    );
     setIsAdding(false);
   };
 
@@ -98,7 +103,6 @@ const Bookmarks = () => {
       setIsLoading(false)
       navigation("/collection")
     }catch(error){
-      console.log(error)
       setIsLoading(false);
     }
   }
@@ -106,10 +110,7 @@ const Bookmarks = () => {
   // opening all tabs at one go
   const openAllLinks = ()=>  {
     var linksToOpen = collection.timelines.map(tl=>tl.link);
-      console.log(linksToOpen)
-      chrome.windows.create({url: linksToOpen}, function(window) {
-        console.log(window)
-      });
+    chrome.windows.create({url: linksToOpen}, function(window) {});
   }
 
   const backScreenHandler = (e) => {

@@ -34,7 +34,6 @@ const Home = () => {
       try {
         const res = await getAllCollectionsWithoutTimelines();
         const sorteData = sortByLatestUpdated(res.data.data);
-        console.log(sorteData)
         SetCollections(sorteData);
         setFiltererdCollection(sorteData);
         setLoadeing(false)
@@ -69,9 +68,8 @@ const Home = () => {
     } catch (error) {
       // Need to provide a error message
       var hasError=true
-      console.log(error);
     }
-    sendMessage(hasError || false, !hasError ? "Link saved" : "Unable to save");
+    sendMessage(hasError || false, !hasError ? "Link Saved" : "Unable to Save");
   }
 
   const onSearchHandler = (e) =>{
