@@ -71,7 +71,7 @@ const EditCollection = () => {
           <Select name="privacy" value={data.privacy} onInputHandler={onInput} options={[{name:"Private",value:"private"}, {name:"Public",value:"public"}]}/>
         </div>
           <button type="button" className="py-[10px] px-[36px] bg-primary text-[17px] w-full font-normal mt-3 rounded-md disabled:bg-lightPrimary disabled:cursor-not-allowed flex justify-center" disabled={loading} onClick={handleSubmit} >
-            {!loading ? "Create Collection" : 
+            {!loading ? "Edit Collection" : 
             <Loader/>
             }
           </button>

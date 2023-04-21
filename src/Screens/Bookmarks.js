@@ -75,10 +75,13 @@ const Bookmarks = () => {
       const tempCollection = collection;
       tempCollection.timelines.push(data.data);
       setCollection(tempCollection);
+      setIsAdding(false);
+
     } catch (error) {
       // Need to provide a error message
       // console.log(error);
       var hasError=true;
+      setIsAdding(false);
     }
     sendMessage(
       hasError || false,

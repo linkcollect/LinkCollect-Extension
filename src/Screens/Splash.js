@@ -11,7 +11,7 @@ const Splash = () => {
       
     }else{
       chrome.tabs.create({
-        url:"https://linkcollect.io/"
+        url:"https://linkcollect.io/login"
       })
     }
     });

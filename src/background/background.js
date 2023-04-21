@@ -36,12 +36,6 @@ chrome.runtime.onInstalled.addListener(async () => {
     contexts: ["link"],
   });
 
-  chrome.contextMenus.create({
-    title: "Save All Tabs (of this window)",
-    parentId: "linkcollect-12",
-    id: "save-all-tabs",
-    contexts: ["page"],
-  });
 
   chrome.contextMenus.create({
     title: "Save This Tab To Recent Collection",
@@ -49,6 +43,14 @@ chrome.runtime.onInstalled.addListener(async () => {
     id: "save-current-tab",
     contexts: ["page"],
   });
+
+  chrome.contextMenus.create({
+    title: "Save All Tabs (of this window)",
+    parentId: "linkcollect-12",
+    id: "save-all-tabs",
+    contexts: ["page"],
+  });
+
 });
 
 // Context menu click listeners
@@ -114,7 +116,7 @@ const saveAlltabs = async () => {
     //1. Need to create new collection
     let tabSessionNum = currentTabSession["tab-session"] + 1;
     const form = new FormData();
-    form.append("title", `tabs session ${tabSessionNum}`);
+    form.append("title", `Tabs Session - ${tabSessionNum}`);
     const collection = await fetch(`${api}`, {
       method: "POST",
       headers: {
