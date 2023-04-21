@@ -23,6 +23,13 @@ chrome.runtime.onInstalled.addListener(async () => {
     title: "Save to Linkcollect",
     contexts: ["page"],
   });
+
+  chrome.contextMenus.create({
+    id: "save-link-to-recent",
+    title: "Save Link To Recent Collection",
+    contexts: ["link"],
+  });
+
   chrome.contextMenus.create({
     title: "Save All tabs",
     parentId: "linkcollect-12",
@@ -40,7 +47,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 // Context menu click listeners
 chrome.contextMenus.onClicked.addListener(async (item, tab) => {
-  await acionDistaptcher(item.menuItemId);
+  await acionDistaptcher(item);
 });
 
 // Commands listeners
@@ -49,13 +56,17 @@ chrome.commands.onCommand.addListener(async (command) => {
 });
 
 // API Action creator based on event
-const acionDistaptcher = async (name) => {
+const acionDistaptcher = async (item) => {
+  let name = item.menuItemId;
   switch (name) {
     case "save-current-tab":
       await saveCurrentTab();
       break;
     case "save-all-tabs":
       await saveAlltabs();
+      break;
+    case "save-link-to-recent":
+      await saveLinkToRecent(item);
       break;
   }
 };
@@ -91,7 +102,9 @@ const saveAlltabs = async () => {
   const token = await chrome.storage.local.get(["token"]);
   const tabs = await chrome.tabs.query({});
   const currentTabSession = await chrome.storage.local.get(["tab-session"]);
-  const structuredTimelines = tabs.filter(filteredTimeline).map(structureTimeline);
+  const structuredTimelines = tabs
+    .filter(filteredTimeline)
+    .map(structureTimeline);
   console.log(structuredTimelines);
   try {
     //1. Need to create new collection
@@ -140,6 +153,32 @@ const saveAlltabs = async () => {
   );
 };
 
+// Save link
+const saveLinkToRecent = async (item) => {
+  const collection = await chrome.storage.local.get(["collection"]);
+  const token = await chrome.storage.local.get(["token"]);
+  const structuredTimeLine = await getWebsiteData(item.linkUrl);
+  try {
+    const res = await fetch(`${api}/${collection.collection.id}/timelines`, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+      },
+      body: JSON.stringify(structuredTimeLine),
+    });
+    const data = await res.json();
+    if (data.status >= 300 && data.status < 500) {
+      throw Error();
+    }
+  } catch (error) {
+    console.log(error);
+    var hasError = true;
+  }
+  sendMessage(hasError || false, !hasError ? "Link saved" : "Unable to save");
+};
+
+// Message Creatort to show the toast message in the browser
 const sendMessage = (hasError = false, userMessage) => {
   console.log("Hello");
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -165,19 +204,18 @@ const sendMessage = (hasError = false, userMessage) => {
   });
 };
 
-const structureTimeline =(tab) =>{
+// Utilty funtions
+const structureTimeline = (tab) => {
   const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
-    return {
-  
-        link: tab.url,
-        title: tab.title,
-        favicon: tab.favIconUrl,
-        time,
-    };
-}
+  return {
+    link: tab.url,
+    title: tab.title,
+    favicon: tab.favIconUrl,
+    time,
+  };
+};
 
-const filteredTimeline  = (tab) => {
-  
+const filteredTimeline = (tab) => {
   if (
     /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g.test(
       tab.url
@@ -186,4 +224,15 @@ const filteredTimeline  = (tab) => {
     return {
       tab,
     };
+};
+
+const getWebsiteData = async (url) => {
+  const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
+  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  return {
+    link: url,
+    title: "link from " + tabs[0].title,
+    favicon: tabs[0].favIconUrl,
+    time,
+  };
 };
