@@ -11,6 +11,16 @@ chrome.tabs.onUpdated.addListener((tabId, _, tab) => {
       console.log("Hello");
       chrome.tabs.sendMessage(tabId, {
         message: "LOGIN_SUCCESS",
+      },
+      (response) => {
+        if (!chrome.runtime.lastError) {
+          // if you have any response
+          console.log(response);
+        } else {
+          // if your document doesn’t have any response, it’s fine but you should actually handle
+          // it and we are doing this by carefully examining chrome.runtime.lastError
+          console.log(response);
+        }
       });
     }
   });

@@ -8,7 +8,7 @@ import { getAllCollectionsWithoutTimelines } from "../api/collectionService";
 import NoResult from "../Components/NoResult/NoResult";
 import Loader from "../Components/Loader/Loader";
 import PageLoader from "../Components/Loader/PageLoader";
-import { getCurrentTab, upadteLatestCollection } from "../utils/chromeAPI";
+import { getCurrentTab, sendMessage, upadteLatestCollection } from "../utils/chromeAPI";
 import { createTimeline } from "../api/timelineService";
 import { sortByLatestUpdated } from "../utils/utilty";
 
@@ -68,8 +68,10 @@ const Home = () => {
       await upadteLatestCollection(updatedCollections[collectionIndex]._id,updatedCollections[collectionIndex].title)
     } catch (error) {
       // Need to provide a error message
+      var hasError=true
       console.log(error);
     }
+    sendMessage(hasError || false, !hasError ? "Link saved" : "Unable to save");
   }
 
   const onSearchHandler = (e) =>{

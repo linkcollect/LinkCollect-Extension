@@ -22,7 +22,6 @@ const CollectionItem = ({
   const [copyText,setCopyText] = useState("Copy Link");
   const [isAdding,setIsAdding] = useState(false);
   const copyImageRef = useRef();
-  const bookMarkImage = useRef();
   const auth = useSelector(state=>state.auth);
   const onCopy = () => {
     setCopyText("Copied")
@@ -40,10 +39,6 @@ const CollectionItem = ({
     setIsAdding(true);
     await addHandler(collectionId);
     setIsAdding(false);
-    if(bookmark)  bookmark.current.src=approveWhite;
-    setTimeout(()=>{
-      bookmark.current.src=AddIcon
-    },2500)
   }
 
 
@@ -84,7 +79,7 @@ const CollectionItem = ({
             onClick={addBookMarkHandler}
 
           >
-            {!isAdding ? <img src={AddIcon} ref={bookMarkImage} className="w-[23px]" /> : <Loader/>}
+            {!isAdding ? <img src={AddIcon} className="w-[23px]" /> : <Loader/>}
           </button>
         </Tooltip>
     </div>

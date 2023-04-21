@@ -23,7 +23,7 @@ const Popup = () => {
   const authState = useSelector((state) => state.auth);
   useEffect(() => {
     chrome.storage.local.get(["token"], async (res) => {
-      
+      console.log(res.token);
       if (res.token) {
         dispatch(authStart());
         const response = jwt_decode(res.token);

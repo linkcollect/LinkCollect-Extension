@@ -78,12 +78,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     token = localStorage.getItem("token");
     if (token) {
       chrome.storage.local.set({ token: token });
+      sendResponse({resMsg:"Done!"})
     }
+    return;
   }
   console.log("Alert");
   if (request.message === "ALL_TABS_SAVED") {
     console.log("Worked");
     showToast(request.hasError,request.userMessage);
+    sendResponse({resMsg:"Done!"})
   }
 });
 

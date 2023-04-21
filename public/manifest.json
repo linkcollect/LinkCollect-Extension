@@ -11,6 +11,8 @@
     "notifications"
   ],
   "host_permissions": [
+    "http://*/*",
+    "https://*/*",
     "<all_urls>"
   ],
   "background": {
@@ -36,9 +38,10 @@
   "content_scripts": [
     {
       "matches": [
+        "http://*/*",
+    "https://*/*",
         "<all_urls>"
       ],
-      "css":["contentScript.css"],
       "js": ["contentScript.js"]
     }
   ],
@@ -46,6 +49,8 @@
     {
       "resources": ["assets/bookmark.png","approve.png","failed.png"],
       "matches": [
+        "http://*/*",
+    "https://*/*",
         "<all_urls>"
       ]
     }
