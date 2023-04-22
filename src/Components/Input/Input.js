@@ -10,7 +10,7 @@ const classMapper = {
     file:cursor-pointer
     `,
   textClass:
-    "mt-1 px-3 py-2 bg-bgSecodary border border-bgGrey placeholder-textPrimary focus:outline-none block w-full rounded-md sm:text-sm",
+    "mt-1 px-3 py-2 bg-bgSecodary border border-bgGrey text-textPrimary placeholder-textPrimary focus:outline-none block w-full rounded-md sm:text-sm",
 };
 
 const Input = ({
@@ -20,11 +20,14 @@ const Input = ({
   placeholder,
   onInputHandler,
   inputClass,
+  value,
+  required
 }) => {
   return (
-    <label className="block my-4">
-      <span className="text-textSecondary block text-[20px] font-light mb-1">
-        {label}
+    <label className="block">
+      <span className="text-textSecondary flex justify-between items-end  block text-[16px] font-light mb[3px]">
+        <p>{label}</p>
+        {type!=="file" && <small className="text-xs"><span className={`${value?.length>required ? "text-danger":""}`}>{value?.length}</span>/{required}</small>}
       </span>
       <input
         type={type}
@@ -32,25 +35,28 @@ const Input = ({
         className={classMapper[inputClass]}
         placeholder={placeholder}
         onChange={onInputHandler}
+        value={value}
       />
     </label>
   );
 };
 
-export const Select = ({ options }) => {
+export const Select = ({ name,onInputHandler,options,value }) => {
   return (
     <>
       <label
         for="privacy"
-        class="block mb-2 font-light text-textSecondary block text-[20px]"
+        class="block mb-[3px] font-light text-textSecondary block text-[16px]"
       >
         Privacy
       </label>
       <select
         id="pravacy"
         class="bg-bgSecodary border border-bgGrey text-textPrimary text-normal rounded-lg focus:ring-textSecondary focus:border-textSecondary block w-full p-3"
+        onChange={onInputHandler}
+        name={name}
+        value={value}
       >
-        <option selected>Choose a country</option>
         {options.map((opt)=>(
           <option value={opt.value}>{opt.name}</option>
         ))}

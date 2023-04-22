@@ -17,7 +17,8 @@ const authReducer = (state=initilaState,action) => {
         case AUTH_SUCCESS : 
             return  {
                 ...state,
-                token:data,
+                token:data.token,
+                user:data.user,
                 loading:false,
             }
         case AUTH_FAILURE :
