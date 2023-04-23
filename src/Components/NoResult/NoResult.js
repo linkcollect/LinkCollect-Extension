@@ -2,11 +2,11 @@ import React from "react";
 import noCollectionItem from "../../assets/Icons/no-collection.svg";
 import addIcon from "../../assets/Icons/add-tab.svg";
 import Loader from "../Loader/Loader";
-const NoResult = ({onAdd, title, noResultName,bookMark,loading}) => {
+const NoResult = ({onClickHandler, title, noResultName,bookMark,loading}) => {
   return (
     <div className="flex gap-[50px] flex-col justify-around h-[60%] items-center">
       <button
-        onClick={onAdd}
+        onClick={onClickHandler}
         className={`py-[10px] px-[9px] w-[200px] flex justify-center bg-primary text-[17px] font-lg font-bold rounded-md flex items-center ${bookMark ? 'order-2' : null}`}
       >
         {" "}

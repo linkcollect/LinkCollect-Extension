@@ -87,7 +87,7 @@ const Home = () => {
       <NoResult
         title="Add Collection"
         noResultName="collections"
-        onAdd={createCollectionRedicector}
+        onClickHandler={createCollectionRedicector}
       />
     );
   }

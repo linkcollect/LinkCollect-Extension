@@ -12,7 +12,7 @@ import NoResult from "../Components/NoResult/NoResult";
 import Loader from "../Components/Loader/Loader";
 import { ToolTip2 } from "../Components/Tooltip/Tooltip";
 
-import { getCurrentTab } from "../utils/chromeAPI";
+import { getCurrentTab, sendMessage } from "../utils/chromeAPI";
 
 import { deleteCollection, getCollection } from "../api/collectionService";
 import { deleteTimeline, createTimeline } from "../api/timelineService";
@@ -69,25 +69,24 @@ const Bookmarks = () => {
       const getTab = await getCurrentTab();
       const timeline = { link: getTab.url, title: getTab.title,favicon:getTab.favIconUrl, time };
       // DB Add
-      const { data } = await createTimeline(collection._id, timeline);
-
+      const  res  = await createTimeline(collection._id, timeline);
+      console.log(res);
       // Instant state update
       const tempCollection = collection;
-      tempCollection.timelines.push(data.data);
+      tempCollection.timelines.push(res.data.data);
       setCollection(tempCollection);
-      setIsAdding(false);
-
+      // setIsAdding(false);
     } catch (error) {
       // Need to provide a error message
-      // console.log(error);
+      console.log(error);
       var hasError=true;
-      setIsAdding(false);
+      // setIsAdding(false);
     }
+    setIsAdding(false);
     sendMessage(
       hasError || false,
       !hasError ? "Link Saved" : "Unable To Save"
     );
-    setIsAdding(false);
   };
 
   // Collection copy
@@ -217,7 +216,7 @@ const Bookmarks = () => {
           </div>
         </div>
       ) : (
-        <NoResult title="Add bookmarks" noResultName="bookmarks" onAdd={addBookMarkHandler} bookMark={true} loading={isAdding}/>
+        <NoResult title="Add bookmarks" noResultName="bookmarks" onClickHandler={addBookMarkHandler} bookMark={true} loading={isAdding}/>
       )}
     </>
   );
