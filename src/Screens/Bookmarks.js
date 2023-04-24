@@ -50,6 +50,7 @@ const Bookmarks = () => {
     try {
       //DB delete
       await deleteTimeline(collection._id, timeLineId);
+      
       // state update
       const tempCollection = { ...collection };
       tempCollection.timelines = tempCollection.timelines.filter(
@@ -71,16 +72,14 @@ const Bookmarks = () => {
       // DB Add
       const  res  = await createTimeline(collection._id, timeline);
       console.log(res);
+
       // Instant state update
       const tempCollection = collection;
       tempCollection.timelines.push(res.data.data);
       setCollection(tempCollection);
-      // setIsAdding(false);
     } catch (error) {
-      // Need to provide a error message
       console.log(error);
       var hasError=true;
-      // setIsAdding(false);
     }
     setIsAdding(false);
     sendMessage(

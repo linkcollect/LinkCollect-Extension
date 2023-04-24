@@ -8,7 +8,15 @@ export const getOrigin = (weblink) =>{
       return url.host
 }
 
-export const sortByLatestUpdated = (data)=>{
-    const sorteData = data.sort((data1,data2)=>new Date(data2.updatedAt)-new Date(data1.updatedAt));
-    return sorteData;
+export const dataSortByType = (data,sortingType)=>{
+    
+    switch(sortingType){
+        case "MOST_BOOKMARKED":
+            const sorteDataByNumberOfBookmarks = data.sort((data1,data2)=>data2.timelines.length-data1.timelines.length);
+            return sorteDataByNumberOfBookmarks;
+        default:
+            const sorteDataByUpdated = data.sort((data1,data2)=>new Date(data2.updatedAt)-new Date(data1.updatedAt));
+            return sorteDataByUpdated;
+    }
+
 }
