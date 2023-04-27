@@ -12,7 +12,7 @@ import logo4 from "../../assets/Branding/Logo4.svg"
 
 import { getOrigin, nameShortner } from "../../utils/utilty";
 
-const BookmarkItem = ({ id, favicon, name, url, onDelete }) => {
+const BookmarkItem = ({ id, favicon, name, url, onDelete , collctionId=null }) => {
   const [isDelting, setIsDeleting] = useState(false);
   const [copyText,setCopyText] = useState("Copy Link")
   const copyImageRef = useRef()
@@ -20,7 +20,7 @@ const BookmarkItem = ({ id, favicon, name, url, onDelete }) => {
   // Delete bookmark link
   const deletehanlder = async () => {
     setIsDeleting(true);
-    await onDelete(id);
+    await onDelete(id,collctionId);
     setIsDeleting(false);
   };
 

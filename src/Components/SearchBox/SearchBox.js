@@ -2,7 +2,7 @@ import React from "react";
 import filterMenu from "../../assets/Icons/filter--menu.svg"
 const SearchBox = ({onSearch}) => {
   return (
-    <div className="flex items-center">
+    <div className="flex items-center w-full">
       <label htmlFor="simple-search" className="sr-only">
         Search
       </label>
