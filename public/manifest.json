@@ -1,11 +1,10 @@
 {
   "name": "LinkCollect",
   "version": "1.0.0",
-  "description": "linkcollect is the simplest way to save & share web links from anywhere to anyone",
+  "description": "linkcollect is the simplest way to save & share web links and tabs from anywhere to anyone",
   "permissions": [
     "storage",
     "tabs",
-    "scripting",
     "activeTab",
     "contextMenus"
   ],
