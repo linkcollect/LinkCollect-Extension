@@ -34,6 +34,7 @@ const NewCollection = () => {
   const handleSubmit =  async (e) => {
     e.preventDefault();
     if(data.title==="" || data.title.length>40 || data.description.length>240) return
+    if(image?.size>=2e+6) return
     setLoading(true);
     try{
       const form = new FormData();
@@ -90,6 +91,7 @@ const NewCollection = () => {
             onInputHandler={onInputFile}
             inputClass="fileClass"
           />
+          {image?.size>=2e+6 && <small className="text-xs text-danger ml-[11px] mt-[2px]">File should be less then 2 MB</small>}
         </div>
           <button type="button" className="py-[10px] px-[36px] bg-primary text-[17px] w-full font-normal mt-3 rounded-md disabled:bg-lightPrimary disabled:cursor-not-allowed flex justify-center" disabled={loading} onClick={handleSubmit} >
             {!loading ? "Create Collection" : 

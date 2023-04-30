@@ -5,7 +5,6 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { updateCollection } from "../api/collectionService";
 import Loader from "../Components/Loader/Loader";
 
-
 const EditCollection = () => {
   const navigate = useNavigate();
   const loction = useLocation();
@@ -23,9 +22,11 @@ const EditCollection = () => {
     setData(state=>({...state,[e.target.name]:e.target.value}));
   };
 
+
   const onInputFile = (e) => {
     e.preventDefault();
     setImage(e.target.files[0])
+  
   };
 
 
@@ -41,12 +42,13 @@ const EditCollection = () => {
   const handleSubmit =  async (e) => {
     e.preventDefault();
     if(data.title==="" || data.title.length>40 ) return
+    if(image?.size>=2e+6) return
     setLoading(true);
     try{
       const form = new FormData();
       form.append("title",data.title);
       form.append("isPublic",data.privacy==="public" ? true : false);
-      if(image!=="")
+      if(image!=="" )
         form.append("image",image);
       const {collectionData} = await updateCollection(collectionId,form);
       navigate(-1)
@@ -86,6 +88,7 @@ const EditCollection = () => {
             onInputHandler={onInputFile}
             inputClass="fileClass"
           />
+          {image?.size>=2e+6 && <small className="text-xs text-danger ml-[11px] mt-[2px]">File should be less then 2 MB</small>}
         </div>
           <button type="button" className="py-[10px] px-[36px] bg-primary text-[17px] w-full font-normal mt-3 rounded-md disabled:bg-lightPrimary disabled:cursor-not-allowed flex justify-center" disabled={loading} onClick={handleSubmit} >
             {!loading ? "Edit Collection" : 
