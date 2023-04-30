@@ -45,7 +45,7 @@ const EditCollection = () => {
     try{
       const form = new FormData();
       form.append("title",data.title);
-      form.append("privacy",data.privacy);
+      form.append("isPublic",data.privacy==="public" ? true : false);
       if(image!=="")
         form.append("image",image);
       const {collectionData} = await updateCollection(collectionId,form);
