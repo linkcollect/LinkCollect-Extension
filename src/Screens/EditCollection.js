@@ -15,11 +15,19 @@ const EditCollection = () => {
     privacy:loction.state.privacy?"public":"private",
   })
 
+  const [image,setImage] = useState();
+  
   const [loading,setLoading] = useState(false);
   const onInput = (e) => {
     e.preventDefault();
     setData(state=>({...state,[e.target.name]:e.target.value}));
   };
+
+  const onInputFile = (e) => {
+    e.preventDefault();
+    setImage(e.target.files[0])
+  };
+
 
 
 
@@ -38,6 +46,8 @@ const EditCollection = () => {
       const form = new FormData();
       form.append("title",data.title);
       form.append("privacy",data.privacy);
+      if(image!=="")
+        form.append("image",image);
       const {collectionData} = await updateCollection(collectionId,form);
       navigate(-1)
     }catch(error){
@@ -69,6 +79,13 @@ const EditCollection = () => {
           />
           {data.title.length > 40 && <small className="text-xs text-danger ml-[11px] mt-[2px]">Name length should be less than 40</small>}
           <Select name="privacy" value={data.privacy} onInputHandler={onInput} options={[{name:"Private",value:"private"}, {name:"Public",value:"public"}]}/>
+          <Input
+            label="Collection Thumnail"
+            placeholder="Upload image"
+            type="file"
+            onInputHandler={onInputFile}
+            inputClass="fileClass"
+          />
         </div>
           <button type="button" className="py-[10px] px-[36px] bg-primary text-[17px] w-full font-normal mt-3 rounded-md disabled:bg-lightPrimary disabled:cursor-not-allowed flex justify-center" disabled={loading} onClick={handleSubmit} >
             {!loading ? "Edit Collection" : 
