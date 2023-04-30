@@ -39,7 +39,7 @@ const NewCollection = () => {
       const form = new FormData();
       form.append("title",data.title);
       form.append("description",data.description);
-      form.append("privacy","isPublic",data.privacy==="public" ? true : false);
+      form.append("isPublic",data.privacy==="public" ? true : false);
       if(image!=="")
         form.append("image",image);
       const {collectionData} = await createCollection(form);
