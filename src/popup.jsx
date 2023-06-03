@@ -1,6 +1,6 @@
 /*global chrome*/
-import React, { useEffect } from "react";
-import { StrictMode, userState } from "react";
+import React, { useEffect,useState } from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./popup.css";
 import Layout from "./Layout/Layout";
@@ -17,11 +17,13 @@ import jwt_decode from "jwt-decode";
 import store from "./store";
 import { loginSucccess,loginStart } from "./store/userSlice";
 import { getAllCollections } from "./api/collectionService";
-import { getCollectionDataStart, getCollectionSuccess } from "./store/collectionsSlice";
+import { getCollectionDataStart, getCollectionFailed, getCollectionSuccess } from "./store/collectionsSlice";
 import { dataSortByType } from "./utils/utilty";
+import Offline from "./Components/Offline/Offline";
 const Popup = () => {
   const dispatch = useDispatch();
   const userState = useSelector((state) => state.user);
+  const collection = useSelector(state=>state.collection)
   console.log(userState)
   useEffect(() => {
     chrome.storage.local.get(["token"], (res) => {
@@ -44,12 +46,18 @@ const Popup = () => {
     async function init() {
       if (userState.token) {
         setJwtInRequestHeader(userState.token);
-        //Gettgn alll the data and fixed it to the state;
+        try {
+          //Gettgn alll the data and fixed it to the state;
         dispatch(getCollectionDataStart());
         const res = await getAllCollections();
         const sortingType = await chrome.storage.local.get(["linkcollect_sorting_type"])
         const sortedData = dataSortByType(res.data.data,sortingType.linkcollect_sorting_type)
         dispatch(getCollectionSuccess(sortedData))
+        } catch (error) {
+          console.log("heelol")
+          dispatch(getCollectionFailed());
+        }
+        
       }
     }
 
@@ -58,14 +66,14 @@ const Popup = () => {
 
   
 
-  if (userState.loading) {
-    return "Loading..";
+  if (collection.error) {
+    return<Layout> <Offline/> </Layout>
   }
 
 
   return (
     <>
-      <Layout token={userState.token}>
+      <Layout>
         <Routes>
           <Route
             path="/"

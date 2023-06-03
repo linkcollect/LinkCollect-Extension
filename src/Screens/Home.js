@@ -139,7 +139,7 @@ const Home = () => {
     }
   })
 
-  if (!collection.loading && collection.data.length === 0) {
+  if (!collection.loading && collection?.data?.length === 0) {
     return (
       <NoResult
         title="Add Collection"
@@ -174,7 +174,7 @@ const Home = () => {
             <p className="text-[18px] text-textPrimary">
               Collections
               <span className="ml-2 rounded-full py-[2px] bg-success p-2">
-                {filteredData.length}
+                {filteredData?.length}
               </span>
             </p>
             <button
@@ -186,7 +186,7 @@ const Home = () => {
             </button>
           </div>
           <div className="mt-4 flex flex-col gap-2 h-[49%] overflow-y-auto overflow-x-hidden px-3 w-full">
-            {filteredData.map((collection) => (
+            {filteredData?.map((collection) => (
               <CollectionItem
                 name={collection.title}
                 count={collection.timelines.length}
@@ -198,7 +198,7 @@ const Home = () => {
                 image={collection.image}
               />
             ))}
-            {filteredBookmarks.map((bookmark) => (
+            {filteredBookmarks?.map((bookmark) => (
               <>
                 {bookmark?.timelines.length > 0 && (
                   <div key={bookmark.collctionId} className="mt-5">
