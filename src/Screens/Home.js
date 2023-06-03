@@ -27,6 +27,7 @@ const Home = () => {
  
   //filtermenu ref to open and close it
   const filterMenu = useRef()
+  const menuRef= useRef();
 
   const auth = useSelector((state) => state.user);
 
@@ -132,6 +133,12 @@ const Home = () => {
     clickhandler();
   }
 
+  window.addEventListener("click",e=>{
+    if(e.target !== filterMenu.current && e.target !== menuRef.current){
+      clickhandler()
+    }
+  })
+
   if (!collection.loading && collection.data.length === 0) {
     return (
       <NoResult
@@ -151,7 +158,7 @@ const Home = () => {
             onClick={clickhandler}
             className="flex justify-center items-center border border-secodary rounded-xl p-2"
           >
-            <img src={filterName} className="w-[23px]" />
+            <img src={filterName} className="w-[23px]" ref={menuRef} />
           </button>
           <div className="z-[9999] absolute hidden right-7" ref={filterMenu}>
             <div className="w-[10rem] text-[16px] bg-bgPrimary cursor-pointer p-2 mt-2 rounded-xl border-bgGrey border-2">
