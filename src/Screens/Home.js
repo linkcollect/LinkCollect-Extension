@@ -1,10 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import addIcon from "../assets/Icons/add-tab.svg";
 import CollectionItem from "../Components/CollectiionItem/CollectionItem";
 import SearchBox from "../Components/SearchBox/SearchBox";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getAllCollections } from "../api/collectionService";
 import NoResult from "../Components/NoResult/NoResult";
 import PageLoader from "../Components/Loader/PageLoader";
 import {
@@ -15,18 +14,13 @@ import {
 import { createTimeline, deleteTimeline } from "../api/timelineService";
 import BookmarkItem from "../Components/BookmarkItem/BookmarkItem";
 import filterName from "../assets/Icons/filter--menu.svg";
-import { addBookmark, sortCollection } from "../store/collectionsSlice";
+import { addBookmark, sortCollection, deleteBookmark } from "../store/collectionsSlice";
 
 const Home = () => {
 
 
   // gloabl collections
-  const [collections, SetCollections] = useState([]);
   const collection = useSelector(state => state.collection)
-
-
-  //Bookmarks search state
-  const [bookmarks, setBookmarks] = useState([]);
 
   //Query Params state
   const [query,setQuery] = useState("");
@@ -96,40 +90,21 @@ const Home = () => {
         collection.data,collectionId
       );
     } catch (error) {
-      // Need to provide a error message
-      console.log(error)
       var hasError = true;
     }
     sendMessage(hasError || false, !hasError ? "Link Saved" : "Unable to Save");
   };
 
   // Bookmark delete handler
-  const deleleteBookmark = async (timeLineId, collectionId) => {
-    console.log(collectionId, timeLineId);
+  const deleteBookmarkHandler = async (timeLineId, collectionId) => {
+    
+    // collection data update
+    dispatch(deleteBookmark({collectionId,timeLineId}))
+
     // DB Update
     await deleteTimeline(collectionId, timeLineId);
 
-    // collection data update
-    const collectionIndex = collections.findIndex(
-      (collection) => collection._id === collectionId
-    );
-    const updatedCollections = [...collections];
-    updatedCollections[collectionIndex].timelines = updatedCollections[
-      collectionIndex
-    ].timelines.filter((timeLine) => timeLineId !== timeLine._id);
-    SetCollections(updatedCollections);
-
-    //Need to update filtered bookmarks
-    const collectionIdOfTheDeletedTimeline = bookmarks.findIndex(
-      (bookmark) => bookmark.collctionId === collectionId
-    );
-    const updatedBookMarksList = [...bookmarks];
-    console.log(collectionIdOfTheDeletedTimeline, updatedBookMarksList);
-    updatedBookMarksList[collectionIdOfTheDeletedTimeline].timelines =
-      updatedBookMarksList[collectionIdOfTheDeletedTimeline].timelines.filter(
-        (timeLine) => timeLine._id !== timeLineId
-      );
-    setBookmarks(updatedBookMarksList);
+    
   };
 
   const onSearchHandler = (e) => {
@@ -234,7 +209,7 @@ const Home = () => {
                         name={timeline.title}
                         url={timeline.link}
                         favicon={timeline.favicon}
-                        onDelete={deleleteBookmark}
+                        onDelete={deleteBookmarkHandler}
                         collctionId={timeline.collectionId}
                       />
                     ))}
