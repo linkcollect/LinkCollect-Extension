@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Tooltip from "../Tooltip/Tooltip";
-import Loader from "../Loader/Loader";
 
 import CopyIcon from "../../assets/Icons/copyLight.svg";
 import DeleteIcon from "../../assets/Icons/delete.svg";
@@ -19,9 +18,7 @@ const BookmarkItem = ({ id, favicon, name, url, onDelete , collctionId=null }) =
   
   // Delete bookmark link
   const deletehanlder = async () => {
-    setIsDeleting(true);
     await onDelete(id,collctionId);
-    setIsDeleting(false);
   };
 
   //Copy bookmark link
@@ -74,7 +71,7 @@ const BookmarkItem = ({ id, favicon, name, url, onDelete , collctionId=null }) =
             className="bg-textLight rounded-full py-2 px-[8px] flex justify-center items-center"
             onClick={deletehanlder}
           >
-            {!isDelting ? <img src={DeleteIcon} className="w-[20px]" /> : <Loader />}
+            <img src={DeleteIcon} className="w-[20px]" />
           </button>
         </Tooltip>
       </div>
