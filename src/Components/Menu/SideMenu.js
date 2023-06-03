@@ -19,12 +19,12 @@ const MenuItem = ({ name, icon, onCLickHandler, link }) => {
 };
 
 const SideMenu = React.forwardRef(({ onLogout, isOpen },ref) => {
-  const auth = useSelector(state=>state.auth);
+  const user = useSelector(state=>state.user);
   const menuList = [
     {
       name: "Open in Web",
       icon: openLink,
-      link: `https://www.linkcollect.io/${auth.user.username}`,
+      link: `https://linkcollect.io/${user.user.username}`,
     },
     {
       name: "View Commands",
