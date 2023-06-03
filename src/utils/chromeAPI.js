@@ -6,7 +6,12 @@ export const getLocalData = async (key1,...rest) =>{
     const values = await chrome.storage.local.get([key1])
     return values;
 }
-export const upadteLatestCollection =async (id,collectionName) =>{
+export const upadteLatestCollection =async (collections,collctionId) =>{
+  const collectionIndex = collections.findIndex(
+    (collection) => collection._id === collctionId
+  );
+  let id = collections[collectionIndex]._id;
+  let collectionName = collections[collectionIndex].title
    await chrome.storage.local.set({collection:{id:id,collectionName:collectionName}})
 }
 
