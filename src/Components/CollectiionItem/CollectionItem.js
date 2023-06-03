@@ -22,7 +22,7 @@ const CollectionItem = ({
   const [copyText,setCopyText] = useState("Copy Link");
   const [isAdding,setIsAdding] = useState(false);
   const copyImageRef = useRef();
-  const auth = useSelector(state=>state.auth);
+  const auth = useSelector(state=>state.user);
   const onCopy = () => {
     setCopyText("Copied")
     if(copyImageRef) copyImageRef.current.src=approve;
