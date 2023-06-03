@@ -97,7 +97,7 @@ const Home = () => {
 
   // Bookmark delete handler
   const deleteBookmarkHandler = async (timeLineId, collectionId) => {
-    
+
     // collection data update
     dispatch(deleteBookmark({collectionId,timeLineId}))
 

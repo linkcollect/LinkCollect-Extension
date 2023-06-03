@@ -1,6 +1,6 @@
 /*global chrome*/
 import React, { useEffect } from "react";
-import { StrictMode, useState } from "react";
+import { StrictMode, userState } from "react";
 import { createRoot } from "react-dom/client";
 import "./popup.css";
 import Layout from "./Layout/Layout";
@@ -11,23 +11,27 @@ import Bookmarks from "./Screens/Bookmarks";
 import EditCollection from "./Screens/EditCollection";
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import reducers from "./reducers";
 import { Provider } from "react-redux";
-import { authStart, authSuccess } from "./actions/authActions";
-import { createStore } from "redux";
 import { setJwtInRequestHeader } from "./api/httpService";
 import jwt_decode from "jwt-decode";
-
+import store from "./store";
+import { loginSucccess,loginStart } from "./store/userSlice";
+import { getAllCollections } from "./api/collectionService";
+import { getCollectionDataStart, getCollectionSuccess } from "./store/collectionsSlice";
+import { dataSortByType } from "./utils/utilty";
 const Popup = () => {
   const dispatch = useDispatch();
-  const authState = useSelector((state) => state.auth);
+  const userState = useSelector((state) => state.user);
+  console.log(userState)
   useEffect(() => {
-    chrome.storage.local.get(["token"], async (res) => {
+    chrome.storage.local.get(["token"], (res) => {
+     
       if (res.token) {
-        dispatch(authStart());
+        dispatch(loginStart());
         const response = jwt_decode(res.token);
+        console.log(response)
         dispatch(
-          authSuccess({
+          loginSucccess({
             token: res.token,
             user: { userId: response.userId, username: response.username },
           })
@@ -37,32 +41,39 @@ const Popup = () => {
   }, []);
 
   useEffect(() => {
-    function init() {
-      if (authState.token) {
-        setJwtInRequestHeader(authState.token);
+    async function init() {
+      if (userState.token) {
+        setJwtInRequestHeader(userState.token);
+        //Gettgn alll the data and fixed it to the state;
+        dispatch(getCollectionDataStart());
+        const res = await getAllCollections();
+        const sortingType = await chrome.storage.local.get(["linkcollect_sorting_type"])
+        const sortedData = dataSortByType(res.data.data,sortingType.linkcollect_sorting_type)
+        dispatch(getCollectionSuccess(sortedData))
       }
     }
 
     init();
-  }, [authState.token]);
+  }, [userState.token]);
 
   
 
-  if (authState.loading) {
+  if (userState.loading) {
     return "Loading..";
   }
 
+
   return (
     <>
-      <Layout token={authState.token}>
+      <Layout token={userState.token}>
         <Routes>
           <Route
             path="/"
             element={
-              !authState.token ? <Splash /> : <Navigate to="/collection" />
+              !userState.token ? <Splash /> : <Navigate to="/collection" />
             }
           />
-          {authState.token && (
+          {userState.token && (
             <>
               <Route path="/collection" element={<Home/>} />
               <Route path="/:collectionId" element={<Bookmarks />} />
@@ -79,7 +90,6 @@ const Popup = () => {
   );
 };
 
-const store = createStore(reducers);
 const rootElement = document.getElementById("linkcollect-target");
 const root = createRoot(rootElement);
 root.render(

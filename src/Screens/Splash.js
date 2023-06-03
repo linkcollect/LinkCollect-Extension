@@ -6,15 +6,10 @@ import splashLogo from "../assets/Branding/splash-branding.svg"
 const Splash = () => {
 
   const startLoginHanlder = () =>{
-    chrome.storage.local.get(["token"],(result)=>{
-    if(result.token!=undefined){
-      
-    }else{
+
       chrome.tabs.create({
         url:"https://linkcollect.io/login"
       })
-    }
-    });
     
   }
 
