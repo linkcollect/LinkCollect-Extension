@@ -4,10 +4,13 @@ import BackArrow from "../assets/Icons/arrow.svg";
 import { useNavigate } from "react-router-dom";
 import { createCollection } from "../api/collectionService";
 import Loader from "../Components/Loader/Loader";
+import { addNewCollecton } from "../store/collectionsSlice";
+import { useDispatch } from "react-redux";
 
 
 const NewCollection = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [data,setData] = useState({
     title:"",
     privacy:"public",
@@ -43,7 +46,8 @@ const NewCollection = () => {
       form.append("isPublic",data.privacy==="public" ? true : false);
       if(image!=="")
         form.append("image",image);
-      const {collectionData} = await createCollection(form);
+      const res = await createCollection(form);
+      dispatch(addNewCollecton(res.data.data));
       navigate(-1)
     }catch(error){
     }
