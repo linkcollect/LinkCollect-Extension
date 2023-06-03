@@ -30,23 +30,27 @@ const collectionSlice = createSlice({
     },
 
     //Adding the new data
-    addNewCollecton: (state, {payload}) => {
-        console.log(payload)
-        state.data = payload.isRecentlySorted ?  [payload.newCollection,...state.data] : [...state.data,payload.newCollection]
-        console.log(state.data,payload)
+    addNewCollecton: (state, { payload }) => {
+      console.log(payload);
+      state.data = payload.isRecentlySorted
+        ? [payload.newCollection, ...state.data]
+        : [...state.data, payload.newCollection];
+      console.log(state.data, payload);
     },
 
     //Updating the collection
-    setUpdateCollection: (state, {payload}) => {
-        const collectionIndex =  state.data.findIndex(
-            (collection) => collection._id === payload.collectionId
-          );
-          state.data[collectionIndex] = {...payload.updatedCollectio} 
+    setUpdateCollection: (state, { payload }) => {
+      const collectionIndex = state.data.findIndex(
+        (collection) => collection._id === payload.collectionId
+      );
+      state.data[collectionIndex] = { ...payload.updatedCollectio };
     },
 
     //Removing particular collection
-    removeCollection: (state, {payload}) => {
-        state.data = state.data.filter(collection=>collection._id!==payload.collectionId);
+    removeCollection: (state, { payload }) => {
+      state.data = state.data.filter(
+        (collection) => collection._id !== payload.collectionId
+      );
     },
 
     //Sorting collection and set sorted data
@@ -60,18 +64,21 @@ const collectionSlice = createSlice({
       const collectionIndex = state.data.findIndex(
         (collection) => collection._id === payload.collectionId
       );
-      state.data[collectionIndex].timelines.push(payload.bookmark);
+      state.data[collectionIndex].timelines = [
+        payload.bookmark,
+        ...state.data[collectionIndex].timelines,
+      ];
     },
 
     //Delete Bookmark
-    deleteBookmark: (state,{payload}) =>{
-        const collectionIndex = state.data.findIndex(
-            (collection) => collection._id === payload.collectionId
-          );
-          state.data[collectionIndex].timelines = state.data[
-            collectionIndex
-          ].timelines.filter((timeLine) => payload.timeLineId !== timeLine._id);
-    }
+    deleteBookmark: (state, { payload }) => {
+      const collectionIndex = state.data.findIndex(
+        (collection) => collection._id === payload.collectionId
+      );
+      state.data[collectionIndex].timelines = state.data[
+        collectionIndex
+      ].timelines.filter((timeLine) => payload.timeLineId !== timeLine._id);
+    },
   },
 });
 
@@ -84,7 +91,7 @@ export const {
   removeCollection,
   sortCollection,
   addBookmark,
-  deleteBookmark
+  deleteBookmark,
 } = collectionSlice.actions;
 
 export default collectionSlice;
