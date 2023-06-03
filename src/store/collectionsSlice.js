@@ -31,8 +31,8 @@ const collectionSlice = createSlice({
 
     //Adding the new data
     addNewCollecton: (state, {payload}) => {
-        // console.log(state.data,payload)
-        state.data = [payload,...state.data]
+        console.log(payload)
+        state.data = payload.isRecentlySorted ?  [payload.newCollection,...state.data] : [...state.data,payload.newCollection]
         console.log(state.data,payload)
     },
 
