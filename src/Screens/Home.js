@@ -114,8 +114,9 @@ const Home = () => {
 
   // Filter menu opener/closer
   const clickhandler = () => {
+    if(!filterMenu.current) return
     const filterMenuEle = filterMenu.current
-    if(filterMenuEle.classList.contains('hidden')){
+    if(filterMenuEle?.classList?.contains('hidden')){
       filterMenuEle.classList.remove('hidden');
       filterMenuEle.classList.add('block')
     }else{

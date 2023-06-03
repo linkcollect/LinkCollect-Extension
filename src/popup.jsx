@@ -24,14 +24,11 @@ const Popup = () => {
   const dispatch = useDispatch();
   const userState = useSelector((state) => state.user);
   const collection = useSelector(state=>state.collection)
-  console.log(userState)
   useEffect(() => {
     chrome.storage.local.get(["token"], (res) => {
-     
       if (res.token) {
         dispatch(loginStart());
         const response = jwt_decode(res.token);
-        console.log(response)
         dispatch(
           loginSucccess({
             token: res.token,

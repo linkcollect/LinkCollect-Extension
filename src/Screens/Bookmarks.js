@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import BackArrow from "../assets/Icons/arrow.svg";
@@ -18,7 +18,7 @@ import { deleteCollection} from "../api/collectionService";
 import { deleteTimeline, createTimeline } from "../api/timelineService";
 import { useDispatch, useSelector } from "react-redux";
 import PageLoader from "../Components/Loader/PageLoader";
-import { nameShortner } from "../utils/utilty";
+import { dataSortByType, nameShortner } from "../utils/utilty";
 import { addBookmark, deleteBookmark, removeCollection } from "../store/collectionsSlice";
 
 const Bookmarks = () => {
@@ -32,6 +32,11 @@ const Bookmarks = () => {
   const menuRef= useRef();
   const auth = useSelector((state) => state.user);
   const dispatch = useDispatch();
+
+  const sortedData = useMemo(()=>{
+    return dataSortByType([...collection.timelines],"RECENTLY_UPDATE")
+    
+  },[collection])
 
   // Delete Bookmark
   const deleteBookmarkHandler = async (timeLineId) => {
@@ -169,7 +174,7 @@ const Bookmarks = () => {
 
           {/* Collection list */}
           <div className="h-[60%] w-full px-3 overflow-y-auto">
-            {collection.timelines.map((timeline) => (
+            {sortedData.map((timeline) => (
               <BookmarkItem
                 key={timeline._id}
                 id={timeline._id}
