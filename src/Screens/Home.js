@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import addIcon from "../assets/Icons/add-tab.svg";
 import CollectionItem from "../Components/CollectiionItem/CollectionItem";
 import SearchBox from "../Components/SearchBox/SearchBox";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getAllCollections } from "../api/collectionService";
 import NoResult from "../Components/NoResult/NoResult";
@@ -13,53 +13,61 @@ import {
   upadteLatestCollection,
 } from "../utils/chromeAPI";
 import { createTimeline, deleteTimeline } from "../api/timelineService";
-import { dataSortByType } from "../utils/utilty";
 import BookmarkItem from "../Components/BookmarkItem/BookmarkItem";
 import filterName from "../assets/Icons/filter--menu.svg";
+import { addBookmark, sortCollection } from "../store/collectionsSlice";
 
 const Home = () => {
+
+
   // gloabl collections
   const [collections, SetCollections] = useState([]);
+  const collection = useSelector(state => state.collection)
 
-  // Filterd/search collection that will be shown
-  const [filteredCollection, setFiltererdCollection] = useState([]);
 
   //Bookmarks search state
   const [bookmarks, setBookmarks] = useState([]);
 
-  const [loading, setLoadeing] = useState(false);
-
+  //Query Params state
+  const [query,setQuery] = useState("");
+ 
   //filtermenu ref to open and close it
   const filterMenu = useRef()
 
-  const auth = useSelector((state) => state.auth);
+  const auth = useSelector((state) => state.user);
+
+  //Distapcher
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
+
+  //Filtered Collections
+  const filteredData = useMemo(()=>{
+    return collection.data?.filter((collection) =>
+        collection.title.toLowerCase().includes(query.toLowerCase())
+      );
+  },[query,collection.data])
+
+  // filteredbookmarks
+  const filteredBookmarks = useMemo(()=>{
+    return query.length>0 ? collection.data?.map((collection) => ({
+          collectionTitle: collection.title,
+          collctionId: collection._id,
+          timelines: [
+            ...collection.timelines.filter(
+              (timeline) =>
+                timeline.title
+                  .toLowerCase()
+                  .includes(query.toLowerCase()) ||
+                timeline.link.toLowerCase().includes(query.toLowerCase())
+            ),
+          ],
+        })) :  [] ;
+  })
 
   const createCollectionRedicector = () => {
     navigate("/new-collection");
   };
-
-  useEffect(() => {
-    if (!auth.token) {
-      return navigate("/");
-    }
-    setLoadeing(true);
-    const getCollections = async () => {
-      try {
-        const res = await getAllCollections();
-        const sortingType = await chrome.storage.local.get(["linkcollect_sorting_type"])
-        console.log(sortingType)
-        const sorteData = dataSortByType(res.data.data,sortingType.linkcollect_sorting_type);
-        SetCollections(sorteData);
-        setFiltererdCollection(sorteData);
-        setLoadeing(false);
-        await upadteLatestCollection(sorteData[0]._id, sorteData[0].title);
-      } catch (error) {
-        setLoadeing(false);
-      }
-    };
-    getCollections(auth.token);
-  }, []);
 
   const handleCopy = (collectionId) => {
     navigator.clipboard.writeText(
@@ -81,20 +89,15 @@ const Home = () => {
       // DB Add
       const res = await createTimeline(collectionId, timeline);
       // Instant state update
-      console.log(res.data.data);
-      const collectionIndex = collections.findIndex(
-        (collection) => collection._id === collectionId
-      );
-      const updatedCollections = [...collections];
-      updatedCollections[collectionIndex].timelines.push(res.data.data);
-      SetCollections(updatedCollections);
-      setFiltererdCollection(updatedCollections);
+      
+      dispatch(addBookmark({collectionId,bookmark:res.data.data}))
+
       await upadteLatestCollection(
-        updatedCollections[collectionIndex]._id,
-        updatedCollections[collectionIndex].title
+        collection.data,collectionId
       );
     } catch (error) {
       // Need to provide a error message
+      console.log(error)
       var hasError = true;
     }
     sendMessage(hasError || false, !hasError ? "Link Saved" : "Unable to Save");
@@ -130,33 +133,10 @@ const Home = () => {
   };
 
   const onSearchHandler = (e) => {
-    // As we need to search in global collections
-    const tempCollections = [...collections];
-    let newfilteredCollection = tempCollections;
-    let filteredBookmarks = [];
-    if (e.target.value !== "") {
-      newfilteredCollection = tempCollections.filter((collection) =>
-        collection.title.toLowerCase().includes(e.target.value.toLowerCase())
-      );
-      filteredBookmarks = tempCollections.map((collection) => ({
-        collectionTitle: collection.title,
-        collctionId: collection._id,
-        timelines: [
-          ...collection.timelines.filter(
-            (timeline) =>
-              timeline.title
-                .toLowerCase()
-                .includes(e.target.value.toLowerCase()) ||
-              timeline.link.toLowerCase().includes(e.target.value.toLowerCase())
-          ),
-        ],
-      }));
-    }
-    setBookmarks(filteredBookmarks);
-    setFiltererdCollection(newfilteredCollection);
+    setQuery(e.target.value);
   };
 
-  // Filter menu opener
+  // Filter menu opener/closer
   const clickhandler = () => {
     const filterMenuEle = filterMenu.current
     if(filterMenuEle.classList.contains('hidden')){
@@ -171,17 +151,13 @@ const Home = () => {
   // Sorting the data base on filter
   const sortData = async (sortingType)=>{
     await chrome.storage.local.set({"linkcollect_sorting_type":sortingType})
-    const copyData = [...collections];
-    const sortedData = dataSortByType(copyData,sortingType);
-
-    console.log(sortedData);
-    SetCollections(p=>sortedData)
-    setFiltererdCollection(p=>sortedData);
+    
+    dispatch(sortCollection(sortingType))
     
     clickhandler();
   }
 
-  if (!loading && collections.length === 0) {
+  if (!collection.loading && collection.data.length === 0) {
     return (
       <NoResult
         title="Add Collection"
@@ -210,13 +186,13 @@ const Home = () => {
           </div>
         </div>
       </div>
-      {!loading ? (
+      {!collection.loading ? (
         <div className=" bg-bgSecodary h-[680px]">
           <div className="flex justify-between items-center pt-4 px-3">
             <p className="text-[18px] text-textPrimary">
               Collections
               <span className="ml-2 rounded-full py-[2px] bg-success p-2">
-                {filteredCollection.length}
+                {filteredData.length}
               </span>
             </p>
             <button
@@ -228,7 +204,7 @@ const Home = () => {
             </button>
           </div>
           <div className="mt-4 flex flex-col gap-2 h-[49%] overflow-y-auto overflow-x-hidden px-3 w-full">
-            {filteredCollection.map((collection) => (
+            {filteredData.map((collection) => (
               <CollectionItem
                 name={collection.title}
                 count={collection.timelines.length}
@@ -240,7 +216,7 @@ const Home = () => {
                 image={collection.image}
               />
             ))}
-            {bookmarks.map((bookmark) => (
+            {filteredBookmarks.map((bookmark) => (
               <>
                 {bookmark?.timelines.length > 0 && (
                   <div key={bookmark.collctionId} className="mt-5">
