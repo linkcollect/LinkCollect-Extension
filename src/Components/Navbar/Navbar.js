@@ -3,8 +3,8 @@ import logo from "../../assets/Branding/logo2.svg";
 import avatar from "../../assets/avatar.svg";
 import SideMenu from "../Menu/SideMenu";
 import { useDispatch } from "react-redux";
-import { authLogout } from "../../actions/authActions";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../../store/userSlice";
 
 
 const Navbar = () => {
@@ -17,7 +17,7 @@ const Navbar = () => {
   const logoutHandler  = (e) =>{
     e.preventDefault();
     chrome.storage.local.remove(['token'],()=>{
-      dispatch(authLogout());
+      dispatch(logout());
       navigate("/")
     })
   }
