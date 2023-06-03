@@ -14,49 +14,36 @@ import { ToolTip2 } from "../Components/Tooltip/Tooltip";
 
 import { getCurrentTab, sendMessage } from "../utils/chromeAPI";
 
-import { deleteCollection, getCollection } from "../api/collectionService";
+import { deleteCollection} from "../api/collectionService";
 import { deleteTimeline, createTimeline } from "../api/timelineService";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PageLoader from "../Components/Loader/PageLoader";
 import { nameShortner } from "../utils/utilty";
+import { addBookmark, deleteBookmark, removeCollection } from "../store/collectionsSlice";
 
 const Bookmarks = () => {
   const [showMenu, setShowMenu] = useState(false);
   const navigation = useNavigate();
   const { collectionId } = useParams();
-  const [collection, setCollection] = useState([]);
+  const collection = useSelector(state=>state.collection.data.filter(collection=>collection._id===collectionId)[0]);
   const [isLoading, setIsLoading] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const popupref = useRef();
   const menuRef= useRef();
-  const auth = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    setIsLoading(true);
-    try {
-      async function gettingCollection() {
-        const { data } = await getCollection(collectionId);
-        setCollection(data.data);
-        setIsLoading(false);
-      }
-      gettingCollection();
-    } catch (error) {
-      setIsLoading(false);
-    }
-  }, []);
+  const auth = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   // Delete Bookmark
-  const deleleteBookmark = async (timeLineId) => {
+  const deleteBookmarkHandler = async (timeLineId) => {
     try {
+      console.log(timeLineId)
+       // collection data update
+      dispatch(deleteBookmark({collectionId,timeLineId}))
+
       //DB delete
       await deleteTimeline(collection._id, timeLineId);
       
       // state update
-      const tempCollection = { ...collection };
-      tempCollection.timelines = tempCollection.timelines.filter(
-        (timeline) => timeline._id !== timeLineId
-      );
-      setCollection(tempCollection);
     } catch (error) {
       // console.log(error);
     }
@@ -71,12 +58,8 @@ const Bookmarks = () => {
       const timeline = { link: getTab.url, title: getTab.title,favicon:getTab.favIconUrl, time };
       // DB Add
       const  res  = await createTimeline(collection._id, timeline);
-      console.log(res);
-
       // Instant state update
-      const tempCollection = collection;
-      tempCollection.timelines.push(res.data.data);
-      setCollection(tempCollection);
+      dispatch(addBookmark({collectionId,bookmark:res.data.data}))
     } catch (error) {
       console.log(error);
       var hasError=true;
@@ -101,7 +84,7 @@ const Bookmarks = () => {
     setIsLoading(true);
     try{
       await deleteCollection(collectionId);
-      setIsLoading(false)
+      dispatch(removeCollection({collectionId}))
       navigation("/collection")
     }catch(error){
       setIsLoading(false);
@@ -193,7 +176,7 @@ const Bookmarks = () => {
                 name={timeline.title}
                 url={timeline.link}
                 favicon={timeline.favicon}
-                onDelete={deleleteBookmark}
+                onDelete={deleteBookmarkHandler}
               />
             ))}
           </div>
