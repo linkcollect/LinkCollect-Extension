@@ -4,9 +4,12 @@ import BackArrow from "../assets/Icons/arrow.svg";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { updateCollection } from "../api/collectionService";
 import Loader from "../Components/Loader/Loader";
+import { useDispatch } from "react-redux";
+import { setUpdateCollection } from "../store/collectionsSlice";
 
 const EditCollection = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
   const loction = useLocation();
   const {collectionId} = useParams();
   const [data,setData] = useState({
@@ -50,7 +53,8 @@ const EditCollection = () => {
       form.append("isPublic",data.privacy==="public" ? true : false);
       if(image!=="" )
         form.append("image",image);
-      const {collectionData} = await updateCollection(collectionId,form);
+      const res = await updateCollection(collectionId,form);
+      dispatch(setUpdateCollection({collectionId,updatedCollectio:res.data.data}))
       navigate(-1)
     }catch(error){
       
