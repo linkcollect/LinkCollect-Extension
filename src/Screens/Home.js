@@ -136,7 +136,17 @@ const Home = () => {
 
   window.addEventListener("click",e=>{
     if(e.target !== filterMenu.current && e.target !== menuRef.current){
-      clickhandler()
+     // this is to close the filter menu when clicked outside of it, if it is open
+
+      if(!filterMenu.current) return
+      const filterMenuEle = filterMenu.current
+      if(filterMenuEle?.classList?.contains('hidden')){
+        return
+      }else{
+        filterMenuEle.classList.remove('block');
+        filterMenuEle.classList.add('hidden')
+      }
+      
     }
   })
 
