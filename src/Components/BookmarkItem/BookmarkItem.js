@@ -36,8 +36,14 @@ const BookmarkItem = ({ id, favicon, name, url, onDelete , collctionId=null }) =
   return (
     <div className="bg-bgPrimary p-2 flex hover:rounded-md justify-between border-b border-bgGrey hover:bg-lightBlueBG ">
       <div className="flex">
+      {/* link wrapper for onclick */}
+      <Link
+            className="flex justify-center items-center"
+            to={url}
+            target="_blank"
+          >   
         
-        <img src={favicon || logo4} className="w-[30px] h-[30px]" />
+        <img src={favicon || logo4} className="w-[30px] h-[30px]" />  
     
         <div className="flex flex-col ml-2 ">
           <p className="text-[12px] w-full font-bold text-textPrimary">
@@ -46,7 +52,10 @@ const BookmarkItem = ({ id, favicon, name, url, onDelete , collctionId=null }) =
           <p className="text-lightText text-xs text-textPrimary">
             {nameShortner(getOrigin(url),22)}
           </p>
+
+        
         </div>
+        </Link>
       </div>
       <div className="flex gap-2">
         <Tooltip name={copyText}>
