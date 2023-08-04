@@ -34,7 +34,7 @@ const BookmarkItem = ({ id, favicon, name, url, onDelete , collctionId=null }) =
 
 
   return (
-    <div className="bg-bgPrimary p-2 flex justify-between border-b border-bgGrey">
+    <div className="bg-bgPrimary p-2 flex hover:rounded-md justify-between border-b border-bgGrey hover:bg-lightBlueBG ">
       <div className="flex">
         
         <img src={favicon || logo4} className="w-[30px] h-[30px]" />

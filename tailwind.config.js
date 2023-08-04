@@ -17,7 +17,8 @@ module.exports = {
       textSecondary:"#636472",
       textLight:"#f6f6f6",
       success:"#62b560",
-      danger:"#ff0000"
+      danger:"#ff0000",
+      lightBlueBG :"#e8e8fc"
 
     }
   },

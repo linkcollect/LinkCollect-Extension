@@ -45,7 +45,7 @@ const CollectionItem = ({
   return (
     <div className="relative">
     <Link to={"/"+collectionId}>
-    <div className="bg-bgPrimary rounded-md border border-secodary  p-2 flex justify-between w-full" >
+    <div className="bg-bgPrimary hover:bg-lightBlueBG rounded-md border border-secodary  p-2 flex justify-between w-full" >
       <div className="flex">
         <img className="w-[40px]" src={image!="undefined" && image!== undefined ?  image : logo} />
         <div className="flex flex-col ml-4 ">
