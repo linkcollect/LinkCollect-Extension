@@ -24,3 +24,19 @@ body{
     background-color: #232438;
     border-radius: 14px;
   }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+  
+  .animate-scrollingText {
+    display: inline-block; /* Important: Force inline-block layout */
+    white-space: nowrap; /* Prevent text from wrapping */
+    animation: scroll 30s linear infinite;
+  }
+  

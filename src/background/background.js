@@ -1,6 +1,7 @@
 // PROD: API URL CHANGE
 const api = "https://api.linkcollect.io/api/v1/collections";
 
+
 chrome.tabs.onUpdated.addListener((tabId, _, tab) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const activeTab = tabs[0];
@@ -102,6 +103,8 @@ const saveCurrentTab = async () => {
     var hasError = true;
   }
   sendMessage(hasError || false, !hasError ? "Link Saved" : "Unable To Save");
+
+
 };
 
 //Save all tabs
@@ -239,3 +242,5 @@ const getWebsiteData = async (url) => {
     time,
   };
 };
+
+

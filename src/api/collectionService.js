@@ -43,3 +43,12 @@ export function getAllCollectionsWithoutTimelines() {
 export function getAllByUsername(username) {
   return http.get(`${apiEndpoint}/user/${username}`);
 }
+
+
+
+export function getLiveMessage() {
+  // return http.get(`${apiEndpoint}/linkcollect/live-message`);
+  let message = "How are you all? love linkcollect? click here and give a follow on twitter";
+  let res ={data: message, cta: "https://twitter.com/linkcollect_io"}
+  return res;
+}
