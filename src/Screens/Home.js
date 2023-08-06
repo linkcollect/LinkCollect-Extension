@@ -43,6 +43,7 @@ const Home = () => {
 
   //Filtered Collections
   const filteredData = useMemo(() => {
+    
     return collection.data?.filter((collection) =>
       collection.title.toLowerCase().includes(query.toLowerCase())
     );
@@ -161,20 +162,22 @@ const Home = () => {
   useEffect(() => {
     async function doMessageUpdate() {
       const res = await chrome.storage.local.get(["readCount"]);
-      const storedReadCount = res.readCount || 0;
+      const storedReadCount = await res.readCount;
+      console.log("storedReadCount", storedReadCount);
 
       const res2 = await chrome.storage.local.get(["messageLive"]);
-      const storedMessageLive = res2.messageLive || "";
+      const storedMessageLive = res2?.messageLive;
 
       const message = getLiveMessage(); // Assuming you have a function like this
       await handleAnimationEnd(storedReadCount);
-      if (storedMessageLive.data === message.data && storedReadCount <= 2) {
+      if (storedMessageLive?.data === message?.data && storedReadCount <= 2) {
         setDisplayMessageBool(true);
       } else if (storedMessageLive !== message) {
         await chrome.storage.local.set({ messageLive: message });
         setDisplayMessageBool(true);
         setMessageLive(message);
         setReadCount(0);
+        console.log("updating readCount to 0 as messages are diff")
         await chrome.storage.local.set({ readCount: 0 });
         window.dispatchEvent(new Event("storage"));
       }
@@ -187,10 +190,10 @@ const Home = () => {
     console.log("Change to local storage!");
     let mes = await chrome.storage.local.get(["messageLive"]);
     let resCount = await chrome.storage.local.get(["readCount"]);
-    setMessageLive(mes.messageLive);
-    setReadCount(resCount.readCount);
+    setMessageLive(mes?.messageLive);
+    setReadCount(resCount?.readCount);
 
-    console.log("message and cta", mes.messageLive.data, mes.messageLive.cta);
+    console.log("message and cta", mes?.messageLive?.data, mes.messageLive?.cta);
 
     if (readCount < 3) {
       setDisplayMessageBool(true);
@@ -326,11 +329,11 @@ const Home = () => {
               // onAnimationEnd={handleAnimationEnd}
             >
               <a
-                href={messageLive.cta}
+                href={messageLive?.cta}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {messageLive.data}
+                {messageLive?.data}
               </a>
             </p>
           </div>
