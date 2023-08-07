@@ -43,7 +43,10 @@ const collectionSlice = createSlice({
       const collectionIndex = state.data.findIndex(
         (collection) => collection._id === payload.collectionId
       );
-      state.data[collectionIndex] = { ...payload.updatedCollectio };
+      // As the api is returning updated data with timelines' id only , to persist the original timelines info we are storing it in the orignal timelines
+      const originaltimelines = state.data[collectionIndex].timelines
+      const {timelines,...data} = payload.updatedCollectio
+      state.data[collectionIndex] = { timelines:[...originaltimelines],...data };
     },
 
     //Removing particular collection
