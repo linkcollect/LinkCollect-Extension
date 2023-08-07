@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 import BackArrow from '../assets/Icons/arrow.svg';
 import logo from '../assets/Logo.svg';
@@ -126,9 +127,14 @@ const Bookmarks = () => {
 	});
 
 	return (
-		<>
+		<motion.div
+			initial={{ opacity: 0, y: '100vh' }}
+			animate={{ opacity: 1, y: 0 }}
+			exit={{ opacity: 0, y: '100vh' }}
+			transition={{ duration: 0.3, ease: [0.19, 0.46, 0.74, 0.9] }}
+		>
 			{/* Back button container */}
-			<div className="pt-4 pl-6 bg-bgPrimary border-b border-bgGrey px-4 pb-4 drop-shadow-md">
+			<div className=" pt-4 pl-6 bg-bgPrimary border-b border-bgGrey px-4 pb-4 drop-shadow-md">
 				<button
 					onClick={backScreenHandler}
 					className="cursor-pointer flex items-center gap-3 [&>img]:rotate-[90deg] [&>img]:w-[22px]"
@@ -140,7 +146,7 @@ const Bookmarks = () => {
 				</button>
 			</div>
 			{!isLoading && (
-				<div className="animate-fade bg-primary p-2 flex justify-between items-center pr-4 my-3 mx-3 rounded-md">
+				<div className=" bg-primary p-2 flex justify-between items-center pr-4 my-3 mx-3 rounded-md">
 					<div className="flex">
 						<div className="flex flex-col justify-center ml-3 ">
 							<p className="text-[14px] font-medium text-bgPrimary">
@@ -179,11 +185,11 @@ const Bookmarks = () => {
 				</div>
 			)}
 			{isLoading ? (
-				<div className="flex w-full h-[70vh] justify-center items-center">
+				<div className=" flex w-full h-[70vh] justify-center items-center">
 					<PageLoader />
 				</div>
 			) : collection.timelines && collection.timelines.length > 0 ? (
-				<div className="animate-fade h-[88%]">
+				<div className="  duration-700 h-[88%]">
 					{/* Collection Heading */}
 
 					{/* Collection list */}
@@ -232,7 +238,7 @@ const Bookmarks = () => {
 					loading={isAdding}
 				/>
 			)}
-		</>
+		</motion.div>
 	);
 };
 

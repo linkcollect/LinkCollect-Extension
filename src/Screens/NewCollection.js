@@ -80,7 +80,7 @@ const NewCollection = () => {
 					</p>
 				</button>
 			</div>
-			<div className="animate-fade bg-bgPrimary bg-bgSecondary p-3 px-5 flex flex-col justify-between items-center h-[73%]">
+			<div className="bg-bgPrimary bg-bgSecondary p-3 px-5 flex flex-col justify-between items-center h-[73%]">
 				<div className="w-full">
 					<Input
 						label="Collection Name"

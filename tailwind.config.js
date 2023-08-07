@@ -2,24 +2,7 @@
 module.exports = {
 	content: ['./src/**/*.{html,js,jsx}'],
 	theme: {
-		extend: {
-			// this is animation class
-			animation: {
-				fade: 'fadeInUp 2s cubic-bezier(.35,.98,.31,.97)',
-			},
-
-			// this is actual animation that runs on each mount
-			keyframes: (theme) => ({
-				fadeInUp: {
-					'0%': { opacity: '0', transform: 'translate(0, 4rem)' },
-					'100%': { opacity: '1', transform: 'translate(0, 0)' },
-				},
-				fadeInRight: {
-					'0%': { opacity: '0', transform: 'translate(-4rem, 0rem)' },
-					'100%': { opacity: '1', transform: 'translate(0, 0)' },
-				},
-			}),
-		},
+		extend: {},
 		colors: {
 			bgPrimary: '#fff',
 			bgSecodary: '#f9f9f9',
@@ -36,5 +19,5 @@ module.exports = {
 			lightBlueBG: '#e8e8fc',
 		},
 	},
-	plugins: [],
+	plugins: [require('tailwindcss-animate')],
 };
