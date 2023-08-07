@@ -1,6 +1,6 @@
 {
   "name": "LinkCollect",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "linkcollect is the simplest way to save & share web links from anywhere to anyone",
   "permissions": [
     "storage",
