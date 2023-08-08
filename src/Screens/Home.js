@@ -8,6 +8,7 @@ import NoResult from "../Components/NoResult/NoResult";
 import PageLoader from "../Components/Loader/PageLoader";
 import { getLiveMessage } from "../api/collectionService";
 import { useEffect } from "react";
+import { motion } from "framer-motion";
 
 import {
   getCurrentTab,
@@ -235,7 +236,12 @@ const Home = () => {
   }
 
   return (
-    <div>
+    <motion.div
+      initial={{}}
+      animate={{}}
+      exit={{}}
+			transition={{ duration: 0.3, ease: [0.19, 0.46, 0.74, 0.9] }}
+    >
       <div className="py-3 bg-bgPrimary border-b border-bgGrey px-4 drop-shadow-md flex items-center gap-2">
         <SearchBox onSearch={onSearchHandler} />
         <div className="relative">
@@ -343,7 +349,7 @@ const Home = () => {
           <PageLoader />
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

@@ -21,6 +21,7 @@ import PageLoader from "../Components/Loader/PageLoader";
 import { dataSortByType, nameShortner } from "../utils/utilty";
 import { addBookmark, deleteBookmark, removeCollection } from "../store/collectionsSlice";
 
+import { motion } from "framer-motion";
 const Bookmarks = () => {
   const [showMenu, setShowMenu] = useState(false);
   const navigation = useNavigate();
@@ -116,7 +117,13 @@ const Bookmarks = () => {
     })
 
   return (
-    <>
+    <motion.div
+      initial={{ y: '100vh' }}
+      animate={{ y: 0 }}
+      exit={{ y: '100vh' }}
+      transition={{ duration: 0.3, ease: [0.19, 0.46, 0.74, 0.9] }}
+      className=''
+    >
       {/* Back button container */}
       <div className="pt-4 pl-6 bg-bgPrimary border-b border-bgGrey px-4 pb-4 drop-shadow-md">
         <button
@@ -205,7 +212,7 @@ const Bookmarks = () => {
       ) : (
         <NoResult title="Add bookmarks" noResultName="bookmarks" onClickHandler={addBookMarkHandler} bookMark={true} loading={isAdding}/>
       )}
-    </>
+    </motion.div>
   );
 };
 
