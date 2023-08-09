@@ -121,7 +121,7 @@ const Bookmarks = () => {
       initial={{ y: '100vh' }}
       animate={{ y: 0 }}
       exit={{ y: '100vh' }}
-      transition={{ duration: 0.3, ease: [0.19, 0.46, 0.74, 0.9] }}
+      transition={{ duration: 0.2, ease: [0.19, 0.46, 0.74, 0.9] }}
       className=''
     >
       {/* Back button container */}
