@@ -9,7 +9,7 @@ import Home from "./Screens/Home";
 import NewCollection from "./Screens/NewCollection";
 import Bookmarks from "./Screens/Bookmarks";
 import EditCollection from "./Screens/EditCollection";
-import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Provider } from "react-redux";
 import { setJwtInRequestHeader } from "./api/httpService";
@@ -20,6 +20,7 @@ import { getAllCollections } from "./api/collectionService";
 import { getCollectionDataStart, getCollectionFailed, getCollectionSuccess } from "./store/collectionsSlice";
 import { dataSortByType } from "./utils/utilty";
 import Offline from "./Components/Offline/Offline";
+import { AnimatePresence } from "framer-motion";
 const Popup = () => {
   const dispatch = useDispatch();
   const userState = useSelector((state) => state.user);
@@ -67,11 +68,11 @@ const Popup = () => {
     return<Layout> <Offline/> </Layout>
   }
 
-
-  return (
-    <>
-      <Layout>
-        <Routes>
+  function AnimatedRoutes() {
+    const location = useLocation();
+    return (
+      <AnimatePresence initial={false} mode="wait">
+        <Routes location={location} key={location.pathname}>
           <Route
             path="/"
             element={
@@ -90,6 +91,13 @@ const Popup = () => {
             </>
           )}
         </Routes>
+      </AnimatePresence>
+    )
+  }
+  return (
+    <>
+      <Layout>
+        <AnimatedRoutes />
       </Layout>
     </>
   );
