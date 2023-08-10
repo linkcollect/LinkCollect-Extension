@@ -1,5 +1,5 @@
-import React, { useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import React, { useMemo, useRef, useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import BackArrow from "../assets/Icons/arrow.svg";
 import logo from "../assets/Logo.svg";
@@ -11,6 +11,7 @@ import PopupMenu from "../Components/Menu/PopupMenu";
 import NoResult from "../Components/NoResult/NoResult";
 import Loader from "../Components/Loader/Loader";
 import { ToolTip2 } from "../Components/Tooltip/Tooltip";
+import PopupModal from "../Components/PopupModal/PopupModal";
 
 import { getCurrentTab, sendMessage } from "../utils/chromeAPI";
 
@@ -20,8 +21,10 @@ import { useDispatch, useSelector } from "react-redux";
 import PageLoader from "../Components/Loader/PageLoader";
 import { dataSortByType, nameShortner } from "../utils/utilty";
 import { addBookmark, deleteBookmark, removeCollection } from "../store/collectionsSlice";
+import { getUser } from "../api/userService";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+
 const Bookmarks = () => {
   const [showMenu, setShowMenu] = useState(false);
   const navigation = useNavigate();
@@ -38,6 +41,29 @@ const Bookmarks = () => {
     return dataSortByType([...collection.timelines],"RECENTLY_UPDATE")
     
   },[collection])
+
+   // error message state
+   const [notPremiumError, setNotPremiumError] = useState(false);
+   function showNotPremiumError() {setNotPremiumError(true)}
+   function closeNotPremiumError() {setNotPremiumError(false)}
+
+   // user Premium check
+  const [isPremium, setIsPremium] = useState(false);
+  // fetch Premium status on every mount
+  useEffect(() => {
+    const getUserPremium = async () => {
+      const user = await getUser(auth.user.userId)
+      setIsPremium(user.data.data.isPremium)
+      console.log(user);
+    //   console.log(user);
+    }
+    getUserPremium();
+  }, [])
+
+  const handleNotPremiumError = () => {
+    // TODO: Create a popup to show a specific error message on call which returns a React Modal Component based on the value of isPremium state
+    notPremiumError ? closeNotPremiumError() : showNotPremiumError();
+  }
 
   // Delete Bookmark
   const deleteBookmarkHandler = async (timeLineId) => {
@@ -57,6 +83,7 @@ const Bookmarks = () => {
 
   //Add bookmark
   const addBookMarkHandler = async () => {
+    if (isPremium) {
     setIsAdding(true);
     try {
       const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
@@ -75,6 +102,28 @@ const Bookmarks = () => {
       hasError || false,
       !hasError ? "Link Saved" : "Unable To Save"
     );
+    } else if (collection.timelines.length < 4) {
+        setIsAdding(true);
+    try {
+      const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
+      const getTab = await getCurrentTab();
+      const timeline = { link: getTab.url, title: getTab.title,favicon:getTab.favIconUrl, time };
+      // DB Add
+      const  res  = await createTimeline(collection._id, timeline);
+      // Instant state update
+      dispatch(addBookmark({collectionId,bookmark:res.data.data}))
+    } catch (error) {
+      console.log(error);
+      var hasError=true;
+    }
+    setIsAdding(false);
+    sendMessage(
+      hasError || false,
+      !hasError ? "Link Saved" : "Unable To Save"
+    );
+    } else {
+        handleNotPremiumError();
+    }
   };
 
   // Collection copy
@@ -122,7 +171,7 @@ const Bookmarks = () => {
       animate={{ y: 0 }}
       exit={{ y: '100vh' }}
       transition={{ duration: 0.2, ease: [0.19, 0.46, 0.74, 0.9] }}
-      className=''
+      className='h-[100%]'
     >
       {/* Back button container */}
       <div className="pt-4 pl-6 bg-bgPrimary border-b border-bgGrey px-4 pb-4 drop-shadow-md">
@@ -208,6 +257,17 @@ const Bookmarks = () => {
               </button>
             </ToolTip2>
           </div>
+          <AnimatePresence mode="wait">
+            {notPremiumError && 
+                <PopupModal
+                title="Cannot Create more Links"
+                content="Free Plan allows max of 30 collections and 3000 links. Please upgrade to premium to create more"
+                buttonText="Upgrade"
+                modalOpen={notPremiumError}
+                onCloseHandler={closeNotPremiumError}
+              />
+              }
+              </AnimatePresence>
         </div>
       ) : (
         <NoResult title="Add bookmarks" noResultName="bookmarks" onClickHandler={addBookMarkHandler} bookMark={true} loading={isAdding}/>

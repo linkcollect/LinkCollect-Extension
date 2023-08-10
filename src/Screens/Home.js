@@ -6,9 +6,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import NoResult from "../Components/NoResult/NoResult";
 import PageLoader from "../Components/Loader/PageLoader";
-import { getLiveMessage } from "../api/collectionService";
+import { getAllByUsername, getLiveMessage } from "../api/collectionService";
+import { getUser } from "../api/userService";
 import { useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 import {
   getCurrentTab,
@@ -23,6 +24,7 @@ import {
   sortCollection,
   deleteBookmark,
 } from "../store/collectionsSlice";
+import PopupModal from "../Components/PopupModal/PopupModal";
 
 const Home = () => {
   // gloabl collections
@@ -34,6 +36,11 @@ const Home = () => {
   //filtermenu ref to open and close it
   const filterMenu = useRef();
   const menuRef = useRef();
+
+  // error message state
+  const [notPremiumError, setNotPremiumError] = useState(false);
+  function showNotPremiumError() {setNotPremiumError(true)}
+  function closeNotPremiumError() {setNotPremiumError(false)}
 
   const auth = useSelector((state) => state.user);
 
@@ -50,6 +57,18 @@ const Home = () => {
     );
   }, [query, collection.data]);
 
+  // user Premium check
+  const [isPremium, setIsPremium] = useState(false);
+  // fetch Premium status on every mount
+  useEffect(() => {
+    const getUserPremium = async () => {
+      const user = await getUser(auth.user.userId)
+      setIsPremium(user.data.data.isPremium)
+      console.log(user);
+    }
+    getUserPremium();
+  }, [])
+  
   // filteredbookmarks
   const filteredBookmarks = useMemo(() => {
     return query.length > 0
@@ -69,8 +88,16 @@ const Home = () => {
 
   // this is to REDIRECT TO create new collection
   const createCollectionRedicector = () => {
-    navigate("/new-collection");
+    if (isPremium) navigate("/new-collection");
+    // WARNING: Max collection length for non-premium user is hardcoded
+    else if (collection.data.length < 2) navigate("/new-collection");
+    else (handleNotPremiumError())
   };
+
+  const handleNotPremiumError = () => {
+    // TODO: Create a popup to show a specific error message on call which returns a React Modal Component based on the value of isPremium state
+    notPremiumError ? closeNotPremiumError() : showNotPremiumError();
+  }
 
   const handleCopy = (collectionId) => {
     navigator.clipboard.writeText(
@@ -270,7 +297,7 @@ const Home = () => {
         </div>
       </div>
       {!collection.loading ? (
-        <div className=" bg-bgSecodary h-[680px]">
+        <div className="relative bg-bgSecodary h-[680px]">
           <div className="flex justify-between items-center pt-4 px-3">
             <p className="text-[18px] text-textPrimary">
               Collections
@@ -285,6 +312,17 @@ const Home = () => {
               {" "}
               <img src={addIcon} className="mr-2" /> Create Collection{" "}
             </button>
+            <AnimatePresence mode="wait">
+            {notPremiumError && 
+                <PopupModal
+                title="Cannot Create more Collections"
+                content="Free Plan allows max of 30 collections and 3000 links. Please upgrade to premium to create more"
+                buttonText="Upgrade"
+                modalOpen={notPremiumError}
+                onCloseHandler={closeNotPremiumError}
+              />
+              }
+              </AnimatePresence>
           </div>
           <div className="mt-4 flex flex-col gap-2 h-[49%] overflow-y-auto overflow-x-hidden px-3 w-full">
             {filteredData?.map((collection) => (
