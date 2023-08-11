@@ -25,7 +25,7 @@ const Input = ({
 }) => {
   return (
     <label className="block">
-      <span className="text-textSecondary flex justify-between items-end  block text-[16px] font-light mb[3px]">
+      <span className="text-textSecondary flex justify-between items-end text-[16px] font-light mb[3px]">
         <p>{label}</p>
         {type!=="file" && <small className="text-xs"><span className={`${value?.length>required ? "text-danger":""}`}>{value?.length}</span>/{required}</small>}
       </span>
@@ -45,20 +45,20 @@ export const Select = ({ name,onInputHandler,options,value }) => {
   return (
     <>
       <label
-        for="privacy"
-        class="block mb-[3px] font-light text-textSecondary block text-[16px]"
+        htmlFor="privacy"
+        className="block mb-[3px] font-light text-textSecondary text-[16px]"
       >
         Privacy
       </label>
       <select
         id="pravacy"
-        class="bg-bgSecodary border border-bgGrey text-textPrimary text-normal rounded-lg focus:ring-textSecondary focus:border-textSecondary block w-full p-3"
+        className="bg-bgSecodary border border-bgGrey text-textPrimary text-normal rounded-lg focus:ring-textSecondary focus:border-textSecondary block w-full p-3"
         onChange={onInputHandler}
         name={name}
         value={value}
       >
-        {options.map((opt)=>(
-          <option value={opt.value}>{opt.name}</option>
+        {options.map((opt, index)=>(
+          <option key={index} value={opt.value}>{opt.name}</option>
         ))}
       </select>
     </>
