@@ -28,10 +28,13 @@ const userSclice = createSlice({
         logout:(state,{payload})=>{
             state.user={}
             state.token=""
+        },
+        setPremium:(state, {payload})=>{
+            state.user = payload.user;
         }
     }
 })
 
-export const  {loginStart,loginFailed,loginSucccess,logout} = userSclice.actions;
+export const  {loginStart,loginFailed,loginSucccess,logout, setPremium} = userSclice.actions;
 
 export default userSclice
