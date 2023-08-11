@@ -122,7 +122,7 @@ const Bookmarks = () => {
       animate={{ y: 0 }}
       exit={{ y: '100vh' }}
       transition={{ duration: 0.2, ease: [0.19, 0.46, 0.74, 0.9] }}
-      className=''
+      className='h-full'
     >
       {/* Back button container */}
       <div className="pt-4 pl-6 bg-bgPrimary border-b border-bgGrey px-4 pb-4 drop-shadow-md">
