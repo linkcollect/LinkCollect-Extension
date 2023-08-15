@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { Fragment, useMemo, useRef, useState } from "react";
 import addIcon from "../assets/Icons/add-tab.svg";
 import CollectionItem from "../Components/CollectiionItem/CollectionItem";
 import SearchBox from "../Components/SearchBox/SearchBox";
@@ -300,7 +300,7 @@ const Home = () => {
               />
             ))}
             {filteredBookmarks?.map((bookmark) => (
-              <>
+              <Fragment key={bookmark.collctionId}>
                 {bookmark?.timelines.length > 0 && (
                   <div key={bookmark.collctionId} className="mt-5">
                     <h1
@@ -323,10 +323,10 @@ const Home = () => {
                     ))}
                   </div>
                 )}
-              </>
+              </Fragment>
             ))}
           </div>
-          <div className="py-5 cursor-pointer text-textPrimary py-1 flex justify-center items-center">
+          <div className="py-5 cursor-pointer text-textPrimary flex justify-center items-center">
             <p
               className={`py-0 text-textSecondary ${
                 displayMessageBool ? "animate-scrollingText" : "hidden"

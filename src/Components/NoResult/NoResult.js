@@ -7,7 +7,7 @@ const NoResult = ({onClickHandler, title, noResultName,bookMark,loading}) => {
     <div className="flex gap-[50px] flex-col justify-around h-[60%] items-center">
       <button
         onClick={onClickHandler}
-        className={`py-[10px] px-[9px] w-[200px] flex justify-center bg-primary text-[17px] font-lg font-bold rounded-md flex items-center ${bookMark ? 'order-2' : null}`}
+        className={`py-[10px] px-[9px] w-[200px] flex justify-center bg-primary text-[17px] font-lg font-bold rounded-md items-center ${bookMark ? 'order-2' : null}`}
       >
         {" "}
         {bookMark && loading ? <Loader/> :

@@ -45,7 +45,7 @@ const SideMenu = React.forwardRef(({ onLogout, isOpen },ref) => {
 
   return (
     <div
-      className={`fixed fixed z-[99] overflow-hidden top-[81px] right-0 h-full w-full flex justify-end bg-bgSecodary/[0.3] ${
+      className={`fixed z-[99] overflow-hidden top-[81px] right-0 h-full w-full flex justify-end bg-bgSecodary/[0.3] ${
         isOpen ? "translate-x-0" : "translate-x-full"
       } ease-in-out duration-500`}
     >
