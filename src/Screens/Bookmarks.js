@@ -13,25 +13,22 @@ import Loader from "../Components/Loader/Loader";
 import { ToolTip2 } from "../Components/Tooltip/Tooltip";
 import PopupModal from "../Components/PopupModal/PopupModal";
 
-import { getCurrentTab, sendMessage } from "../utils/chromeAPI";
-
 import { deleteCollection} from "../api/collectionService";
-import { deleteTimeline, createTimeline } from "../api/timelineService";
+import { deleteTimeline } from "../api/timelineService";
 import { useDispatch, useSelector } from "react-redux";
 import PageLoader from "../Components/Loader/PageLoader";
 import { dataSortByType, nameShortner } from "../utils/utilty";
-import { addBookmark, deleteBookmark, removeCollection } from "../store/collectionsSlice";
-import { getUser } from "../api/userService";
+import { deleteBookmark, removeCollection } from "../store/collectionsSlice";
 
 import { motion, AnimatePresence } from "framer-motion";
-
+import { useAddBookmarks } from "../hooks/useAddBookmark";
 const Bookmarks = () => {
   const [showMenu, setShowMenu] = useState(false);
+  const { isAdding, addBookmarkHook } = useAddBookmarks();
   const navigation = useNavigate();
   const { collectionId } = useParams();
   const collection = useSelector(state=>state.collection.data.filter(collection=>collection._id===collectionId)[0]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAdding, setIsAdding] = useState(false);
   const popupref = useRef();
   const menuRef= useRef();
   const auth = useSelector((state) => state.user);
@@ -41,29 +38,6 @@ const Bookmarks = () => {
     return dataSortByType([...collection.timelines],"RECENTLY_UPDATE")
     
   },[collection])
-
-   // error message state
-   const [notPremiumError, setNotPremiumError] = useState(false);
-   function showNotPremiumError() {setNotPremiumError(true)}
-   function closeNotPremiumError() {setNotPremiumError(false)}
-
-   // user Premium check
-  const [isPremium, setIsPremium] = useState(false);
-  // fetch Premium status on every mount
-  useEffect(() => {
-    const getUserPremium = async () => {
-      const user = await getUser(auth.user.userId)
-      setIsPremium(user.data.data.isPremium)
-      console.log(user);
-    //   console.log(user);
-    }
-    getUserPremium();
-  }, [])
-
-  const handleNotPremiumError = () => {
-    // TODO: Create a popup to show a specific error message on call which returns a React Modal Component based on the value of isPremium state
-    notPremiumError ? closeNotPremiumError() : showNotPremiumError();
-  }
 
   // Delete Bookmark
   const deleteBookmarkHandler = async (timeLineId) => {
@@ -81,48 +55,23 @@ const Bookmarks = () => {
     }
   };
 
+  // error message state
+  const [linkLimitError, setLinkLimitError] = useState(false);
+  function showLinkLimitError() {setLinkLimitError(true)}
+  function closeLinkLimitError() {setLinkLimitError(false)}
+
+  const handleLinkLimitError = () => {
+    linkLimitError ? closeLinkLimitError() : showLinkLimitError();
+  }
   //Add bookmark
   const addBookMarkHandler = async () => {
-    if (isPremium) {
-    setIsAdding(true);
-    try {
-      const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
-      const getTab = await getCurrentTab();
-      const timeline = { link: getTab.url, title: getTab.title,favicon:getTab.favIconUrl, time };
-      // DB Add
-      const  res  = await createTimeline(collection._id, timeline);
-      // Instant state update
-      dispatch(addBookmark({collectionId,bookmark:res.data.data}))
-    } catch (error) {
-      console.log(error);
-      var hasError=true;
-    }
-    setIsAdding(false);
-    sendMessage(
-      hasError || false,
-      !hasError ? "Link Saved" : "Unable To Save"
-    );
-    } else if (collection.timelines.length < 4) {
-        setIsAdding(true);
-    try {
-      const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
-      const getTab = await getCurrentTab();
-      const timeline = { link: getTab.url, title: getTab.title,favicon:getTab.favIconUrl, time };
-      // DB Add
-      const  res  = await createTimeline(collection._id, timeline);
-      // Instant state update
-      dispatch(addBookmark({collectionId,bookmark:res.data.data}))
-    } catch (error) {
-      console.log(error);
-      var hasError=true;
-    }
-    setIsAdding(false);
-    sendMessage(
-      hasError || false,
-      !hasError ? "Link Saved" : "Unable To Save"
-    );
+    if (auth.user.isPremium) {
+      addBookmarkHook(collectionId)
+    } else if (collection.timelines.length < 1000) {
+      addBookmarkHook(collectionId)
     } else {
-        handleNotPremiumError();
+        handleLinkLimitError();
+        console.log("error popup");
     }
   };
 
@@ -171,8 +120,19 @@ const Bookmarks = () => {
       animate={{ y: 0 }}
       exit={{ y: '100vh' }}
       transition={{ duration: 0.2, ease: [0.19, 0.46, 0.74, 0.9] }}
-      className='h-[100%]'
+      className='h-full'
     >
+    <AnimatePresence mode="wait">
+    {linkLimitError && 
+        <PopupModal
+        title="Cannot Create more Links"
+        content="Free Plan allows max of 30 collections and 3000 links. Please upgrade to premium to create more"
+        buttonText="Upgrade"
+        modalOpen={linkLimitError}
+        onCloseHandler={closeLinkLimitError}
+        />
+        }
+        </AnimatePresence>
       {/* Back button container */}
       <div className="pt-4 pl-6 bg-bgPrimary border-b border-bgGrey px-4 pb-4 drop-shadow-md">
         <button
@@ -257,17 +217,6 @@ const Bookmarks = () => {
               </button>
             </ToolTip2>
           </div>
-          <AnimatePresence mode="wait">
-            {notPremiumError && 
-                <PopupModal
-                title="Cannot Create more Links"
-                content="Free Plan allows max of 30 collections and 3000 links. Please upgrade to premium to create more"
-                buttonText="Upgrade"
-                modalOpen={notPremiumError}
-                onCloseHandler={closeNotPremiumError}
-              />
-              }
-              </AnimatePresence>
         </div>
       ) : (
         <NoResult title="Add bookmarks" noResultName="bookmarks" onClickHandler={addBookMarkHandler} bookMark={true} loading={isAdding}/>

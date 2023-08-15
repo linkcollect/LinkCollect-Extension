@@ -10,7 +10,7 @@ import { getAllByUsername, getLiveMessage } from "../api/collectionService";
 import { getUser } from "../api/userService";
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { useAddBookmarks } from "../hooks/useAddBookmark";
 import {
   getCurrentTab,
   sendMessage,
@@ -38,9 +38,9 @@ const Home = () => {
   const menuRef = useRef();
 
   // error message state
-  const [notPremiumError, setNotPremiumError] = useState(false);
-  function showNotPremiumError() {setNotPremiumError(true)}
-  function closeNotPremiumError() {setNotPremiumError(false)}
+  const [collectionLimitError, setCollectionLimitError] = useState(false);
+  function showCollectionLimitError() {setCollectionLimitError(true)}
+  function closeCollectionLimitError() {setCollectionLimitError(false)}
 
   const auth = useSelector((state) => state.user);
 
@@ -49,6 +49,7 @@ const Home = () => {
 
   const navigate = useNavigate();
 
+  const { isAdding, addBookmarkHook } = useAddBookmarks()
   //Filtered Collections
   const filteredData = useMemo(() => {
     
@@ -56,18 +57,6 @@ const Home = () => {
       collection.title.toLowerCase().includes(query.toLowerCase())
     );
   }, [query, collection.data]);
-
-  // user Premium check
-  const [isPremium, setIsPremium] = useState(false);
-  // fetch Premium status on every mount
-  useEffect(() => {
-    const getUserPremium = async () => {
-      const user = await getUser(auth.user.userId)
-      setIsPremium(user.data.data.isPremium)
-      console.log(user);
-    }
-    getUserPremium();
-  }, [])
   
   // filteredbookmarks
   const filteredBookmarks = useMemo(() => {
@@ -88,15 +77,15 @@ const Home = () => {
 
   // this is to REDIRECT TO create new collection
   const createCollectionRedicector = () => {
-    if (isPremium) navigate("/new-collection");
+    if (auth.user.isPremium) navigate("/new-collection");
     // WARNING: Max collection length for non-premium user is hardcoded
-    else if (collection.data.length < 2) navigate("/new-collection");
-    else (handleNotPremiumError())
+    else if (collection.data.length < 30) navigate("/new-collection");
+    else (handleCollectionLimitError())
   };
 
-  const handleNotPremiumError = () => {
+  const handleCollectionLimitError = () => {
     // TODO: Create a popup to show a specific error message on call which returns a React Modal Component based on the value of isPremium state
-    notPremiumError ? closeNotPremiumError() : showNotPremiumError();
+    collectionLimitError ? closeCollectionLimitError() : showCollectionLimitError();
   }
 
   const handleCopy = (collectionId) => {
@@ -105,28 +94,34 @@ const Home = () => {
     );
   };
 
-  // Bookmark add handler
-  const addHandler = async (collectionId) => {
-    try {
-      const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
-      const getTab = await getCurrentTab();
-      const timeline = {
-        link: getTab.url,
-        title: getTab.title,
-        favicon: getTab.favIconUrl,
-        time,
-      };
-      // DB Add
-      const res = await createTimeline(collectionId, timeline);
-      // Instant state update
-
-      dispatch(addBookmark({ collectionId, bookmark: res.data.data }));
-
-      await upadteLatestCollection(collection.data, collectionId);
-    } catch (error) {
-      var hasError = true;
+    // error message state
+    const [linkLimitError, setLinkLimitError] = useState(false);
+    function showLinkLimitError() {setLinkLimitError(true)}
+    function closeLinkLimitError() {setLinkLimitError(false)}
+  
+    const handleLinkLimitError = () => {
+      linkLimitError ? closeLinkLimitError() : showLinkLimitError();
     }
-    sendMessage(hasError || false, !hasError ? "Link Saved" : "Unable to Save");
+    
+    // Bookmark add handler
+    const addHandler = async (collectionId) => {
+      const currentCollection = collection.data.find(e => {
+          return e._id === collectionId;
+      })
+      console.log(collection.data, currentCollection);
+    if (auth.user.isPremium) {
+        addBookmarkHook(collectionId)
+    } else if (currentCollection.timelines.length < 1000) {
+        addBookmarkHook(collectionId)
+    } else {
+        handleLinkLimitError();
+        console.log("error popup");
+    }
+    try {
+      await upadteLatestCollection(collection.data, collectionId);
+    } catch(error) {
+      console.log(error);
+    }
   };
 
   // Bookmark delete handler
@@ -264,11 +259,33 @@ const Home = () => {
 
   return (
     <motion.div
-      initial={{}}
-      animate={{}}
-      exit={{}}
-			transition={{ duration: 0.3, ease: [0.19, 0.46, 0.74, 0.9] }}
+      initial={{y: 0}}
+      animate={{y: 0}}
+      exit={{y: 0}}
+	  transition={{ duration: 0, ease: [0.19, 0.46, 0.74, 0.9] }}
     >
+    <AnimatePresence mode="wait">
+    {collectionLimitError && 
+        <PopupModal
+        title="Cannot Create more Collections"
+        content="Free Plan allows max of 30 collections and 3000 links. Please upgrade to premium to create more"
+        buttonText="Upgrade"
+        modalOpen={collectionLimitError}
+        onCloseHandler={closeCollectionLimitError}
+        />
+        }
+        </AnimatePresence>
+        <AnimatePresence mode="wait">
+    {linkLimitError && 
+        <PopupModal
+        title="Cannot Create more Links"
+        content="Free Plan allows max of 30 collections and 3000 links. Please upgrade to premium to create more"
+        buttonText="Upgrade"
+        modalOpen={linkLimitError}
+        onCloseHandler={closeLinkLimitError}
+        />
+        }
+        </AnimatePresence>
       <div className="py-3 bg-bgPrimary border-b border-bgGrey px-4 drop-shadow-md flex items-center gap-2">
         <SearchBox onSearch={onSearchHandler} />
         <div className="relative">
@@ -297,7 +314,7 @@ const Home = () => {
         </div>
       </div>
       {!collection.loading ? (
-        <div className="relative bg-bgSecodary h-[680px]">
+        <div className="bg-bgSecodary h-[680px]">
           <div className="flex justify-between items-center pt-4 px-3">
             <p className="text-[18px] text-textPrimary">
               Collections
@@ -312,17 +329,6 @@ const Home = () => {
               {" "}
               <img src={addIcon} className="mr-2" /> Create Collection{" "}
             </button>
-            <AnimatePresence mode="wait">
-            {notPremiumError && 
-                <PopupModal
-                title="Cannot Create more Collections"
-                content="Free Plan allows max of 30 collections and 3000 links. Please upgrade to premium to create more"
-                buttonText="Upgrade"
-                modalOpen={notPremiumError}
-                onCloseHandler={closeNotPremiumError}
-              />
-              }
-              </AnimatePresence>
           </div>
           <div className="mt-4 flex flex-col gap-2 h-[49%] overflow-y-auto overflow-x-hidden px-3 w-full">
             {filteredData?.map((collection) => (

@@ -7,7 +7,7 @@ const PopupModal = ({ title, content, buttonText, modalOpen, onCloseHandler, chi
   return (
     <div
     onClick={onCloseHandler}
-    className="backdrop w-full h-full fixed flex items-center justify-center z-[9999] top-0 left-0">
+    className="backdrop w-full h-full fixed flex items-center justify-center z-[9999] top-[0px] left-0">
         <motion.div
         initial={{ opacity: 0, y: '2rem' }}
         animate={{ opacity: 1, y: 0 }}
