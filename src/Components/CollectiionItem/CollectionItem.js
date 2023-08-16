@@ -8,6 +8,8 @@ import Tooltip from "../Tooltip/Tooltip";
 import Loader from "../Loader/Loader";
 import approve from "../../assets/Icons/approve.svg"
 import approveWhite from "../../assets/approve-white.svg"
+import pin from "../../assets/Icons/pin.svg"
+import pinHover from "../../assets/Icons/pin-hover.svg"
 import { useSelector } from "react-redux";
 import { nameShortner } from "../../utils/utilty";
 const CollectionItem = ({
@@ -16,8 +18,9 @@ const CollectionItem = ({
   count,
   copyLinkHandler,
   addHandler,
+  pinToggleHandler,
   id:collectionId,
-
+  isPinned
 }) => {
   const [copyText,setCopyText] = useState("Copy Link");
   const [isAdding,setIsAdding] = useState(false);
@@ -34,6 +37,10 @@ const CollectionItem = ({
     },1500);
   };
 
+  const [hover, setHover] = useState(false);
+  const pinClickHandler = async (e) => {
+    await pinToggleHandler(collectionId)
+  }
 
   const addBookMarkHandler = async (e) =>{
     setIsAdding(true);
@@ -44,8 +51,13 @@ const CollectionItem = ({
 
   return (
     <div className="relative">
+    {(isPinned || hover) && 
+      <img key="pin-icon" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} 
+        className="absolute z-[9999] top-[-5px] left-[-5px] cursor-pointer" 
+        src={isPinned ? pin : pinHover} alt="" 
+        onClick={pinClickHandler}/>}
     <Link to={"/"+collectionId}>
-    <div className="bg-bgPrimary hover:bg-lightBlueBG rounded-md border border-secodary  p-2 flex justify-between w-full" >
+    <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} className="bg-bgPrimary hover:bg-lightBlueBG rounded-md border border-secodary  p-2 flex justify-between w-full" >
       <div className="flex">
         <img className="w-[40px]" src={image!="undefined" && image!== undefined ?  image : logo} />
         <div className="flex flex-col ml-4 ">

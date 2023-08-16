@@ -44,7 +44,9 @@ export function getAllByUsername(username) {
   return http.get(`${apiEndpoint}/user/${username}`);
 }
 
-
+export function togglePin(collectionId) {
+    return http.post(`${apiEndpoint}/togglePin/${collectionId}`)
+}
 
 export function getLiveMessage() {
   // return http.get(`${apiEndpoint}/linkcollect/live-message`);

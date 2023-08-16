@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import NoResult from "../Components/NoResult/NoResult";
 import PageLoader from "../Components/Loader/PageLoader";
-import { getLiveMessage } from "../api/collectionService";
+import { getLiveMessage, togglePin } from "../api/collectionService";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 
@@ -22,6 +22,7 @@ import {
   addBookmark,
   sortCollection,
   deleteBookmark,
+  pinCollectionToggle,
 } from "../store/collectionsSlice";
 
 const Home = () => {
@@ -77,6 +78,18 @@ const Home = () => {
       `http://linkcollect.io/${auth.user.username}/c/${collectionId}`
     );
   };
+
+  // Pin Collection handler
+  const handlePin = async (collectionId) => {
+    dispatch(pinCollectionToggle({ collectionId}))
+    try {
+      const res = await togglePin(collectionId);
+      console.log(res);
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  
 
   // Bookmark add handler
   const addHandler = async (collectionId) => {
@@ -286,7 +299,7 @@ const Home = () => {
               <img src={addIcon} className="mr-2" /> Create Collection{" "}
             </button>
           </div>
-          <div className="mt-4 flex flex-col gap-2 h-[49%] overflow-y-auto overflow-x-hidden px-3 w-full">
+          <div className="pt-4 flex flex-col gap-2 h-[49%] overflow-y-auto overflow-x-visible px-3 w-full">
             {filteredData?.map((collection) => (
               <CollectionItem
                 name={collection.title}
@@ -296,7 +309,9 @@ const Home = () => {
                 id={collection._id}
                 copyLinkHandler={handleCopy}
                 addHandler={addHandler}
+                pinToggleHandler={handlePin}
                 image={collection.image}
+                isPinned={collection.isPinned}
               />
             ))}
             {filteredBookmarks?.map((bookmark) => (
