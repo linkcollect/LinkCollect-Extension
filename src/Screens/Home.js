@@ -45,7 +45,6 @@ const Home = () => {
 
   //Filtered Collections
   const filteredData = useMemo(() => {
-    
     return collection.data?.filter((collection) =>
       collection.title.toLowerCase().includes(query.toLowerCase())
     );
@@ -81,14 +80,17 @@ const Home = () => {
 
   // Pin Collection handler
   const handlePin = async (collectionId) => {
-    dispatch(pinCollectionToggle({ collectionId}))
+    dispatch(pinCollectionToggle({ collectionId }))
     try {
       const res = await togglePin(collectionId);
-      console.log(res);
+      const sortingType = await chrome.storage.local.get("linkcollect_sorting_type")
+      console.log(sortingType);
+      dispatch(sortCollection(sortingType.linkcollect_sorting_type))
     } catch (error) {
-      console.error(error)
+        console.error(error)
     }
-  }
+}
+// console.log(filteredData);
   
 
   // Bookmark add handler
@@ -177,7 +179,7 @@ const Home = () => {
     async function doMessageUpdate() {
       const res = await chrome.storage.local.get(["readCount"]);
       const storedReadCount = await res.readCount;
-      console.log("storedReadCount", storedReadCount);
+    //   console.log("storedReadCount", storedReadCount);
 
       const res2 = await chrome.storage.local.get(["messageLive"]);
       const storedMessageLive = res2?.messageLive;
@@ -191,7 +193,7 @@ const Home = () => {
         setDisplayMessageBool(true);
         setMessageLive(message);
         setReadCount(0);
-        console.log("updating readCount to 0 as messages are diff")
+        // console.log("updating readCount to 0 as messages are diff")
         await chrome.storage.local.set({ readCount: 0 });
         window.dispatchEvent(new Event("storage"));
       }
@@ -201,13 +203,13 @@ const Home = () => {
   }, []);
 
   window.addEventListener("storage", async () => {
-    console.log("Change to local storage!");
+    // console.log("Change to local storage!");
     let mes = await chrome.storage.local.get(["messageLive"]);
     let resCount = await chrome.storage.local.get(["readCount"]);
     setMessageLive(mes?.messageLive);
     setReadCount(resCount?.readCount);
 
-    console.log("message and cta", mes?.messageLive?.data, mes.messageLive?.cta);
+    // console.log("message and cta", mes?.messageLive?.data, mes.messageLive?.cta);
 
     if (readCount < 3) {
       setDisplayMessageBool(true);
@@ -341,7 +343,7 @@ const Home = () => {
               </Fragment>
             ))}
           </div>
-          <div className="py-5 cursor-pointer text-textPrimary flex justify-center items-center">
+          <div className="py-1 cursor-pointer text-textPrimary flex justify-center items-center">
             <p
               className={`py-0 text-textSecondary ${
                 displayMessageBool ? "animate-scrollingText" : "hidden"
