@@ -22,12 +22,13 @@ const PopupModal = ({ title, content, buttonText, modalOpen, onCloseHandler, chi
             <h3 className="font-bold leading-none text-[18px]">{title}</h3>
             <p className="text-justify">{content}</p>
             {buttonText &&
-              <button
+              <a
                 // className="mt-2 block bg-danger text-[white]  text-[14px] rounded px-4 py-2"
                 className="py-[9px] px-[9px] bg-primary text-textLight text-[13px] font-lg font-bold rounded-md flex gap-2 w-fit"
+                href='https://linkcollect.lemonsqueezy.com/' target="_blank"
               >
                 <img src={upgrage} alt="butttonImg" />
-                {buttonText}</button>}
+                {buttonText}</a>}
             {children}
           </div>
         </motion.div>

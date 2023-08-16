@@ -65,9 +65,7 @@ const Bookmarks = () => {
   }
   //Add bookmark
   const addBookMarkHandler = async () => {
-    if (auth.user.isPremium) {
-      addBookmarkHook(collectionId)
-    } else if (collection.timelines.length < 1000) {
+    if (auth.user.isPremium || collection.timelines.length < 100) {
       addBookmarkHook(collectionId)
     } else {
         handleLinkLimitError();

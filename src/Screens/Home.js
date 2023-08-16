@@ -9,7 +9,7 @@ import PageLoader from "../Components/Loader/PageLoader";
 import { getAllByUsername, getLiveMessage } from "../api/collectionService";
 import { getUser } from "../api/userService";
 import { useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, easeOut } from "framer-motion";
 import { useAddBookmarks } from "../hooks/useAddBookmark";
 import {
   getCurrentTab,
@@ -77,9 +77,8 @@ const Home = () => {
 
   // this is to REDIRECT TO create new collection
   const createCollectionRedicector = () => {
-    if (auth.user.isPremium) navigate("/new-collection");
+    if (auth.user.isPremium || collection.data.length < 30) navigate("/new-collection");
     // WARNING: Max collection length for non-premium user is hardcoded
-    else if (collection.data.length < 30) navigate("/new-collection");
     else (handleCollectionLimitError())
   };
 
@@ -109,9 +108,7 @@ const Home = () => {
           return e._id === collectionId;
       })
       console.log(collection.data, currentCollection);
-    if (auth.user.isPremium) {
-        addBookmarkHook(collectionId)
-    } else if (currentCollection.timelines.length < 1000) {
+    if (auth.user.isPremium || currentCollection.timelines.length < 100) {
         addBookmarkHook(collectionId)
     } else {
         handleLinkLimitError();
@@ -259,16 +256,16 @@ const Home = () => {
 
   return (
     <motion.div
-      initial={{y: 0}}
-      animate={{y: 0}}
-      exit={{y: 0}}
-	  transition={{ duration: 0, ease: [0.19, 0.46, 0.74, 0.9] }}
+      initial={{opacity: 0, y: 0}}
+      animate={{opacity: 1, y: 0}}
+      exit={{opacity: 0,y: 0}}
+	  transition={{ duration: 0.1, ease: easeOut }}
     >
     <AnimatePresence mode="wait">
     {collectionLimitError && 
         <PopupModal
-        title="Cannot Create more Collections"
-        content="Free Plan allows max of 30 collections and 3000 links. Please upgrade to premium to create more"
+        title="Can't Create More Collections"
+        content="Free Plan allows 30 collections. Please upgrade to premium to create more"
         buttonText="Upgrade"
         modalOpen={collectionLimitError}
         onCloseHandler={closeCollectionLimitError}
@@ -278,8 +275,8 @@ const Home = () => {
         <AnimatePresence mode="wait">
     {linkLimitError && 
         <PopupModal
-        title="Cannot Create more Links"
-        content="Free Plan allows max of 30 collections and 3000 links. Please upgrade to premium to create more"
+        title="Can't Create More Links"
+        content="Free Plan allows 100 links per collection. Please upgrade to premium to create more"
         buttonText="Upgrade"
         modalOpen={linkLimitError}
         onCloseHandler={closeLinkLimitError}
