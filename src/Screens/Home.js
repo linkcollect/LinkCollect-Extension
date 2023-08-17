@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import NoResult from "../Components/NoResult/NoResult";
 import PageLoader from "../Components/Loader/PageLoader";
-import { getLiveMessage } from "../api/collectionService";
+import { getLiveMessage, togglePin } from "../api/collectionService";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 
@@ -22,6 +22,7 @@ import {
   addBookmark,
   sortCollection,
   deleteBookmark,
+  pinCollectionToggle,
 } from "../store/collectionsSlice";
 
 const Home = () => {
@@ -44,7 +45,6 @@ const Home = () => {
 
   //Filtered Collections
   const filteredData = useMemo(() => {
-    
     return collection.data?.filter((collection) =>
       collection.title.toLowerCase().includes(query.toLowerCase())
     );
@@ -77,6 +77,21 @@ const Home = () => {
       `http://linkcollect.io/${auth.user.username}/c/${collectionId}`
     );
   };
+
+  // Pin Collection handler
+  const handlePin = async (collectionId) => {
+    dispatch(pinCollectionToggle({ collectionId }))
+    try {
+      const res = await togglePin(collectionId);
+      const sortingType = await chrome.storage.local.get("linkcollect_sorting_type")
+      console.log(sortingType);
+      dispatch(sortCollection(sortingType.linkcollect_sorting_type))
+    } catch (error) {
+        console.error(error)
+    }
+}
+// console.log(filteredData);
+  
 
   // Bookmark add handler
   const addHandler = async (collectionId) => {
@@ -164,7 +179,7 @@ const Home = () => {
     async function doMessageUpdate() {
       const res = await chrome.storage.local.get(["readCount"]);
       const storedReadCount = await res.readCount;
-      console.log("storedReadCount", storedReadCount);
+    //   console.log("storedReadCount", storedReadCount);
 
       const res2 = await chrome.storage.local.get(["messageLive"]);
       const storedMessageLive = res2?.messageLive;
@@ -178,7 +193,7 @@ const Home = () => {
         setDisplayMessageBool(true);
         setMessageLive(message);
         setReadCount(0);
-        console.log("updating readCount to 0 as messages are diff")
+        // console.log("updating readCount to 0 as messages are diff")
         await chrome.storage.local.set({ readCount: 0 });
         window.dispatchEvent(new Event("storage"));
       }
@@ -188,13 +203,13 @@ const Home = () => {
   }, []);
 
   window.addEventListener("storage", async () => {
-    console.log("Change to local storage!");
+    // console.log("Change to local storage!");
     let mes = await chrome.storage.local.get(["messageLive"]);
     let resCount = await chrome.storage.local.get(["readCount"]);
     setMessageLive(mes?.messageLive);
     setReadCount(resCount?.readCount);
 
-    console.log("message and cta", mes?.messageLive?.data, mes.messageLive?.cta);
+    // console.log("message and cta", mes?.messageLive?.data, mes.messageLive?.cta);
 
     if (readCount < 3) {
       setDisplayMessageBool(true);
@@ -286,7 +301,7 @@ const Home = () => {
               <img src={addIcon} className="mr-2" /> Create Collection{" "}
             </button>
           </div>
-          <div className="mt-4 flex flex-col gap-2 h-[49%] overflow-y-auto overflow-x-hidden px-3 w-full">
+          <div className="pt-4 flex flex-col gap-2 h-[49%] overflow-y-auto overflow-x-visible px-3 w-full">
             {filteredData?.map((collection) => (
               <CollectionItem
                 name={collection.title}
@@ -296,7 +311,9 @@ const Home = () => {
                 id={collection._id}
                 copyLinkHandler={handleCopy}
                 addHandler={addHandler}
+                pinToggleHandler={handlePin}
                 image={collection.image}
+                isPinned={collection.isPinned}
               />
             ))}
             {filteredBookmarks?.map((bookmark) => (
@@ -326,7 +343,7 @@ const Home = () => {
               </Fragment>
             ))}
           </div>
-          <div className="py-5 cursor-pointer text-textPrimary flex justify-center items-center">
+          <div className="py-1 cursor-pointer text-textPrimary flex justify-center items-center">
             <p
               className={`py-0 text-textSecondary ${
                 displayMessageBool ? "animate-scrollingText" : "hidden"
