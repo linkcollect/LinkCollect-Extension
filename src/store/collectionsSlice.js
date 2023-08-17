@@ -49,6 +49,13 @@ const collectionSlice = createSlice({
       state.data[collectionIndex] = { timelines:[...originaltimelines],...data };
     },
 
+    //Pin Collection
+    pinCollectionToggle: (state, { payload }) => {
+      const  collectionIndex = state.data.findIndex(
+        (collection) => collection._id === payload.collectionId
+      );
+      state.data[collectionIndex] = { ...state.data[collectionIndex], isPinned: !state.data[collectionIndex].isPinned, pinnedTime: Date.now()}},
+
     //Removing particular collection
     removeCollection: (state, { payload }) => {
       state.data = state.data.filter(
@@ -60,6 +67,7 @@ const collectionSlice = createSlice({
     sortCollection: (state, { payload }) => {
       const sortedData = dataSortByType(state.data, payload);
       state.data = sortedData;
+      console.log(payload);
     },
 
     //Add bookmarkd to the collection
@@ -91,6 +99,7 @@ export const {
   getCollectionFailed,
   addNewCollecton,
   setUpdateCollection,
+  pinCollectionToggle,
   removeCollection,
   sortCollection,
   addBookmark,
