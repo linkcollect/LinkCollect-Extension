@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import NoResult from "../Components/NoResult/NoResult";
 import PageLoader from "../Components/Loader/PageLoader";
-import { getAllByUsername, getLiveMessage } from "../api/collectionService";
+import { getAllByUsername } from "../api/collectionService";
 import { getUser } from "../api/userService";
 import { getLiveMessage, togglePin } from "../api/collectionService";
 import { useEffect } from "react";
@@ -104,7 +104,7 @@ const Home = () => {
       linkLimitError ? closeLinkLimitError() : showLinkLimitError();
     }
     
-    // Bookmark add handler
+    // // Bookmark add handler
     const addHandler = async (collectionId) => {
       const currentCollection = collection.data.find(e => {
           return e._id === collectionId;
@@ -115,7 +115,7 @@ const Home = () => {
     } else {
         handleLinkLimitError();
         console.log("error popup");
-    }
+    } }
 
 
   // Pin Collection handler
@@ -133,15 +133,15 @@ const Home = () => {
 // console.log(filteredData);
   
 
-  // Bookmark add handler
-  const addHandler = async (collectionId) => {
+  // // Bookmark add handler
+  // const addHandler = async (collectionId) => {
 
-    try {
-      await upadteLatestCollection(collection.data, collectionId);
-    } catch(error) {
-      console.log(error);
-    }
-  };
+  //   try {
+  //     await upadteLatestCollection(collection.data, collectionId);
+  //   } catch(error) {
+  //     console.log(error);
+  //   }
+  // };
 
   // Bookmark delete handler
   const deleteBookmarkHandler = async (timeLineId, collectionId) => {
