@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { logout } from "../../store/userSlice";
 
 
-const Navbar = () => {
+const Navbar = ({ profilePic }) => {
   const [show, setShow] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ const Navbar = () => {
 
       <div className="">
           <div className="w-[40px] rounded-full overflow-hidden cursor-pointer" onClick={()=>setShow(prevState=>!prevState)}>
-            <img src={avatar} ref={profileRef}/>
+            <img src={profilePic ? profilePic : avatar} ref={profileRef}/>
           </div>
       </div>
       <SideMenu ref={navaref} onLogout={logoutHandler} isOpen={show}/>

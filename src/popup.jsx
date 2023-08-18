@@ -54,7 +54,7 @@ const Popup = () => {
         dispatch(getCollectionSuccess(sortedData))
         // store user premium in state
         const user = await getUserByUsername(userState.user.username);
-        dispatch(setPremium({user: {...userState.user, isPremium: user.data.data.isPremium}}))
+        dispatch(setPremium({user: {...userState.user, profilePic:user.data.data.profilePic, isPremium: user.data.data.isPremium}}))
         } catch (error) {
           console.log("heelol")
           dispatch(getCollectionFailed());
