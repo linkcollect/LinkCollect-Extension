@@ -15,11 +15,19 @@ import { ToolTip2 } from "../Components/Tooltip/Tooltip";
 import { getCurrentTab, sendMessage } from "../utils/chromeAPI";
 
 import { deleteCollection} from "../api/collectionService";
+<<<<<<< Updated upstream
 import { deleteTimeline, createTimeline } from "../api/timelineService";
 import { useDispatch, useSelector } from "react-redux";
 import PageLoader from "../Components/Loader/PageLoader";
 import { dataSortByType, nameShortner } from "../utils/utilty";
 import { addBookmark, deleteBookmark, removeCollection } from "../store/collectionsSlice";
+=======
+import { deleteTimeline, togglePin } from "../api/timelineService";
+import { useDispatch, useSelector } from "react-redux";
+import PageLoader from "../Components/Loader/PageLoader";
+import { dataSortByType, nameShortner } from "../utils/utilty";
+import { deleteBookmark, pinTimelineToggle, removeCollection } from "../store/collectionsSlice";
+>>>>>>> Stashed changes
 
 import { motion } from "framer-motion";
 const Bookmarks = () => {
@@ -77,6 +85,16 @@ const Bookmarks = () => {
     );
   };
 
+  // toggle pin
+  const togglePinned = async (timelineId) => {
+    dispatch(pinTimelineToggle({ collectionId, timelineId }))
+    // console.log(collection);
+    try {
+        const res = await togglePin(collectionId, timelineId);
+    } catch (error) {
+        console.error(error)
+    }
+  }
   // Collection copy
   const collectionCopyHandler = () => {
     navigator.clipboard.writeText(
@@ -189,6 +207,8 @@ const Bookmarks = () => {
                 url={timeline.link}
                 favicon={timeline.favicon}
                 onDelete={deleteBookmarkHandler}
+                onToggle={togglePinned}
+                isPinned={timeline.isPinned}
               />
             ))}
           </div>

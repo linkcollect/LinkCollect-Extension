@@ -55,6 +55,18 @@ const collectionSlice = createSlice({
         (collection) => collection._id === payload.collectionId
       );
       state.data[collectionIndex] = { ...state.data[collectionIndex], isPinned: !state.data[collectionIndex].isPinned, pinnedTime: Date.now()}},
+<<<<<<< Updated upstream
+=======
+
+    pinTimelineToggle: (state, { payload }) => {
+      const  collectionIndex = state.data.findIndex(
+        (collection) => collection._id === payload.collectionId
+      );
+      const timelineIndex = state.data[collectionIndex].timelines.findIndex(
+        timeline => timeline._id === payload.timelineId
+      )
+    state.data[collectionIndex].timelines[timelineIndex] = { ...state.data[collectionIndex].timelines[timelineIndex], isPinned: !state.data[collectionIndex].timelines[timelineIndex].isPinned ? true : false, pinnedTime: Date.now()}},  
+>>>>>>> Stashed changes
 
     //Removing particular collection
     removeCollection: (state, { payload }) => {
@@ -100,6 +112,7 @@ export const {
   addNewCollecton,
   setUpdateCollection,
   pinCollectionToggle,
+  pinTimelineToggle,
   removeCollection,
   sortCollection,
   addBookmark,
