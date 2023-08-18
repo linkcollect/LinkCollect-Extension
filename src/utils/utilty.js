@@ -16,7 +16,7 @@ export const dataSortByType = (data, sortingType)=>{
             console.log(sorteDataByNumberOfBookmarks);
             return [...pins, ...sorteDataByNumberOfBookmarks];
         default:
-            const sorteDataByUpdated = data.filter(collection => collection.isPinned === false).sort((data1,data2)=>new Date(data2.updatedAt)-new Date(data1.updatedAt));
+            const sorteDataByUpdated = data.filter(collection => !collection.isPinned).sort((data1,data2)=>new Date(data2.updatedAt)-new Date(data1.updatedAt));
             console.log(sorteDataByUpdated);
             return [...pins, ...sorteDataByUpdated];
     }
