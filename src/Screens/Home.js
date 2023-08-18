@@ -349,7 +349,7 @@ const Home = () => {
               <img src={addIcon} className="mr-2" /> Create Collection{" "}
             </button>
           </div>
-          <div className="pt-4 flex flex-col gap-2 h-[49%] overflow-y-auto overflow-x-visible px-3 w-full">
+          <div className="pt-4 flex flex-col gap-2 h-[54%] overflow-y-auto overflow-x-visible px-3 w-full">
             {filteredData?.map((collection) => (
               <CollectionItem
                 name={collection.title}

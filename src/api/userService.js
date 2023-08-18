@@ -8,3 +8,6 @@ export function getUser(userId) {
     return http.get(`${apiEndpoint}/get-user/${userId}`);
 }
 
+export function getUserByUsername(userName) {
+    return http.get(`${apiEndpoint}/get_user/${userName}`);
+}
