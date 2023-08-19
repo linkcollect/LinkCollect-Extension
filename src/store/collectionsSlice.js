@@ -54,7 +54,7 @@ const collectionSlice = createSlice({
       const  collectionIndex = state.data.findIndex(
         (collection) => collection._id === payload.collectionId
       );
-      state.data[collectionIndex] = { ...state.data[collectionIndex], isPinned: !state.data[collectionIndex].isPinned, pinnedTime: Date.now()}},
+      state.data[collectionIndex] = { ...state.data[collectionIndex], isPinned: !state.data[collectionIndex].isPinned}},
 
     //Removing particular collection
     removeCollection: (state, { payload }) => {
