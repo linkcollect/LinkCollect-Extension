@@ -9,6 +9,9 @@ import ShareIcon from "../../assets/Icons/arrow-share.svg";
 import approveWhite from "../../assets/approve-white.svg";
 import logo4 from "../../assets/Branding/Logo4.svg";
 
+import pin from "../../assets/Icons/pin.svg"
+import pinHover from "../../assets/Icons/pin-hover.svg"
+
 import { getOrigin, nameShortner } from "../../utils/utilty";
 
 const BookmarkItem = ({
@@ -18,6 +21,8 @@ const BookmarkItem = ({
   url,
   onDelete,
   collctionId = null,
+  onToggle,
+  isPinned
 }) => {
   const [isDelting, setIsDeleting] = useState(false);
   const [copyText, setCopyText] = useState("Copy Link");
@@ -39,9 +44,20 @@ const BookmarkItem = ({
     }, 2500);
   };
 
+  // pin Bookmark
+  const [hover, setHover] = useState(false);
+  const toggleHandler = async (e) => {
+    await onToggle(id)
+  }
+
   return (
-    <div className="bg-bgPrimary p-2 flex hover:rounded-md justify-between border-b border-bgGrey hover:bg-lightBlueBG ">
-      <div className="flex">
+    <div className="relative bg-bgPrimary p-2 flex hover:rounded-md justify-between border-b border-bgGrey hover:bg-lightBlueBG ">
+      {(isPinned || hover) &&
+      <img key="pin-icon" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} 
+        className="absolute z-[9999] top-[3px] left-[-4px] cursor-pointer " 
+        src={isPinned ? pin : pinHover} alt="" 
+        onClick={toggleHandler}/>}
+      <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} className="flex">
         {/* link wrapper for onclick */}
         <Link
           className="flex justify-center items-center"

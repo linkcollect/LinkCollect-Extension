@@ -96,7 +96,7 @@ const saveCurrentTab = async () => {
       body: JSON.stringify(structuredTimeLine),
     });
     const data = await res.json();
-    if (data.status >= 300 && data.status < 500) {
+    if (res.status >= 300 && res.status < 500) {
       throw Error();
     }
   } catch (error) {
@@ -129,8 +129,7 @@ const saveAlltabs = async () => {
       body: form,
     });
     const collectionData = await collection.json();
-
-    if (collectionData.status >= 300 && collectionData.status < 500) {
+    if (collection.status >= 300 && collection.status < 500) {
       throw Error();
     }
 
@@ -147,7 +146,7 @@ const saveAlltabs = async () => {
       }
     );
     const data = await res.json();
-    if (data.status >= 300 && data.status < 500) {
+    if (res.status >= 300 && res.status < 500) {
       throw Error();
     }
 
@@ -176,7 +175,7 @@ const saveLinkToRecent = async (item) => {
       body: JSON.stringify(structuredTimeLine),
     });
     const data = await res.json();
-    if (data.status >= 300 && data.status < 500) {
+    if (res.status >= 300 && res.status < 500) {
       throw Error();
     }
   } catch (error) {

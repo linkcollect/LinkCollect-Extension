@@ -7,6 +7,9 @@ export function createTimeline(collectionId, timeline) {
   return http.post(`${apiEndpoint}/${collectionId}/timelines`, timeline);
 }
 
+export function togglePin(collectionId, timelineId) {
+    return http.patch(`${apiEndpoint}/${collectionId}/timelines/togglePin/${timelineId}`)
+}
 
 export function deleteTimeline(collectionId, timelineId) {
   return http.delete(`${apiEndpoint}/${collectionId}/timelines/${timelineId}`);
