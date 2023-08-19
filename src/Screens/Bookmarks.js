@@ -1,5 +1,5 @@
-import React, { useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import React, { useMemo, useRef, useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import BackArrow from "../assets/Icons/arrow.svg";
 import logo from "../assets/Logo.svg";
@@ -11,8 +11,7 @@ import PopupMenu from "../Components/Menu/PopupMenu";
 import NoResult from "../Components/NoResult/NoResult";
 import Loader from "../Components/Loader/Loader";
 import { ToolTip2 } from "../Components/Tooltip/Tooltip";
-
-import { getCurrentTab, sendMessage } from "../utils/chromeAPI";
+import PopupModal from "../Components/PopupModal/PopupModal";
 
 import { deleteCollection} from "../api/collectionService";
 import { deleteTimeline, togglePin } from "../api/timelineService";
@@ -21,14 +20,15 @@ import PageLoader from "../Components/Loader/PageLoader";
 import { dataSortByType, nameShortner } from "../utils/utilty";
 import { deleteBookmark, pinTimelineToggle, removeCollection } from "../store/collectionsSlice";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAddBookmarks } from "../hooks/useAddBookmark";
 const Bookmarks = () => {
   const [showMenu, setShowMenu] = useState(false);
+  const { isAdding, addBookmarkHook } = useAddBookmarks();
   const navigation = useNavigate();
   const { collectionId } = useParams();
   const collection = useSelector(state=>state.collection.data.filter(collection=>collection._id===collectionId)[0]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAdding, setIsAdding] = useState(false);
   const popupref = useRef();
   const menuRef= useRef();
   const auth = useSelector((state) => state.user);
@@ -55,26 +55,22 @@ const Bookmarks = () => {
     }
   };
 
+  // error message state
+  const [linkLimitError, setLinkLimitError] = useState(false);
+  function showLinkLimitError() {setLinkLimitError(true)}
+  function closeLinkLimitError() {setLinkLimitError(false)}
+
+  const handleLinkLimitError = () => {
+    linkLimitError ? closeLinkLimitError() : showLinkLimitError();
+  }
   //Add bookmark
   const addBookMarkHandler = async () => {
-    setIsAdding(true);
-    try {
-      const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
-      const getTab = await getCurrentTab();
-      const timeline = { link: getTab.url, title: getTab.title,favicon:getTab.favIconUrl, time };
-      // DB Add
-      const  res  = await createTimeline(collection._id, timeline);
-      // Instant state update
-      dispatch(addBookmark({collectionId,bookmark:res.data.data}))
-    } catch (error) {
-      console.log(error);
-      var hasError=true;
+    if (auth.user.isPremium || collection.timelines.length < 100) {
+      addBookmarkHook(collectionId)
+    } else {
+        handleLinkLimitError();
+        console.log("error popup");
     }
-    setIsAdding(false);
-    sendMessage(
-      hasError || false,
-      !hasError ? "Link Saved" : "Unable To Save"
-    );
   };
 
   // toggle pin
@@ -134,6 +130,17 @@ const Bookmarks = () => {
       transition={{ duration: 0.2, ease: [0.19, 0.46, 0.74, 0.9] }}
       className='h-full'
     >
+    <AnimatePresence mode="wait">
+    {linkLimitError && 
+        <PopupModal
+        title="Cannot Create more Links"
+        content="Free Plan allows max of 30 collections and 3000 links. Please upgrade to premium to create more"
+        buttonText="Upgrade"
+        modalOpen={linkLimitError}
+        onCloseHandler={closeLinkLimitError}
+        />
+        }
+        </AnimatePresence>
       {/* Back button container */}
       <div className="pt-4 pl-6 bg-bgPrimary border-b border-bgGrey px-4 pb-4 drop-shadow-md">
         <button

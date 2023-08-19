@@ -8,8 +8,7 @@ export const getOrigin = (weblink) =>{
       return url.host
 }
 
-export const dataSortByType = (data,sortingType)=>{
-    console.log(sortingType);
+export const dataSortByType = (data, sortingType)=>{
     const pins = data.filter(collection => collection.isPinned === true).sort((data1, data2) =>new Date(data2.pinnedTime) - new Date(data1.pinnedTime));
     switch(sortingType){
         case "MOST_BOOKMARKED":

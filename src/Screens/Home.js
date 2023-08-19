@@ -6,10 +6,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import NoResult from "../Components/NoResult/NoResult";
 import PageLoader from "../Components/Loader/PageLoader";
+import { getAllByUsername } from "../api/collectionService";
+import { getUser } from "../api/userService";
 import { getLiveMessage, togglePin } from "../api/collectionService";
 import { useEffect } from "react";
-import { motion } from "framer-motion";
-
+import { motion, AnimatePresence, easeOut } from "framer-motion";
+import { useAddBookmarks } from "../hooks/useAddBookmark";
 import {
   getCurrentTab,
   sendMessage,
@@ -24,6 +26,7 @@ import {
   deleteBookmark,
   pinCollectionToggle,
 } from "../store/collectionsSlice";
+import PopupModal from "../Components/PopupModal/PopupModal";
 
 const Home = () => {
   // gloabl collections
@@ -36,6 +39,11 @@ const Home = () => {
   const filterMenu = useRef();
   const menuRef = useRef();
 
+  // error message state
+  const [collectionLimitError, setCollectionLimitError] = useState(false);
+  function showCollectionLimitError() {setCollectionLimitError(true)}
+  function closeCollectionLimitError() {setCollectionLimitError(false)}
+
   const auth = useSelector((state) => state.user);
 
   //Distapcher
@@ -43,13 +51,14 @@ const Home = () => {
 
   const navigate = useNavigate();
 
+  const { isAdding, addBookmarkHook } = useAddBookmarks()
   //Filtered Collections
   const filteredData = useMemo(() => {
     return collection.data?.filter((collection) =>
       collection.title.toLowerCase().includes(query.toLowerCase())
     );
   }, [query, collection.data]);
-
+  
   // filteredbookmarks
   const filteredBookmarks = useMemo(() => {
     return query.length > 0
@@ -69,14 +78,45 @@ const Home = () => {
 
   // this is to REDIRECT TO create new collection
   const createCollectionRedicector = () => {
-    navigate("/new-collection");
+    if (auth.user.isPremium || collection.data.length < 30) navigate("/new-collection");
+    // WARNING: Max collection length for non-premium user is hardcoded
+    else (handleCollectionLimitError())
   };
+
+  const handleCollectionLimitError = () => {
+    // TODO: Create a popup to show a specific error message on call which returns a React Modal Component based on the value of isPremium state
+    collectionLimitError ? closeCollectionLimitError() : showCollectionLimitError();
+  }
 
   const handleCopy = (collectionId) => {
     navigator.clipboard.writeText(
       `http://linkcollect.io/${auth.user.username}/c/${collectionId}`
     );
   };
+
+
+    // error message state
+    const [linkLimitError, setLinkLimitError] = useState(false);
+    function showLinkLimitError() {setLinkLimitError(true)}
+    function closeLinkLimitError() {setLinkLimitError(false)}
+  
+    const handleLinkLimitError = () => {
+      linkLimitError ? closeLinkLimitError() : showLinkLimitError();
+    }
+    
+    // // Bookmark add handler
+    const addHandler = async (collectionId) => {
+      const currentCollection = collection.data.find(e => {
+          return e._id === collectionId;
+      })
+      console.log(collection.data, currentCollection);
+    if (auth.user.isPremium || currentCollection.timelines.length < 100) {
+        addBookmarkHook(collectionId)
+    } else {
+        handleLinkLimitError();
+        console.log("error popup");
+    } }
+
 
   // Pin Collection handler
   const handlePin = async (collectionId) => {
@@ -93,29 +133,15 @@ const Home = () => {
 // console.log(filteredData);
   
 
-  // Bookmark add handler
-  const addHandler = async (collectionId) => {
-    try {
-      const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
-      const getTab = await getCurrentTab();
-      const timeline = {
-        link: getTab.url,
-        title: getTab.title,
-        favicon: getTab.favIconUrl,
-        time,
-      };
-      // DB Add
-      const res = await createTimeline(collectionId, timeline);
-      // Instant state update
+  // // Bookmark add handler
+  // const addHandler = async (collectionId) => {
 
-      dispatch(addBookmark({ collectionId, bookmark: res.data.data }));
-
-      await upadteLatestCollection(collection.data, collectionId);
-    } catch (error) {
-      var hasError = true;
-    }
-    sendMessage(hasError || false, !hasError ? "Link Saved" : "Unable to Save");
-  };
+  //   try {
+  //     await upadteLatestCollection(collection.data, collectionId);
+  //   } catch(error) {
+  //     console.log(error);
+  //   }
+  // };
 
   // Bookmark delete handler
   const deleteBookmarkHandler = async (timeLineId, collectionId) => {
@@ -252,11 +278,33 @@ const Home = () => {
 
   return (
     <motion.div
-      initial={{}}
-      animate={{}}
-      exit={{}}
-			transition={{ duration: 0.3, ease: [0.19, 0.46, 0.74, 0.9] }}
+      initial={{opacity: 0, y: 0}}
+      animate={{opacity: 1, y: 0}}
+      exit={{opacity: 0,y: 0}}
+	  transition={{ duration: 0.1, ease: easeOut }}
     >
+    <AnimatePresence mode="wait">
+    {collectionLimitError && 
+        <PopupModal
+        title="Can't Create More Collections"
+        content="Free Plan allows 30 collections. Please upgrade to premium to create more"
+        buttonText="Upgrade"
+        modalOpen={collectionLimitError}
+        onCloseHandler={closeCollectionLimitError}
+        />
+        }
+        </AnimatePresence>
+        <AnimatePresence mode="wait">
+    {linkLimitError && 
+        <PopupModal
+        title="Can't Create More Links"
+        content="Free Plan allows 100 links per collection. Please upgrade to premium to create more"
+        buttonText="Upgrade"
+        modalOpen={linkLimitError}
+        onCloseHandler={closeLinkLimitError}
+        />
+        }
+        </AnimatePresence>
       <div className="py-3 bg-bgPrimary border-b border-bgGrey px-4 drop-shadow-md flex items-center gap-2">
         <SearchBox onSearch={onSearchHandler} />
         <div className="relative">
@@ -285,7 +333,7 @@ const Home = () => {
         </div>
       </div>
       {!collection.loading ? (
-        <div className=" bg-bgSecodary h-[680px]">
+        <div className="bg-bgSecodary h-[680px]">
           <div className="flex justify-between items-center pt-4 px-3">
             <p className="text-[18px] text-textPrimary">
               Collections
@@ -301,7 +349,7 @@ const Home = () => {
               <img src={addIcon} className="mr-2" /> Create Collection{" "}
             </button>
           </div>
-          <div className="pt-4 flex flex-col gap-2 h-[49%] overflow-y-auto overflow-x-visible px-3 w-full">
+          <div className="pt-4 flex flex-col gap-2 h-[54%] overflow-y-auto overflow-x-visible px-3 w-full">
             {filteredData?.map((collection) => (
               <CollectionItem
                 name={collection.title}

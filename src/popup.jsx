@@ -15,12 +15,13 @@ import { Provider } from "react-redux";
 import { setJwtInRequestHeader } from "./api/httpService";
 import jwt_decode from "jwt-decode";
 import store from "./store";
-import { loginSucccess,loginStart } from "./store/userSlice";
+import { loginSucccess,loginStart,setPremium } from "./store/userSlice";
 import { getAllCollections } from "./api/collectionService";
 import { getCollectionDataStart, getCollectionFailed, getCollectionSuccess } from "./store/collectionsSlice";
 import { dataSortByType } from "./utils/utilty";
 import Offline from "./Components/Offline/Offline";
 import { AnimatePresence } from "framer-motion";
+import { getUser, getUserByUsername } from "./api/userService";
 const Popup = () => {
   const dispatch = useDispatch();
   const userState = useSelector((state) => state.user);
@@ -49,8 +50,11 @@ const Popup = () => {
         dispatch(getCollectionDataStart());
         const res = await getAllCollections();
         const sortingType = await chrome.storage.local.get(["linkcollect_sorting_type"])
-        const sortedData = dataSortByType(res.data.data,sortingType.linkcollect_sorting_type)
+        const sortedData = dataSortByType(res.data.data, sortingType.linkcollect_sorting_type)
         dispatch(getCollectionSuccess(sortedData))
+        // store user premium in state
+        const user = await getUserByUsername(userState.user.username);
+        dispatch(setPremium({user: {...userState.user, profilePic:user.data.data.profilePic, isPremium: user.data.data.isPremium}}))
         } catch (error) {
           console.log("heelol")
           dispatch(getCollectionFailed());
