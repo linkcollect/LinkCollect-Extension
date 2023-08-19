@@ -55,8 +55,6 @@ const collectionSlice = createSlice({
         (collection) => collection._id === payload.collectionId
       );
       state.data[collectionIndex] = { ...state.data[collectionIndex], isPinned: !state.data[collectionIndex].isPinned, pinnedTime: Date.now()}},
-<<<<<<< Updated upstream
-=======
 
     pinTimelineToggle: (state, { payload }) => {
       const  collectionIndex = state.data.findIndex(
@@ -66,7 +64,6 @@ const collectionSlice = createSlice({
         timeline => timeline._id === payload.timelineId
       )
     state.data[collectionIndex].timelines[timelineIndex] = { ...state.data[collectionIndex].timelines[timelineIndex], isPinned: !state.data[collectionIndex].timelines[timelineIndex].isPinned ? true : false, pinnedTime: Date.now()}},  
->>>>>>> Stashed changes
 
     //Removing particular collection
     removeCollection: (state, { payload }) => {

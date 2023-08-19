@@ -15,19 +15,11 @@ import { ToolTip2 } from "../Components/Tooltip/Tooltip";
 import { getCurrentTab, sendMessage } from "../utils/chromeAPI";
 
 import { deleteCollection} from "../api/collectionService";
-<<<<<<< Updated upstream
-import { deleteTimeline, createTimeline } from "../api/timelineService";
-import { useDispatch, useSelector } from "react-redux";
-import PageLoader from "../Components/Loader/PageLoader";
-import { dataSortByType, nameShortner } from "../utils/utilty";
-import { addBookmark, deleteBookmark, removeCollection } from "../store/collectionsSlice";
-=======
 import { deleteTimeline, togglePin } from "../api/timelineService";
 import { useDispatch, useSelector } from "react-redux";
 import PageLoader from "../Components/Loader/PageLoader";
 import { dataSortByType, nameShortner } from "../utils/utilty";
 import { deleteBookmark, pinTimelineToggle, removeCollection } from "../store/collectionsSlice";
->>>>>>> Stashed changes
 
 import { motion } from "framer-motion";
 const Bookmarks = () => {
