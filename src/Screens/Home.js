@@ -334,7 +334,7 @@ const Home = () => {
       </div>
       {!collection.loading ? (
         <div className="bg-bgSecodary h-[680px]">
-          <div className="flex justify-between items-center pt-4 px-3">
+          <div className="flex justify-between items-center mb-2 pt-4 px-3">
             <p className="text-[18px] text-textPrimary">
               Collections
               <span className="ml-2 rounded-full py-[2px] bg-success p-2">
@@ -349,7 +349,7 @@ const Home = () => {
               <img src={addIcon} className="mr-2" /> Create Collection{" "}
             </button>
           </div>
-          <div className="pt-4 flex flex-col gap-2 h-[54%] overflow-y-auto overflow-x-visible px-3 w-full">
+          <div className="pt-[0.3rem] flex flex-col gap-2 h-[53%] overflow-y-auto overflow-x-visible px-3 w-full">
             {filteredData?.map((collection) => (
               <CollectionItem
                 name={collection.title}
