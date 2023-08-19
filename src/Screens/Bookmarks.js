@@ -5,6 +5,7 @@ import BackArrow from "../assets/Icons/arrow.svg";
 import logo from "../assets/Logo.svg";
 import dots from "../assets/Icons/3dot-menu.svg";
 import AddIcon from "../assets/Icons/add.svg";
+import approveIconWhite from '../assets/Icons/approve-white.svg'
 
 import BookmarkItem from "../Components/BookmarkItem/BookmarkItem";
 import PopupMenu from "../Components/Menu/PopupMenu";
@@ -22,6 +23,7 @@ import { deleteBookmark, pinTimelineToggle, removeCollection } from "../store/co
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useAddBookmarks } from "../hooks/useAddBookmark";
+import { getCurrentTab } from "../utils/chromeAPI";
 const Bookmarks = () => {
   const [showMenu, setShowMenu] = useState(false);
   const { isAdding, addBookmarkHook } = useAddBookmarks();
@@ -63,16 +65,25 @@ const Bookmarks = () => {
   const handleLinkLimitError = () => {
     linkLimitError ? closeLinkLimitError() : showLinkLimitError();
   }
+
+  // Check tab match with current tab and show Icon
+  const [tabExists, setTabExists] = useState(false)
+  const checkTabExist = async () => {
+      const currentTab = await getCurrentTab();
+      const isTab = await collection.timelines.some(timeline => timeline.link === currentTab.url);
+      setTabExists(isTab);
+  }
+  checkTabExist()
   //Add bookmark
   const addBookMarkHandler = async () => {
-    if (auth.user.isPremium || collection.timelines.length < 100) {
-      addBookmarkHook(collectionId)
-    } else {
+    if (!tabExists) { 
+      if (auth.user.isPremium || collection.timelines.length < 100) {
+        addBookmarkHook(collectionId)
+      } else {
         handleLinkLimitError();
-        console.log("error popup");
+      }
     }
   };
-
   // toggle pin
   const togglePinned = async (timelineId) => {
     dispatch(pinTimelineToggle({ collectionId, timelineId }))
@@ -214,13 +225,13 @@ const Bookmarks = () => {
 
           {/* Add bookmark */}
           <div className="flex justify-center border-t-2 border-t-secodaryLight p-3">
-            <ToolTip2 name="Bookmark the current tab in one click" top="full" right="-100px">
+            <ToolTip2 name={tabExists ? "Current Tab is already Bookmarked" : "Bookmark the current tab in one click"} top="full" right="-100px">
               <button
                 className="bg-primary rounded-full py-2 px-[8px] flex justify-center items-center"
                 onClick={addBookMarkHandler}
               >
                 {!isAdding ? (
-                  <img src={AddIcon} className="w-[23px]" />
+                  <img src={tabExists ? approveIconWhite : AddIcon} className="w-[23px]" />
                 ) : (
                   <Loader />
                 )}

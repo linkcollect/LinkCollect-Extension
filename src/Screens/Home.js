@@ -353,7 +353,7 @@ const Home = () => {
             {filteredData?.map((collection) => (
               <CollectionItem
                 name={collection.title}
-                count={collection.timelines.length}
+                timelines={collection.timelines}
                 img={collection.image}
                 key={collection._id}
                 id={collection._id}
