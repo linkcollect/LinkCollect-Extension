@@ -7,15 +7,16 @@ import { Link } from "react-router-dom";
 import Tooltip from "../Tooltip/Tooltip";
 import Loader from "../Loader/Loader";
 import approve from "../../assets/Icons/approve.svg"
-import approveWhite from "../../assets/approve-white.svg"
+import approveWhite from "../../assets/Icons/approve-white.svg"
 import pin from "../../assets/Icons/pin.svg"
 import pinHover from "../../assets/Icons/pin-hover.svg"
 import { useSelector } from "react-redux";
 import { nameShortner } from "../../utils/utilty";
+import { getCurrentTab } from "../../utils/chromeAPI";
 const CollectionItem = ({
   image,
   name,
-  count,
+  timelines,
   copyLinkHandler,
   addHandler,
   pinToggleHandler,
@@ -43,11 +44,20 @@ const CollectionItem = ({
   }
 
   const addBookMarkHandler = async (e) =>{
-    setIsAdding(true);
-    await addHandler(collectionId);
-    setIsAdding(false);
+    if(!tabExist) {
+      setIsAdding(true);
+      await addHandler(collectionId);
+      setIsAdding(false);
+    }
   }
 
+  const [tabExist, setTabexist] = useState(false)
+  const checkTabExist = async () => {
+    const currentTab = await getCurrentTab();
+    const isTab = timelines.some(timeline => timeline.link === currentTab.url);
+    setTabexist(isTab);
+  }
+  checkTabExist();
 
   return (
     <div className="relative">
@@ -62,7 +72,7 @@ const CollectionItem = ({
         <img className="w-[40px]" src={image!="undefined" && image!== undefined ?  image : logo} />
         <div className="flex flex-col ml-4 ">
           <p className="text-[14px] text-textPrimary font-bold">{nameShortner(name,20)}</p>
-          <p className="text-textPrimary text-[12px]">{count} Bookmarks</p>
+          <p className="text-textPrimary text-[12px]">{timelines.length} Bookmarks</p>
         </div>
       </div>
     </div>
@@ -85,13 +95,17 @@ const CollectionItem = ({
             <img src={ShareIcon} className="w-[23px]" />
           </Link>
         </Tooltip>
-        <Tooltip name="Bookmark Current Tab">
+        <Tooltip name={tabExist ? "Tab already Exists" : "Bookmark Current Tab"}>
           <button
             className="bg-primary rounded-full py-2 px-[8px] flex justify-center items-center"
             onClick={addBookMarkHandler}
 
           >
-            {!isAdding ? <img src={AddIcon} className="w-[23px]" /> : <Loader/>}
+            {!isAdding ? 
+              (tabExist ? 
+                <img src={approveWhite} className="w-[23px]" /> 
+                : <img src={AddIcon} className="w-[23px]" />) 
+              : <Loader/>}
           </button>
         </Tooltip>
     </div>
