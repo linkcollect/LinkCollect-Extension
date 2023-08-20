@@ -51,13 +51,13 @@ const BookmarkItem = ({
   }
 
   return (
-    <div className="relative bg-bgPrimary p-2 flex hover:rounded-md justify-between border-b border-bgGrey hover:bg-lightBlueBG ">
+    <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} className="relative bg-bgPrimary p-2 flex hover:rounded-md justify-between border-b border-bgGrey hover:bg-lightBlueBG ">
       {(isPinned || hover) &&
-      <img key="pin-icon" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} 
+      <img key="pin-icon" onMouseEnter={() => setHover(true)} 
         className="absolute z-[9999] top-[3px] left-[-4px] cursor-pointer " 
         src={isPinned ? pin : pinHover} alt="" 
         onClick={toggleHandler}/>}
-      <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} className="flex">
+      <div  className="flex">
         {/* link wrapper for onclick */}
         <Link
           className="flex justify-center items-center"
