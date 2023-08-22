@@ -72,9 +72,10 @@ const Popup = () => {
     return<Layout> <Offline/> </Layout>
   }
 
-  function AnimatedRoutes() {
-    const location = useLocation();
-    return (
+  const location = useLocation();
+  return (
+    <>
+      <Layout>
       <AnimatePresence initial={false} mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route
@@ -96,12 +97,6 @@ const Popup = () => {
           )}
         </Routes>
       </AnimatePresence>
-    )
-  }
-  return (
-    <>
-      <Layout>
-        <AnimatedRoutes />
       </Layout>
     </>
   );
