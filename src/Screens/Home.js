@@ -129,20 +129,7 @@ const Home = () => {
     } catch (error) {
         console.error(error)
     }
-}
-// console.log(filteredData);
-  
-
-  // // Bookmark add handler
-  // const addHandler = async (collectionId) => {
-
-  //   try {
-  //     await upadteLatestCollection(collection.data, collectionId);
-  //   } catch(error) {
-  //     console.log(error);
-  //   }
-  // };
-
+  }
   // Bookmark delete handler
   const deleteBookmarkHandler = async (timeLineId, collectionId) => {
     // collection data update
@@ -336,9 +323,9 @@ const Home = () => {
                         id={timeline._id}
                         name={timeline.title}
                         url={timeline.link}
+                        collectionId={bookmark.collctionId}
                         favicon={timeline.favicon}
                         onDelete={deleteBookmarkHandler}
-                        collctionId={timeline.collectionId}
                         isPinned={timeline.isPinned}
                       />
                     ))}

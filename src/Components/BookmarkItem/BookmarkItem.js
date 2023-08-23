@@ -14,23 +14,27 @@ import pinHover from "../../assets/Icons/pin-hover.svg"
 
 import { getOrigin, nameShortner } from "../../utils/utilty";
 
+import { useDispatch } from "react-redux";
+import { pinTimelineToggle } from "../../store/collectionsSlice";
+import { togglePin } from "../../api/timelineService";
+
 const BookmarkItem = ({
   id,
   favicon,
   name,
   url,
   onDelete,
-  collctionId = null,
-  onToggle,
+  collectionId,
   isPinned
 }) => {
   const [isDelting, setIsDeleting] = useState(false);
   const [copyText, setCopyText] = useState("Copy Link");
   const copyImageRef = useRef();
 
+  const dispatch = useDispatch()
   // Delete bookmark link
   const deletehanlder = async () => {
-    await onDelete(id, collctionId);
+    await onDelete(id, collectionId);
   };
 
   //Copy bookmark link
@@ -47,7 +51,12 @@ const BookmarkItem = ({
   // pin Bookmark
   const [hover, setHover] = useState(false);
   const toggleHandler = async (e) => {
-    await onToggle(id)
+    dispatch(pinTimelineToggle({ collectionId: collectionId, timelineId: id }));
+    try {
+        const res = await togglePin(collectionId, id);
+    } catch (error) {
+        console.error(error);
+    }
   }
 
   return (
