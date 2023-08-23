@@ -196,74 +196,28 @@ const Home = () => {
   });
 
   // Code for Live Message Display
-
-  const [readCount, setReadCount] = useState(0);
-  const [displayMessageBool, setDisplayMessageBool] = useState(true);
-  const [messageLive, setMessageLive] = useState({ data: "", cta: "" });
+  const [count, setCount] = useState(0);
+  const [displayMessageBool, setDisplayMessageBool] = useState(false);
+  const [message, setMessage] = useState({ data: "", cta: "" });
 
   useEffect(() => {
-    async function doMessageUpdate() {
-      const res = await chrome.storage.local.get(["readCount"]);
-      const storedReadCount = await res.readCount;
-    //   console.log("storedReadCount", storedReadCount);
-
-      const res2 = await chrome.storage.local.get(["messageLive"]);
-      const storedMessageLive = res2?.messageLive;
-
-      const message = getLiveMessage(); // Assuming you have a function like this
-      await handleAnimationEnd(storedReadCount);
-      if (storedMessageLive?.data === message?.data && storedReadCount <= 2) {
+    const checkMessageExist = async () => {
+      const { readCount } = await chrome.storage.local.get(["readCount"]);
+      const { messageLive } = await chrome.storage.local.get(["messageLive"]);
+      if (messageLive) {
+        setMessage(messageLive);
+        setCount(readCount);
+      }
+      if (count > 0) {
         setDisplayMessageBool(true);
-      } else if (storedMessageLive !== message) {
-        await chrome.storage.local.set({ messageLive: message });
-        setDisplayMessageBool(true);
-        setMessageLive(message);
-        setReadCount(0);
-        // console.log("updating readCount to 0 as messages are diff")
-        await chrome.storage.local.set({ readCount: 0 });
-        window.dispatchEvent(new Event("storage"));
+      } else {
+        setDisplayMessageBool(false);
       }
     }
-
-    doMessageUpdate();
-  }, []);
-
-  window.addEventListener("storage", async () => {
-    // console.log("Change to local storage!");
-    let mes = await chrome.storage.local.get(["messageLive"]);
-    let resCount = await chrome.storage.local.get(["readCount"]);
-    setMessageLive(mes?.messageLive);
-    setReadCount(resCount?.readCount);
-
-    // console.log("message and cta", mes?.messageLive?.data, mes.messageLive?.cta);
-
-    if (readCount < 3) {
-      setDisplayMessageBool(true);
-    } else if (readCount >= 3) {
-      setDisplayMessageBool(false);
-    }
-    // const [readCount, setReadCount] = useState(0);
-    // const [displayMessageBool, setDisplayMessageBool] = useState(true);
-    // const [messageLive, setMessageLive] = useState('');
-
-    // ...
-  });
-
-  const handleAnimationEnd = async (readCount) => {
-    const newReadCount = readCount + 1;
-    setReadCount(newReadCount);
-
-    if (newReadCount < 3) {
-      setDisplayMessageBool(true);
-    } else if (newReadCount >= 3) {
-      setDisplayMessageBool(false);
-    }
-
-    await chrome.storage.local.set({ readCount: newReadCount });
-    window.dispatchEvent(new Event("storage"));
-  };
-
-  // console.log("displayMessageBool", displayMessageBool, readCount, messageLive);
+    checkMessageExist();
+  }, [count])
+  console.log(displayMessageBool);
+//   console.log(chrome.management.getAll());
 
   // If no collection found then show the no result component
   if (!collection.loading && collection?.data?.length === 0) {
@@ -309,10 +263,11 @@ const Home = () => {
         <SearchBox onSearch={onSearchHandler} />
         <div className="relative">
           <button
+            ref={menuRef}
             onClick={clickhandler}
             className="flex justify-center items-center border border-secodary rounded-xl p-2"
           >
-            <img src={filterName} className="w-[23px]" ref={menuRef} />
+            <img src={filterName} className="w-[23px]"/>
           </button>
           <div className="z-[9999] absolute hidden right-7" ref={filterMenu}>
             <div className="w-[10rem] text-[16px] bg-bgPrimary cursor-pointer p-2 mt-2 rounded-xl border-bgGrey border-2">
@@ -384,6 +339,7 @@ const Home = () => {
                         favicon={timeline.favicon}
                         onDelete={deleteBookmarkHandler}
                         collctionId={timeline.collectionId}
+                        isPinned={timeline.isPinned}
                       />
                     ))}
                   </div>
@@ -400,11 +356,11 @@ const Home = () => {
               // onAnimationEnd={handleAnimationEnd}
             >
               <a
-                href={messageLive?.cta}
+                href={message?.cta}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {messageLive?.data}
+                {message?.data}
               </a>
             </p>
           </div>

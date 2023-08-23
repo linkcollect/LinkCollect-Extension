@@ -1,7 +1,9 @@
 import React from "react";
 import Navbar from "../Components/Navbar/Navbar";
 import { useSelector } from "react-redux";
+import { useLiveMessage } from "../hooks/useLiveMessage";
 const Layout = ({ token, children }) => {
+  const counter = useLiveMessage()
   const user = useSelector(state => state.user);
   return (
     <div className="bg-bgPrimary w-[400px] h-[600px] rounded-md overflow-hidden">
