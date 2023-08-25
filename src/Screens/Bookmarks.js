@@ -37,6 +37,9 @@ const Bookmarks = () => {
   const dispatch = useDispatch();
 
   const sortedData = useMemo(()=>{
+    if (isLoading) {
+        return [];
+    }
     return dataSortByType([...collection.timelines],"RECENTLY_UPDATE")
     
   },[collection])
@@ -70,7 +73,7 @@ const Bookmarks = () => {
   const [tabExists, setTabExists] = useState(false)
   const checkTabExist = async () => {
       const currentTab = await getCurrentTab();
-      const isTab = await collection.timelines.some(timeline => timeline.link === currentTab.url);
+      const isTab = await collection?.timelines.some(timeline => timeline.link === currentTab.url);
       setTabExists(isTab);
   }
   checkTabExist()

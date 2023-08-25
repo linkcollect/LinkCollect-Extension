@@ -203,7 +203,7 @@ const Home = () => {
     }
     checkMessageExist();
   }, [count])
-  console.log(displayMessageBool);
+//   console.log(displayMessageBool);
 //   console.log(chrome.management.getAll());
 
   // If no collection found then show the no result component
