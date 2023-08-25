@@ -6,17 +6,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import NoResult from "../Components/NoResult/NoResult";
 import PageLoader from "../Components/Loader/PageLoader";
-import { getAllByUsername } from "../api/collectionService";
-import { getUser } from "../api/userService";
-import { getLiveMessage, togglePin } from "../api/collectionService";
+// import { getAllByUsername } from "../api/collectionService";
+// import { getUser } from "../api/userService";
+import {  togglePin } from "../api/collectionService";
 import { useEffect } from "react";
 import { motion, AnimatePresence, easeOut } from "framer-motion";
 import { useAddBookmarks } from "../hooks/useAddBookmark";
-import {
-  getCurrentTab,
-  sendMessage,
-  upadteLatestCollection,
-} from "../utils/chromeAPI";
+// import {
+//   getCurrentTab,
+//   sendMessage,
+//   upadteLatestCollection,
+// } from "../utils/chromeAPI";
 import { createTimeline, deleteTimeline } from "../api/timelineService";
 import BookmarkItem from "../Components/BookmarkItem/BookmarkItem";
 import filterName from "../assets/Icons/filter--menu.svg";
@@ -360,7 +360,7 @@ const Home = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {message?.data}
+                {message?.message}
               </a>
             </p>
           </div>

@@ -9,7 +9,7 @@ export const useLiveMessage = () => {
       const { messageLive } = await chrome.storage.local.get(["messageLive"]);
       const fetchLiveMessage = await getLiveMessage();
   
-      if (messageLive?.data !== fetchLiveMessage.data) {
+      if (messageLive?.message !== fetchLiveMessage.message) {
         await chrome.storage.local.set({ messageLive: fetchLiveMessage });
         await chrome.storage.local.remove("readCount");
         console.log("This ran once");
