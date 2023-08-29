@@ -218,11 +218,40 @@ const saveAlltabs = async () => {
 
 // Save link
 const saveLinkToRecent = async (item) => {
-  const collection = await chrome.storage.local.get(["collection"]);
   const token = await chrome.storage.local.get(["token"]);
   const structuredTimeLine = await getWebsiteData(item.linkUrl);
+  let rc = {}
   try {
-    const res = await fetch(`${api}/${collection.collection.id}/timelines`, {
+    const allCollections = await fetch(`${api}`, {
+      method: "GET",
+      headers: {
+        // "Content-type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+      }
+    });
+    const collections = await allCollections.json();
+    const randomCollectionExist = collections.data.filter(collection => collection.title === 'Random Collection')
+    if (randomCollectionExist.length === 0) {
+        const form = new FormData();
+        form.append("title", `Random Collection`);
+        form.append("description", `This is random collection, all links saved from right click are saved in this`);
+        form.append("isPinned", true);
+        const collection = await fetch(`${api}`, {
+          method: "POST",
+          headers: {
+            // "Content-type": "application/x-www-form-urlencoded",
+            Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+          },
+          body: form,
+        });
+        const randomCollection = await collection.json();
+        rc = [randomCollection.data]
+        console.log(randomCollection);
+        if (collection.status >= 300 && collection.status < 500) {
+          throw Error();
+        }
+    } else rc = randomCollectionExist
+    const res = await fetch(`${api}/${rc[0]._id}/timelines`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -235,6 +264,7 @@ const saveLinkToRecent = async (item) => {
       throw Error();
     }
   } catch (error) {
+    console.log(error);
     var hasError = true;
   }
   sendMessage(hasError || false, !hasError ? "Link Saved" : "Unable To Save");
@@ -288,14 +318,34 @@ const filteredTimeline = (tab) => {
 };
 
 const getWebsiteData = async (url) => {
-  const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  // api call to fetch favicon 
+  let favicon = await getFaviconUrl(url)
+  let title = "link from " + tabs[0].title
+  const response = await fetch(`https://jsonlink.io/api/extract?url=${url}`);
+  const data = await response.json();
+  console.log("data", data)
+  if(!favicon) {
+    favicon = tabs[0].favIconUrl
+  }
+  if(data.description) {
+    title = data.description
+  }
+  console.log("r", title, favicon)
   return {
     link: url,
-    title: "link from " + tabs[0].title,
-    favicon: tabs[0].favIconUrl,
-    time,
+    title,
+    favicon,
   };
 };
 
+// TODO
+async function getFaviconUrl(url) {
+  const response = await fetch(`https://www.google.com/s2/favicons?domain=${url}`);
+  // // const data = await response.blob();
+  // const blobNew = await response.blob();
+  // let URLNew = URL.createObjectURL(blobNew);
+  // console.log("URLNew", URLNew, blobNew)
+  return null
+}
 

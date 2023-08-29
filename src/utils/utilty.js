@@ -1,5 +1,6 @@
 // get current tab info
 export const nameShortner = (name,length) => {
+    if(!name) return ""
     return name.length > length ? name.slice(0,length)+"..." : name
 }
 //Getting original from any website links
