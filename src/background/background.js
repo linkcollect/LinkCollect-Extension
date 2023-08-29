@@ -69,7 +69,8 @@ const acionDistaptcher = async (item) => {
   let name = item.menuItemId ||  item;
   switch (name) {
     case "save-current-tab":
-      await saveCurrentTab();
+    //   await saveCurrentTab();
+    await saveTab();
       break;
     case "save-all-tabs":
       await saveAlltabs();
@@ -106,6 +107,61 @@ const saveCurrentTab = async () => {
 
 
 };
+
+// Save tab to Random Collection
+const saveTab = async () => {
+  let rc = {}
+  const token = await chrome.storage.local.get(["token"]);
+  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  const structuredTimeLine = structureTimeline(tabs[0]);
+  try {
+    const allCollections = await fetch(`${api}`, {
+      method: "GET",
+      headers: {
+        // "Content-type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+      }
+    });
+    const collections = await allCollections.json();
+    const randomCollectionExist = collections.data.filter(collection => collection.title === 'Random Collection')
+    if (randomCollectionExist.length === 0) {
+        const form = new FormData();
+        form.append("title", `Random Collection`);
+        form.append("description", `This is random collection`);
+        form.append("isPinned", true);
+        const collection = await fetch(`${api}`, {
+          method: "POST",
+          headers: {
+            // "Content-type": "application/x-www-form-urlencoded",
+            Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+          },
+          body: form,
+        });
+        const randomCollection = await collection.json();
+        rc = [randomCollection.data]
+        console.log(randomCollection);
+        if (collection.status >= 300 && collection.status < 500) {
+          throw Error();
+        }
+    } else rc = randomCollectionExist
+    const res = await fetch(`${api}/${rc[0]._id}/timelines`, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+      },
+      body: JSON.stringify(structuredTimeLine),
+    });
+    const data = await res.json();
+    if (res.status >= 300 && res.status < 500) {
+      throw Error();
+    }
+  } catch (error) {
+    console.log(error);
+    var hasError = true;
+  }
+  sendMessage(hasError || false, !hasError ? "Link Saved" : "Unable To Save");
+}
 
 //Save all tabs
 const saveAlltabs = async () => {
