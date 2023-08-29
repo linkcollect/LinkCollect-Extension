@@ -33,13 +33,13 @@ chrome.runtime.onInstalled.addListener(async () => {
 
   chrome.contextMenus.create({
     id: "save-link-to-recent",
-    title: "Save Link To Recent Collection",
+    title: "Save Link To Random Collection",
     contexts: ["link"],
   });
 
 
   chrome.contextMenus.create({
-    title: "Save This Tab To Recent Collection",
+    title: "Save This Tab To Random Collection",
     parentId: "linkcollect-12",
     id: "save-current-tab",
     contexts: ["page"],
@@ -70,7 +70,7 @@ const acionDistaptcher = async (item) => {
   switch (name) {
     case "save-current-tab":
     //   await saveCurrentTab();
-    await saveTab();
+    await saveCurrentTab();
       break;
     case "save-all-tabs":
       await saveAlltabs();
@@ -82,35 +82,35 @@ const acionDistaptcher = async (item) => {
 };
 
 // Saving the current tab to the latest collection
-const saveCurrentTab = async () => {
-  const collection = await chrome.storage.local.get(["collection"]);
-  const token = await chrome.storage.local.get(["token"]);
-  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-  const structuredTimeLine = structureTimeline(tabs[0]);
-  try {
-    const res = await fetch(`${api}/${collection.collection.id}/timelines`, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
-      },
-      body: JSON.stringify(structuredTimeLine),
-    });
-    const data = await res.json();
-    if (res.status >= 300 && res.status < 500) {
-      throw Error();
-    }
-  } catch (error) {
-    var hasError = true;
-  }
-  sendMessage(hasError || false, !hasError ? "Link Saved" : "Unable To Save");
+// const saveCurrentTab = async () => {
+//   const collection = await chrome.storage.local.get(["collection"]);
+//   const token = await chrome.storage.local.get(["token"]);
+//   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+//   const structuredTimeLine = structureTimeline(tabs[0]);
+//   try {
+//     const res = await fetch(`${api}/${collection.collection.id}/timelines`, {
+//       method: "POST",
+//       headers: {
+//         "Content-type": "application/json",
+//         Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+//       },
+//       body: JSON.stringify(structuredTimeLine),
+//     });
+//     const data = await res.json();
+//     if (res.status >= 300 && res.status < 500) {
+//       throw Error();
+//     }
+//   } catch (error) {
+//     var hasError = true;
+//   }
+//   sendMessage(hasError || false, !hasError ? "Link Saved" : "Unable To Save");
 
 
-};
+// };
 
 // Save tab to Random Collection
-const saveTab = async () => {
-  let rc = {}
+const saveCurrentTab = async () => {
+  let rc = []
   const token = await chrome.storage.local.get(["token"]);
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
   const structuredTimeLine = structureTimeline(tabs[0]);
@@ -123,27 +123,23 @@ const saveTab = async () => {
       }
     });
     const collections = await allCollections.json();
-    const randomCollectionExist = collections.data.filter(collection => collection.title === 'Random Collection')
-    if (randomCollectionExist.length === 0) {
-        const form = new FormData();
-        form.append("title", `Random Collection`);
-        form.append("description", `This is random collection`);
-        form.append("isPinned", true);
-        const collection = await fetch(`${api}`, {
-          method: "POST",
-          headers: {
-            // "Content-type": "application/x-www-form-urlencoded",
-            Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
-          },
-          body: form,
-        });
-        const randomCollection = await collection.json();
-        rc = [randomCollection.data]
-        console.log(randomCollection);
-        if (collection.status >= 300 && collection.status < 500) {
-          throw Error();
-        }
-    } else rc = randomCollectionExist
+    const randomCollectionExist = collections.data.filter(collection => collection.title.includes("Random Collection"))
+    console.log(randomCollectionExist)
+
+    // find a collection with space to add the link
+    for (let i = 0; i < randomCollectionExist.length; i++) {
+      const collection = randomCollectionExist[i];
+      if(collection.timelines.length < 99) {
+        rc = [collection]
+        break;
+      }
+    }
+
+    if (rc.length === 0) {
+      rc = await createRandomCollection(randomCollectionExist.length+1, token) // create random collection 1
+      console.log("created rc", rc)
+    }
+
     const res = await fetch(`${api}/${rc[0]._id}/timelines`, {
       method: "POST",
       headers: {
@@ -220,7 +216,7 @@ const saveAlltabs = async () => {
 const saveLinkToRecent = async (item) => {
   const token = await chrome.storage.local.get(["token"]);
   const structuredTimeLine = await getWebsiteData(item.linkUrl);
-  let rc = {}
+  let rc = []
   try {
     const allCollections = await fetch(`${api}`, {
       method: "GET",
@@ -230,27 +226,20 @@ const saveLinkToRecent = async (item) => {
       }
     });
     const collections = await allCollections.json();
-    const randomCollectionExist = collections.data.filter(collection => collection.title === 'Random Collection')
-    if (randomCollectionExist.length === 0) {
-        const form = new FormData();
-        form.append("title", `Random Collection`);
-        form.append("description", `This is random collection, all links saved from right click are saved in this`);
-        form.append("isPinned", true);
-        const collection = await fetch(`${api}`, {
-          method: "POST",
-          headers: {
-            // "Content-type": "application/x-www-form-urlencoded",
-            Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
-          },
-          body: form,
-        });
-        const randomCollection = await collection.json();
-        rc = [randomCollection.data]
-        console.log(randomCollection);
-        if (collection.status >= 300 && collection.status < 500) {
-          throw Error();
-        }
-    } else rc = randomCollectionExist
+    const randomCollectionExist = collections.data.filter(collection => collection.title.includes("Random Collection"))
+
+    // find a collection with space to add the link
+    for (let i = 0; i < randomCollectionExist.length; i++) {
+      const collection = randomCollectionExist[i];
+      if(collection.timelines.length < 99) {
+        rc = [collection]
+        break;
+      }
+    }
+    if (rc.length === 0) {
+      rc = await createRandomCollection(randomCollectionExist.length+1, token) // create random collection 1
+    }
+
     const res = await fetch(`${api}/${rc[0]._id}/timelines`, {
       method: "POST",
       headers: {
@@ -347,5 +336,28 @@ async function getFaviconUrl(url) {
   // let URLNew = URL.createObjectURL(blobNew);
   // console.log("URLNew", URLNew, blobNew)
   return null
+}
+
+
+async function createRandomCollection(count, token) {
+  const form = new FormData();
+  form.append("title", `Random Collection - ${count}`);
+  form.append("description", `This is a random collection - ${count}`);
+  form.append("isPinned", true);
+  const collection = await fetch(`${api}`, {
+    method: "POST",
+    headers: {
+      // "Content-type": "application/x-www-form-urlencoded",
+      Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+    },
+    body: form,
+  });
+  const randomCollection = await collection.json();
+  let rc = [randomCollection.data]
+  console.log("created",randomCollection);
+  if (collection.status >= 300 && collection.status < 500) {
+    throw Error();
+  }
+  return rc
 }
 
