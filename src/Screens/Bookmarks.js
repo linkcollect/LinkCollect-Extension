@@ -84,16 +84,6 @@ const Bookmarks = () => {
       }
     }
   };
-  // toggle pin
-  const togglePinned = async (timelineId) => {
-    dispatch(pinTimelineToggle({ collectionId, timelineId }))
-    // console.log(collection);
-    try {
-        const res = await togglePin(collectionId, timelineId);
-    } catch (error) {
-        console.error(error)
-    }
-  }
   // Collection copy
   const collectionCopyHandler = () => {
     navigator.clipboard.writeText(
@@ -215,9 +205,9 @@ const Bookmarks = () => {
                 id={timeline._id}
                 name={timeline.title}
                 url={timeline.link}
+                collectionId={collectionId}
                 favicon={timeline.favicon}
                 onDelete={deleteBookmarkHandler}
-                onToggle={togglePinned}
                 isPinned={timeline.isPinned}
               />
             ))}
