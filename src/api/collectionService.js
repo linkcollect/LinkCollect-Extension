@@ -47,13 +47,13 @@ export function togglePin(collectionId) {
 export async function getLiveMessage() {
   try {
   // return http.get(`${apiEndpoint}/linkcollect/live-message`);
-  let res2 = await http.get(api.baseUrl + "/analytics/live-message");
-  console.log(res2.data.data);
+  // let res2 = await http.get(api.baseUrl + "/analytics/live-message");
+  // console.log(res2.data.data);
   let res = {message: "Hi 👋, enjoying linkcollect? need more? click here to provide feedback :)", cta: "https://twitter.com/linkcollect_io"}
-  if(res2.data) {
-    res.message = await res2.data.data.message;
-    res.cta = await res2.data.data.cta;
-  }
+  // if(res2?.data) {
+  //   res.message = await res2.data.data.message;
+  //   res.cta = await res2.data.data.cta;
+  // }
 
   // return res2.data.data;
   return res;

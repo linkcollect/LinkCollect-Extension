@@ -39,14 +39,14 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 
   chrome.contextMenus.create({
-    title: "Save This Tab To Random Collection",
+    title: "Save This Tab To Random Collection (ALT + C)",
     parentId: "linkcollect-12",
     id: "save-current-tab",
     contexts: ["page"],
   });
 
   chrome.contextMenus.create({
-    title: "Save All Tabs (of this window)",
+    title: "Save All Tabs (of this window) - (ALT + A)",
     parentId: "linkcollect-12",
     id: "save-all-tabs",
     contexts: ["page"],
@@ -61,6 +61,7 @@ chrome.contextMenus.onClicked.addListener(async (item, tab) => {
 
 // Commands listeners
 chrome.commands.onCommand.addListener(async (command) => {
+  console.log("item", item )
   await acionDistaptcher(command);
 });
 
@@ -81,32 +82,6 @@ const acionDistaptcher = async (item) => {
   }
 };
 
-// Saving the current tab to the latest collection
-// const saveCurrentTab = async () => {
-//   const collection = await chrome.storage.local.get(["collection"]);
-//   const token = await chrome.storage.local.get(["token"]);
-//   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-//   const structuredTimeLine = structureTimeline(tabs[0]);
-//   try {
-//     const res = await fetch(`${api}/${collection.collection.id}/timelines`, {
-//       method: "POST",
-//       headers: {
-//         "Content-type": "application/json",
-//         Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
-//       },
-//       body: JSON.stringify(structuredTimeLine),
-//     });
-//     const data = await res.json();
-//     if (res.status >= 300 && res.status < 500) {
-//       throw Error();
-//     }
-//   } catch (error) {
-//     var hasError = true;
-//   }
-//   sendMessage(hasError || false, !hasError ? "Link Saved" : "Unable To Save");
-
-
-// };
 
 // Save tab to Random Collection
 const saveCurrentTab = async () => {
@@ -163,13 +138,21 @@ const saveCurrentTab = async () => {
 const saveAlltabs = async () => {
   const token = await chrome.storage.local.get(["token"]);
   const tabs = await chrome.tabs.query({currentWindow: true});
-  const currentTabSession = await chrome.storage.local.get(["tab-session"]);
   const structuredTimelines = tabs
     .filter(filteredTimeline)
     .map(structureTimeline);
   try {
-    //1. Need to create new collection
-    let tabSessionNum = currentTabSession["tab-session"] + 1;
+    //1. Need to create new collection 
+    const allCollections = await fetch(`${api}`, {
+      method: "GET",
+      headers: {
+        // "Content-type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+      }
+    });
+    const collections = await allCollections.json();
+    const randomCollectionExist = collections.data.filter(collection => collection.title.includes("Tabs Session"))
+    let tabSessionNum = randomCollectionExist.length+1;
     const form = new FormData();
     form.append("title", `Tabs Session - ${tabSessionNum}`);
     const collection = await fetch(`${api}`, {
@@ -202,7 +185,6 @@ const saveAlltabs = async () => {
       throw Error();
     }
 
-    await chrome.storage.local.set({ "tab-session": tabSessionNum });
   } catch (error) {
     var hasError = true;
   }
