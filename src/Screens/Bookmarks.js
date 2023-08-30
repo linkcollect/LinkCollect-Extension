@@ -121,15 +121,15 @@ const Bookmarks = () => {
   // Need to think more bettor solution
   // Popup menu close functiinality if users clocked outside of it
   useEffect(() => {
-    showMenu && window.addEventListener("click",e=>{
+    document.addEventListener("click",e=>{
       if(e.target !== popupref.current && e.target !== menuRef.current){
         setShowMenu(false);
       }
     })
     return () => {
-      showMenu && window.removeEventListener("click", (e) => {console.log("Remove event listener");})
+      document.removeEventListener("click", (e) => {console.log("Remove event listener");})
     }
-  }, [showMenu])
+  }, [])
     
 
   return (

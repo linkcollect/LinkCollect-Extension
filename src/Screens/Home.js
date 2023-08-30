@@ -38,6 +38,7 @@ const Home = () => {
   //filtermenu ref to open and close it
   const filterMenu = useRef();
   const menuRef = useRef();
+  const [isMenu, setIsMenu] = useState(false);
 
   // error message state
   const [collectionLimitError, setCollectionLimitError] = useState(false);
@@ -145,16 +146,18 @@ const Home = () => {
   };
 
   // Filter menu opener/closer
-  const clickhandler = () => {
-    if (!filterMenu.current) return;
-    const filterMenuEle = filterMenu.current;
-    if (filterMenuEle?.classList?.contains("hidden")) {
-      filterMenuEle.classList.remove("hidden");
-      filterMenuEle.classList.add("block");
-    } else {
-      filterMenuEle.classList.remove("block");
-      filterMenuEle.classList.add("hidden");
-    }
+  const clickhandler = (e) => {
+    e.stopPropagation();
+    // if (!filterMenu.current) return;
+    // const filterMenuEle = filterMenu.current;
+    // if (filterMenuEle?.classList?.contains("hidden")) {
+    //   filterMenuEle.classList.remove("hidden");
+    //   filterMenuEle.classList.add("block");
+    // } else {
+    //   filterMenuEle.classList.remove("block");
+    //   filterMenuEle.classList.add("hidden");
+    // }
+    if (isMenu) {}
   };
 
   // Sorting the data base on filter
@@ -166,21 +169,18 @@ const Home = () => {
     clickhandler();
   };
 
+  useEffect(() => {
   // This is to close the filter menu when clicked outside of it, if it is open
-  window.addEventListener("click", (e) => {
-    if (e.target !== filterMenu.current && e.target !== menuRef.current) {
+  document.addEventListener("click", (e) => {
+    if (e.target !== menuRef.current && e.target !== filterMenu.current) {
       // this is to close the filter menu when clicked outside of it, if it is open
-
-      if (!filterMenu.current) return;
-      const filterMenuEle = filterMenu.current;
-      if (filterMenuEle?.classList?.contains("hidden")) {
-        return;
-      } else {
-        filterMenuEle.classList.remove("block");
-        filterMenuEle.classList.add("hidden");
-      }
+      setIsMenu(false);
     }
   });
+  return () => {
+    document.removeEventListener("click", (e) => {console.log("remove event listener")})
+  }
+  }, [])
 
   // Code for Live Message Display
   const [count, setCount] = useState(0);
@@ -251,12 +251,12 @@ const Home = () => {
         <div className="relative">
           <button
             ref={menuRef}
-            onClick={clickhandler}
+            onClick={() => setIsMenu(prev => !prev)}
             className="flex justify-center items-center border border-secodary rounded-xl p-2"
           >
-            <img src={filterName} className="w-[23px]"/>
+            <img src={filterName} ref={filterMenu} className="w-[23px]"/>
           </button>
-          <div className="z-[9999] absolute hidden right-7" ref={filterMenu}>
+          {isMenu && <div className="z-[9999] block absolute right-7">
             <div className="w-[10rem] text-[16px] bg-bgPrimary cursor-pointer p-2 mt-2 rounded-xl border-bgGrey border-2">
               <p
                 className="cursor-pointer text-textPrimary py-1"
@@ -271,7 +271,7 @@ const Home = () => {
                 Most Bookmarkd
               </p>
             </div>
-          </div>
+          </div>}
         </div>
       </div>
       {!collection.loading ? (
