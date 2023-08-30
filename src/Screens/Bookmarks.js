@@ -120,11 +120,17 @@ const Bookmarks = () => {
 
   // Need to think more bettor solution
   // Popup menu close functiinality if users clocked outside of it
-    window.addEventListener("click",e=>{
+  useEffect(() => {
+    showMenu && window.addEventListener("click",e=>{
       if(e.target !== popupref.current && e.target !== menuRef.current){
         setShowMenu(false);
       }
     })
+    return () => {
+      showMenu && window.removeEventListener("click", (e) => {console.log("Remove event listener");})
+    }
+  }, [showMenu])
+    
 
   return (
     <motion.div
