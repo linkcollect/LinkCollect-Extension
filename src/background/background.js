@@ -33,20 +33,20 @@ chrome.runtime.onInstalled.addListener(async () => {
 
   chrome.contextMenus.create({
     id: "save-link-to-recent",
-    title: "Save Link To Recent Collection",
+    title: "Save Link To Random Collection",
     contexts: ["link"],
   });
 
 
   chrome.contextMenus.create({
-    title: "Save This Tab To Recent Collection",
+    title: "Save This Tab To Random Collection (ALT + C)",
     parentId: "linkcollect-12",
     id: "save-current-tab",
     contexts: ["page"],
   });
 
   chrome.contextMenus.create({
-    title: "Save All Tabs (of this window)",
+    title: "Save All Tabs (of this window) - (ALT + A)",
     parentId: "linkcollect-12",
     id: "save-all-tabs",
     contexts: ["page"],
@@ -61,6 +61,7 @@ chrome.contextMenus.onClicked.addListener(async (item, tab) => {
 
 // Commands listeners
 chrome.commands.onCommand.addListener(async (command) => {
+  console.log("item", item)
   await acionDistaptcher(command);
 });
 
@@ -69,6 +70,7 @@ const acionDistaptcher = async (item) => {
   let name = item.menuItemId || item;
   switch (name) {
     case "save-current-tab":
+      //   await saveCurrentTab();
       await saveCurrentTab();
       break;
     case "save-all-tabs":
@@ -80,14 +82,40 @@ const acionDistaptcher = async (item) => {
   }
 };
 
-// Saving the current tab to the latest collection
+
+// Save tab to Random Collection
 const saveCurrentTab = async () => {
-  const collection = await chrome.storage.local.get(["collection"]);
+  let rc = []
   const token = await chrome.storage.local.get(["token"]);
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
   const structuredTimeLine = structureTimeline(tabs[0]);
   try {
-    const res = await fetch(`${api}/${collection.collection.id}/timelines`, {
+    const allCollections = await fetch(`${api}`, {
+      method: "GET",
+      headers: {
+        // "Content-type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+      }
+    });
+    const collections = await allCollections.json();
+    const randomCollectionExist = collections.data.filter(collection => collection.title.includes("Random Collection"))
+    console.log(randomCollectionExist)
+
+    // find a collection with space to add the link
+    for (let i = 0; i < randomCollectionExist.length; i++) {
+      const collection = randomCollectionExist[i];
+      if (collection.timelines.length < 99) {
+        rc = [collection]
+        break;
+      }
+    }
+
+    if (rc.length === 0) {
+      rc = await createRandomCollection(randomCollectionExist.length + 1, token) // create random collection 1
+      console.log("created rc", rc)
+    }
+
+    const res = await fetch(`${api}/${rc[0]._id}/timelines`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -100,12 +128,11 @@ const saveCurrentTab = async () => {
       throw Error();
     }
   } catch (error) {
+    console.log(error);
     var hasError = true;
   }
   sendMessage(hasError || false, !hasError ? "Link Saved" : "Unable To Save");
-
-
-};
+}
 
 //Save all tabs
 const saveAlltabs = async () => {
@@ -117,8 +144,17 @@ const saveAlltabs = async () => {
     .map(structureTimeline);
 
   try {
-    //1. Need to create new collection
-    let tabSessionNum = currentTabSession["tab-session"] + 1;
+    //1. Need to create new collection 
+    const allCollections = await fetch(`${api}`, {
+      method: "GET",
+      headers: {
+        // "Content-type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+      }
+    });
+    const collections = await allCollections.json();
+    const randomCollectionExist = collections.data.filter(collection => collection.title.includes("Tabs Session"))
+    let tabSessionNum = randomCollectionExist.length + 1;
     const form = new FormData();
     form.append("title", `Tabs Session - ${tabSessionNum}`);
     const collection = await fetch(`${api}`, {
@@ -151,7 +187,6 @@ const saveAlltabs = async () => {
       throw Error();
     }
 
-    await chrome.storage.local.set({ "tab-session": tabSessionNum });
   } catch (error) {
     var hasError = true;
   }
@@ -163,11 +198,33 @@ const saveAlltabs = async () => {
 
 // Save link
 const saveLinkToRecent = async (item) => {
-  const collection = await chrome.storage.local.get(["collection"]);
   const token = await chrome.storage.local.get(["token"]);
   const structuredTimeLine = await getWebsiteData(item.linkUrl);
+  let rc = []
   try {
-    const res = await fetch(`${api}/${collection.collection.id}/timelines`, {
+    const allCollections = await fetch(`${api}`, {
+      method: "GET",
+      headers: {
+        // "Content-type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+      }
+    });
+    const collections = await allCollections.json();
+    const randomCollectionExist = collections.data.filter(collection => collection.title.includes("Random Collection"))
+
+    // find a collection with space to add the link
+    for (let i = 0; i < randomCollectionExist.length; i++) {
+      const collection = randomCollectionExist[i];
+      if (collection.timelines.length < 99) {
+        rc = [collection]
+        break;
+      }
+    }
+    if (rc.length === 0) {
+      rc = await createRandomCollection(randomCollectionExist.length + 1, token) // create random collection 1
+    }
+
+    const res = await fetch(`${api}/${rc[0]._id}/timelines`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -180,6 +237,7 @@ const saveLinkToRecent = async (item) => {
       throw Error();
     }
   } catch (error) {
+    console.log(error);
     var hasError = true;
   }
   sendMessage(hasError || false, !hasError ? "Link Saved" : "Unable To Save");
@@ -233,20 +291,34 @@ const filteredTimeline = (tab) => {
 };
 
 const getWebsiteData = async (url) => {
-  const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  // api call to fetch favicon 
+  let favicon = await getFaviconUrl(url)
+  let title = "link from " + tabs[0].title
+  const response = await fetch(`https://jsonlink.io/api/extract?url=${url}`);
+  const data = await response.json();
+  console.log("data", data)
+  if (!favicon) {
+    favicon = tabs[0].favIconUrl
+  }
+  if (data.description) {
+    title = data.description
+  }
+  console.log("r", title, favicon)
   return {
     link: url,
-    title: "link from " + tabs[0].title,
-    favicon: tabs[0].favIconUrl,
-    time,
+    title,
+    favicon,
   };
 };
+
+// feature to get all bookmarks of the browser
+importBookmarks();
 let folder = [];
 const bookmarks = [];
 let modifiedfolderData = [];
+const maxBookmarksLimit = 40;
 const importBookmarks = async () => {
-  const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
   chrome.bookmarks.getTree((tree) => {
     displayBookmarks(tree[0].children)
   });
@@ -269,6 +341,27 @@ const importBookmarks = async () => {
         displayBookmarks(node.children);
 
       }
+    }
+    async function createRandomCollection(count, token) {
+      const form = new FormData();
+      form.append("title", `Random Collection - ${count}`);
+      form.append("description", `This is a random collection - ${count}`);
+      form.append("isPinned", true);
+      const collection = await fetch(`${api}`, {
+        method: "POST",
+        headers: {
+          // "Content-type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+        },
+        body: form,
+      });
+      const randomCollection = await collection.json();
+      let rc = [randomCollection.data]
+      console.log("created", randomCollection);
+      if (collection.status >= 300 && collection.status < 500) {
+        throw Error();
+      }
+      return rc
     }
 
   }
@@ -332,13 +425,13 @@ async function getFolderData(folder, title) {
   // console.log(tempArray, title)
   apirequest(tempArray.reverse(), title)
 }
-importBookmarks();
+// api call to save bookmarks to linkcollect
 async function apirequest(bookmarks, title) {
   const token = await chrome.storage.local.get(["token"]);
   try {
     let bookmarkLength = bookmarks.length;
-    if (bookmarkLength < 90 && bookmarkLength > 0) {
-      console.log(bookmarkLength)
+    if (bookmarkLength < maxBookmarksLimit && bookmarkLength > 0) {
+
       //1. Need to create new collection
       const form = new FormData();
       form.append("title", `${title}`);
@@ -363,23 +456,22 @@ async function apirequest(bookmarks, title) {
             "Content-type": "application/json",
             Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
           },
-          body: JSON.stringify(bookmarks.slice(0, 90)),
+          body: JSON.stringify(bookmarks.slice(0, maxBookmarksLimit)),
         }
       );
       const data = await res.json();
-      console.log(data)
       if (res.status >= 300 && res.status < 500) {
         throw Error();
       }
     }
-    else if (bookmarkLength > 90) {
+    else if (bookmarkLength > maxBookmarksLimit) {
       let start = 0;
-      let end = 90;
+      let end = maxBookmarksLimit;
       // i want to add 30 bookmarks at a time
       while (bookmarkLength > 0) {
         //1. Need to create new collection
         const form = new FormData();
-        form.append("title", ` Bookmarks ${title}`);
+        form.append("title", ` Bookmarks ${title} ${start} - ${end}`);
         const collection = await fetch(`${api}`, {
           method: "POST",
           headers: {
@@ -409,9 +501,9 @@ async function apirequest(bookmarks, title) {
         if (res.status >= 300 && res.status < 500) {
           throw Error();
         }
-        bookmarkLength = bookmarkLength - 90;
-        start = start + 90;
-        end = end + 90;
+        bookmarkLength = bookmarkLength - maxBookmarksLimit;
+        start = start + maxBookmarksLimit;
+        end = end + maxBookmarksLimit;
       }
     }
   } catch (err) {
