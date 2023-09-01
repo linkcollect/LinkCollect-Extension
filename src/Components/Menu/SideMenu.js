@@ -11,15 +11,15 @@ const MenuItem = ({ name, icon, onCLickHandler, link }) => {
       <li className="flex items-center pb-2 h-[50px] pl-3 border-b border-secodary">
         <button onClick={onCLickHandler} className="flex items-center w-full">
           <img src={icon} className="w-[17px]" />
-          <p className="text-textPrimary pl-2 text-xl font-light">{name}</p>
+          <p className="pl-2 text-xl font-light text-textPrimary">{name}</p>
         </button>
       </li>
     </a>
   );
 };
 
-const SideMenu = React.forwardRef(({ onLogout, isOpen },ref) => {
-  const user = useSelector(state=>state.user);
+const SideMenu = React.forwardRef(({ onLogout, isOpen }, ref) => {
+  const user = useSelector(state => state.user);
   const menuList = [
     {
       name: "Open in Web",
@@ -37,6 +37,11 @@ const SideMenu = React.forwardRef(({ onLogout, isOpen },ref) => {
       link: "https://linkcollect.super.site/help",
     },
     {
+      name: "Import from Browser",
+      icon: help,
+      onCLickHandler: onLogout,
+    },
+    {
       name: "Logout",
       icon: logoout,
       onCLickHandler: onLogout,
@@ -45,12 +50,11 @@ const SideMenu = React.forwardRef(({ onLogout, isOpen },ref) => {
 
   return (
     <div
-      className={`fixed z-[99] overflow-hidden top-[81px] right-0 h-full w-full flex justify-end bg-bgSecodary/[0.3] ${
-        isOpen ? "translate-x-0" : "translate-x-full"
-      } ease-in-out duration-500`}
+      className={`fixed z-[99] overflow-hidden top-[81px] right-0 h-full w-full flex justify-end bg-bgSecodary/[0.3] ${isOpen ? "translate-x-0" : "translate-x-full"
+        } ease-in-out duration-500`}
     >
       <div
-        className="drop-shadow-md h-full"
+        className="h-full drop-shadow-md"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="w-[15rem] h-full bg-bgPrimary pt-2">
