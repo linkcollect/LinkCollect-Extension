@@ -425,7 +425,7 @@ async function getFolderData(folder, title) {
   // console.log(tempArray, title)
   apirequest(tempArray.reverse(), title)
 }
-// api call to save bookmarks to linkcollect
+// api call to save bookmarks
 async function apirequest(bookmarks, title) {
   const token = await chrome.storage.local.get(["token"]);
   try {
