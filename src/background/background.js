@@ -136,6 +136,7 @@ const saveCurrentTab = async () => {
 
 //Save all tabs
 const saveAlltabs = async () => {
+  let ErrorMessage = "Failed To Save";
   const token = await chrome.storage.local.get(["token"]);
   const tabs = await chrome.tabs.query({currentWindow: true});
   const structuredTimelines = tabs
@@ -165,6 +166,9 @@ const saveAlltabs = async () => {
     });
     const collectionData = await collection.json();
     if (collection.status >= 300 && collection.status < 500) {
+      if(collectionData.message === 'Collection limit exceeded') {
+        ErrorMessage = "Collection Limit (30) Exceeded, Upgrade To Create More"
+      }
       throw Error();
     }
 
@@ -190,7 +194,7 @@ const saveAlltabs = async () => {
   }
   sendMessage(
     hasError || false,
-    !hasError ? "All Tabs Saved" : "Unable To Save"
+    !hasError ? "All Tabs Saved" : ErrorMessage
   );
 };
 
