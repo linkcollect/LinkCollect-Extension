@@ -1,7 +1,6 @@
 // PROD: API URL CHANGE
 const api = "https://api.linkcollect.io/api/v1/collections";
 
-
 chrome.tabs.onUpdated.addListener((tabId, _, tab) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const activeTab = tabs[0];
@@ -346,3 +345,179 @@ async function createRandomCollection(count, token) {
   return rc
 }
 
+const importBookmarks = async () => {
+  const folder = [];
+  const maxBookmarksLimit = 90;
+  chrome.bookmarks.getTree((tree) => {
+    displayBookmarks(tree[0].children)
+  });
+  // Recursively display the bookmarks
+  async function displayBookmarks(nodes) {
+    // console.log(nodes)
+    for (const node of nodes) {
+      // If the node is a bookmark
+      // If the node has children, recursively display them
+      if (node.url) {
+      }
+      if (node.children) {
+        // console.log(node.title)
+        const folderData = {
+          title: node.title,
+          // children: node.children,
+        }
+        getFolderData(node.children, node.title, maxBookmarksLimit)
+        folder.push(folderData)
+        displayBookmarks(node.children);
+      }
+    }
+  }
+  sendMessage(false, "All bookmarks imported")
+  // console.log(folder)
+}
+
+// importBookmarks();
+async function getFolderData(folder, title, maxBookmarksLimit) {
+  let tempArray = []
+  // console.log(folder)
+  // console.log(title)
+  for (const node of folder) {
+    // console.log(node)
+    if (!node.children) {
+      const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
+      try {
+        const faviconBlob = await getFaviconUrl(node.url);
+        const faviconDataUrl = await blobToDataUrl(faviconBlob);
+        const bookmark = {
+          link: node.url,
+          title: node.title || getMainSiteName(node.url),
+          favicon: faviconDataUrl,
+          time,
+        };
+        tempArray.push(bookmark)
+      } catch (err) {
+        if (err instanceof FetchError && err.code === '404') {
+          const bookmark = {
+            link: node.url,
+            title: node.title || getMainSiteName(node.url),
+            favicon: "https://linkcollect.io/logo_192_x_192.png", // Default URL
+            time,
+          };
+          tempArray.push(bookmark)
+        } else {
+          throw err; // Re-throw the error if it's not a 404
+        }
+      }
+    }
+    function getMainSiteName(url) {
+      try {
+        const urlObject = new URL(url);
+        return urlObject.hostname;
+      } catch (error) {
+        console.error(`Error extracting main site name from ${url}: ${error}`);
+        return null;
+      }
+    }
+    async function getFaviconUrl(url) {
+      const response = await fetch(`https://www.google.com/s2/favicons?domain=${url}`);
+      const blob = await response.blob();
+      return blob;
+    }
+    async function blobToDataUrl(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = event => resolve(event.target.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }
+  }
+  // console.log(tempArray, title)
+  apirequest(tempArray.reverse(), title, maxBookmarksLimit)
+}
+// api call to save bookmarks
+async function apirequest(bookmarks, title, maxBookmarksLimit) {
+  const token = await chrome.storage.local.get(["token"]);
+  try {
+    let bookmarkLength = bookmarks.length;
+    if (bookmarkLength < maxBookmarksLimit && bookmarkLength > 0) {
+
+      //1. Need to create new collection
+      const form = new FormData();
+      form.append("title", `${title}`);
+      const collection = await fetch(`${api}`, {
+        method: "POST",
+        headers: {
+          // "Content-type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+        },
+        body: form,
+      });
+      const collectionData = await collection.json();
+      if (collection.status >= 300 && collection.status < 500) {
+        throw Error();
+      }
+      // 2. Now to add all bookmarks
+      const res = await fetch(
+        `${api}/${collectionData.data._id}/timelines/create-multiple`,
+        {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+          },
+          body: JSON.stringify(bookmarks.slice(0, maxBookmarksLimit)),
+        }
+      );
+      const data = await res.json();
+      if (res.status >= 300 && res.status < 500) {
+        throw Error();
+      }
+    }
+    else if (bookmarkLength > maxBookmarksLimit) {
+      let start = 0;
+      let end = maxBookmarksLimit;
+      // i want to add 30 bookmarks at a time
+      while (bookmarkLength > 0) {
+        //1. Need to create new collection
+        const form = new FormData();
+        form.append("title", ` Bookmarks ${title} ${start} - ${end}`);
+        const collection = await fetch(`${api}`, {
+          method: "POST",
+          headers: {
+            // "Content-type": "application/x-www-form-urlencoded",
+            Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+          },
+          body: form,
+        });
+        const collectionData = await collection.json();
+        if (collection.status >= 300 && collection.status < 500) {
+          throw Error();
+        }
+        // 2. Now to add all bookmarks
+        const res = await fetch(
+          `${api}/${collectionData.data._id}/timelines/create-multiple`,
+          {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+              Authorization: `Bearer ${token.token}`, // notice the Bearer before your token
+            },
+            body: JSON.stringify(bookmarks.slice(start, end)),
+          }
+        );
+        const data = await res.json();
+        console.log(data)
+        if (res.status >= 300 && res.status < 500) {
+          throw Error();
+        }
+        bookmarkLength = bookmarkLength - maxBookmarksLimit;
+        start = start + maxBookmarksLimit;
+        end = end + maxBookmarksLimit;
+      }
+    }
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+export { importBookmarks };
