@@ -61,7 +61,6 @@ chrome.contextMenus.onClicked.addListener(async (item, tab) => {
 
 // Commands listeners
 chrome.commands.onCommand.addListener(async (command) => {
-  console.log("item", item )
   await acionDistaptcher(command);
 });
 
