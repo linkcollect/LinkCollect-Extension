@@ -4,6 +4,7 @@ import openLink from "../../assets/Icons/openLink.svg";
 import help from "../../assets/Icons/help.svg";
 import logoout from "../../assets/Icons/logout.svg";
 import { useSelector } from "react-redux";
+import { importBookmarks } from "../../background/background";
 
 const MenuItem = ({ name, icon, onCLickHandler, link }) => {
   return (
@@ -35,6 +36,11 @@ const SideMenu = React.forwardRef(({ onLogout, isOpen },ref) => {
       name: "Help",
       icon: help,
       link: "https://linkcollect.super.site/help",
+    },
+    {
+      name: "Import from Bookmarks",
+      icon: help,
+      onCLickHandler: importBookmarks
     },
     {
       name: "Logout",
