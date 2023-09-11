@@ -8,7 +8,8 @@ const ContentScript = () => {
   const toastWrapper = {
     padding: "1px 16px",
     display: "flex",
-    height: "47px",
+    height: "272px",
+    width: "113px",
     color: "#6166F1",
     justifyContent: "center",
     gap: "11px",
@@ -26,8 +27,8 @@ const ContentScript = () => {
     transition: "all 0.3s ease-in",
   };
   const imageSizer = {
-    width: "28px",
-    height: "28px",
+    width: "24px",
+    height: "24px",
   };
 
   const failWrapper = {
@@ -57,9 +58,93 @@ const ContentScript = () => {
         <img src={failedUrl} style={imageSizer} />
         <p>Unable to Save</p>
       </div>
-      <div id="toast-content-success" style={toastWrapper}>
-        <img src={imageUrl} style={imageSizer} />
-        <p>Saved To linkCollect</p>
+      <div
+        id="toast-content-success"
+        style={{
+          margin: 0,
+          display: "flex",
+          padding: "17px 11px 16px 11px",
+          justifyContent: "center",
+          alignItems: "center",
+          width: 250,
+          height: 80,
+          color: "#6166f1",
+          fontSize: 20,
+          borderRadius: 8,
+          boxShadow: "0px 2px 13px 0px rgba(43, 30, 43, 1)",
+          position: "fixed",
+          zIndex: 999999999,
+          backgroundColor: "#ffff",
+          top: 10,
+          left: 14,
+          fontWeight: 500,
+          transform: "translateX(-390px)",
+          transition: "all 0.3s ease-in"
+        }}
+      >
+        <div
+          className="content"
+          style={{
+            margin: 0,
+            height: "100%",
+            width: "100%",
+            display: "flex",
+            gap: 24,
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "space-between"
+          }}
+        >
+          <div
+            className="message"
+            style={{
+              margin: 0,
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              justifyContent: "space-between"
+            }}
+          >
+            <img
+              src={imageUrl}
+              style={{ margin: 0, width: 24, height: 24 }}
+            />
+            <p className="" style={{ margin: 0 }}>
+              Saved To linkCollect
+            </p>
+            <div style={{ margin: 0, height: '24px', width: '24px' }} />
+          </div>
+          <button
+            className="cta"
+            style={{
+              margin: 0,
+              display: "flex",
+              width: "100%",
+              minHeight: 32,
+              padding: 6,
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 8,
+              borderRadius: 4,
+              background: "#6166F1",
+              border: "none"
+            }}
+          >
+            <p
+              style={{
+                margin: 0,
+                color: "#F9F9FB",
+                fontSize: 16,
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "100%"
+              }}
+            >
+              Add note
+            </p>
+          </button>
+        </div>
       </div>
     </>
   );
