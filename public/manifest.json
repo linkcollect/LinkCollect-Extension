@@ -19,13 +19,26 @@
   },
   "commands": {
     "save-current-tab": {
-      "suggested_key": "Alt+C",
+      "suggested_key": {
+        "default": "Alt+C",
+        "mac": "Alt+C"
+      },
       "description": "Inject a save recent collection "
     },
     "save-all-tabs": {
-      "suggested_key": "Alt+A",
+      "suggested_key": {
+        "default": "Alt+A",
+        "mac": "Alt+A"
+      },
       "description": "Inject a save all tabs script"
-    }
+    },
+    "_execute_action": {
+      "suggested_key": {
+          "default": "Alt+A",
+          "mac": "Alt+W"
+        },
+      "description" : "Start the extension"
+      }
   },
   "icons": {
     "16": "favicon.png",
