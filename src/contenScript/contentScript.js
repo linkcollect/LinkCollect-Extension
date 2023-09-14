@@ -92,6 +92,7 @@ const ContentScript = () => {
     borderRadius: "8px",
     border: "2px solid #ADAEFF",
     backgroundColor: "white",
+    color: "#0A0A0A",
   };
 
   const toastWrapperAllTabs = {
@@ -213,7 +214,10 @@ const ContentScript = () => {
           {showNote && (
             <textarea
               style={textArea}
-              onChange={(e) => setNote(e.target.value)}
+              onChange={(e) => { 
+                e.stopPropagation()
+                setNote(e.target.value)}
+              }
             />
           )}
           <div style={actionButtonWrapper}>
@@ -289,7 +293,7 @@ const showToast = (hasError = false, userMessage) => {
     token = userMessage.token;
   }
   toastComponent.style.transform = "translateX(0px)";
-  let timeToBeShown = userMessage.isOneLinkedSaved ? 5000 : 2900
+  let timeToBeShown = userMessage.isOneLinkedSaved ? 5000 : 3500
   timerId = setTimeout(() => {
     collectionId = null;
     bookmarkId = null;
