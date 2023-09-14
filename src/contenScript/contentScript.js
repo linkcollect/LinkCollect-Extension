@@ -289,12 +289,13 @@ const showToast = (hasError = false, userMessage) => {
     token = userMessage.token;
   }
   toastComponent.style.transform = "translateX(0px)";
+  let timeToBeShown = userMessage.isOneLinkedSaved ? 5000 : 2900
   timerId = setTimeout(() => {
     collectionId = null;
     bookmarkId = null;
     token = null;
     toastComponent.style.transform = "translateX(-690px)";
-  }, 2900);
+  }, timeToBeShown);
 };
 
 // display: flex; width: 225px; color: rgb(97, 102, 241); justify-content: center; gap: 24px; align-items: center; font-size: 16px; font-family: Lexend; border-radius: 20px; box-shadow: rgb(43, 30, 43) 0px 2px 13px 0px; position: fixed; z-index: 999999999; background-color: rgb(255, 255, 255); top: 10px; left: 14px; font-weight: 500;
