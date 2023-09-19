@@ -110,7 +110,6 @@ const Home = () => {
       const currentCollection = collection.data.find(e => {
           return e._id === collectionId;
       })
-      console.log(collection.data, currentCollection);
     if (auth.user.isPremium || currentCollection.timelines.length < 100) {
         addBookmarkHook(collectionId)
     } else {

@@ -53,10 +53,9 @@ const Popup = () => {
         const sortedData = dataSortByType(res.data.data, sortingType.linkcollect_sorting_type)
         dispatch(getCollectionSuccess(sortedData))
         // store user premium in state
-        const user = await getUserByUsername(userState.user.username);
+        const user = await getUser(userState.user.userId);
         dispatch(setPremium({user: {...userState.user, profilePic:user.data.data.profilePic, isPremium: user.data.data.isPremium}}))
         } catch (error) {
-          console.log("heelol")
           dispatch(getCollectionFailed());
         }
         

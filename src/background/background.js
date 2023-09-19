@@ -102,7 +102,6 @@ const saveCurrentTab = async () => {
     const randomCollectionExist = collections.data.filter((collection) =>
       collection.title.includes("Random Collection")
     );
-    console.log(randomCollectionExist);
 
     // find a collection with space to add the link
     for (let i = 0; i < randomCollectionExist.length; i++) {
@@ -118,7 +117,6 @@ const saveCurrentTab = async () => {
         randomCollectionExist.length + 1,
         token
       ); // create random collection 1
-      console.log("created rc", rc);
     }
 
     const res = await fetch(`${api}/${rc[0]._id}/timelines`, {
@@ -270,7 +268,6 @@ const saveLinkToRecent = async (item) => {
     }
     var hasError = true;
   }
-  console.log(rc[0]._id, bookmarkId);
   sendMessage(hasError || false, {
     message: !hasError ? "Link Saved" : errMessage,
     bookmarkId: !hasError ? bookmarkId : null,
@@ -334,14 +331,12 @@ const getWebsiteData = async (url) => {
   let title = "link from " + tabs[0]?.title;
   const response = await fetch(`https://jsonlink.io/api/extract?url=${url}`);
   const data = await response.json();
-  console.log("data", data);
   if (!favicon) {
     favicon = getFaviconUrl(url);
   }
   if (data.description) {
     title = data.description;
   }
-  console.log("r", title, favicon);
   return {
     link: url,
     title,
@@ -364,7 +359,6 @@ async function createRandomCollection(count, token) {
   });
   const randomCollection = await collection.json();
   let rc = [randomCollection.data];
-  console.log("created", randomCollection);
   if (collection.status >= 300 && collection.status < 500) {
     throw Error();
   }
@@ -532,7 +526,6 @@ async function apirequest(bookmarks, title, maxBookmarksLimit) {
           }
         );
         const data = await res.json();
-        console.log(data);
         if (res.status >= 300 && res.status < 500) {
           throw Error();
         }
