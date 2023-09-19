@@ -84,6 +84,8 @@ const acionDistaptcher = async (item) => {
 // Save tab to Random Collection
 const saveCurrentTab = async () => {
   let rc = [];
+  let errMessage = "Failed To Save";
+
   let bookmarkId = null;
   const token = await chrome.storage.local.get(["token"]);
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -100,7 +102,6 @@ const saveCurrentTab = async () => {
     const randomCollectionExist = collections.data.filter((collection) =>
       collection.title.includes("Random Collection")
     );
-    console.log(randomCollectionExist);
 
     // find a collection with space to add the link
     for (let i = 0; i < randomCollectionExist.length; i++) {
@@ -116,7 +117,6 @@ const saveCurrentTab = async () => {
         randomCollectionExist.length + 1,
         token
       ); // create random collection 1
-      console.log("created rc", rc);
     }
 
     const res = await fetch(`${api}/${rc[0]._id}/timelines`, {
@@ -130,14 +130,17 @@ const saveCurrentTab = async () => {
     const data = await res.json();
     bookmarkId = data.data._id;
     if (res.status >= 300 && res.status < 500) {
-      throw Error();
+      throw new Error(data.message);
     }
   } catch (error) {
     console.log(error);
+    if(error.message === "Link already exists"){
+      errMessage = "Link Already Exists in " + rc[0].title;
+    }
     var hasError = true;
   }
   sendMessage(hasError || false, {
-    message: !hasError ? "Link Saved" : "Unable To Save",
+    message: !hasError ? "Link Saved" : errMessage,
     bookmarkId: !hasError ? bookmarkId : null,
     collectionId: !hasError ? rc[0]._id : null,
     isOneLinkedSaved: !hasError ? true : false,
@@ -147,7 +150,7 @@ const saveCurrentTab = async () => {
 
 //Save all tabs
 const saveAlltabs = async () => {
-  let ErrorMessage = "Failed To Save";
+  let ErrorMessage = "Failed To Save All Tabs";
   const token = await chrome.storage.local.get(["token"]);
   const tabs = await chrome.tabs.query({ currentWindow: true });
   const structuredTimelines = tabs
@@ -179,10 +182,7 @@ const saveAlltabs = async () => {
     });
     const collectionData = await collection.json();
     if (collection.status >= 300 && collection.status < 500) {
-      if (collectionData.message === "Collection limit exceeded") {
-        ErrorMessage = "Collection Limit (30) Exceeded, Upgrade To Create More";
-      }
-      throw Error();
+      throw new Error(collectionData.message);
     }
 
     // 2. Now add all tabs
@@ -202,10 +202,13 @@ const saveAlltabs = async () => {
       throw Error();
     }
   } catch (error) {
+    if (error.message === "Collection limit exceeded") {
+      ErrorMessage = "Collection Limit (30) Exceeded, Upgrade For More";
+    }
     var hasError = true;
   }
   sendMessage(hasError || false, {
-    message: !hasError ? "All Tabs Saved" : "Unable To Save",
+    message: !hasError ? "All Tabs Saved" : ErrorMessage,
     isOneLinkedSaved: false,
   });
 };
@@ -213,6 +216,7 @@ const saveAlltabs = async () => {
 // Save link
 const saveLinkToRecent = async (item) => {
   const token = await chrome.storage.local.get(["token"]);
+  let errMessage = "Failed To Save";
   const structuredTimeLine = await getWebsiteData(item.linkUrl);
   let rc = [];
   let bookmarkId = null;
@@ -255,15 +259,17 @@ const saveLinkToRecent = async (item) => {
     const data = await res.json();
     bookmarkId = data.data._id;
     if (res.status >= 300 && res.status < 500) {
-      throw Error();
+      throw new Error(data.message);
     }
   } catch (error) {
-    console.log(error);
+    console.log({ error });
+    if(error.message === "Link already exists"){
+      errMessage = "Link Already Exists in " + rc[0].title;
+    }
     var hasError = true;
   }
-  console.log(rc[0]._id, bookmarkId);
   sendMessage(hasError || false, {
-    message: !hasError ? "Link Saved" : "Unable To Save",
+    message: !hasError ? "Link Saved" : errMessage,
     bookmarkId: !hasError ? bookmarkId : null,
     collectionId: !hasError ? rc[0]._id : null,
     isOneLinkedSaved: !hasError ? true : false,
@@ -276,7 +282,7 @@ const sendMessage = (hasError = false, userMessage) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const activeTab = tabs[0];
     chrome.tabs.sendMessage(
-      activeTab.id,
+      activeTab?.id,
       {
         message: "ALL_TABS_SAVED",
         hasError: hasError,
@@ -322,35 +328,21 @@ const getWebsiteData = async (url) => {
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
   // api call to fetch favicon
   let favicon = await getFaviconUrl(url);
-  let title = "link from " + tabs[0].title;
+  let title = "link from " + tabs[0]?.title;
   const response = await fetch(`https://jsonlink.io/api/extract?url=${url}`);
   const data = await response.json();
-  console.log("data", data);
   if (!favicon) {
-    favicon = tabs[0].favIconUrl;
+    favicon = getFaviconUrl(url);
   }
   if (data.description) {
     title = data.description;
   }
-  console.log("r", title, favicon);
   return {
     link: url,
     title,
     favicon,
   };
 };
-
-// TODO
-async function getFaviconUrl(url) {
-  const response = await fetch(
-    `https://www.google.com/s2/favicons?domain=${url}`
-  );
-  // // const data = await response.blob();
-  // const blobNew = await response.blob();
-  // let URLNew = URL.createObjectURL(blobNew);
-  // console.log("URLNew", URLNew, blobNew)
-  return null;
-}
 
 async function createRandomCollection(count, token) {
   const form = new FormData();
@@ -367,7 +359,6 @@ async function createRandomCollection(count, token) {
   });
   const randomCollection = await collection.json();
   let rc = [randomCollection.data];
-  console.log("created", randomCollection);
   if (collection.status >= 300 && collection.status < 500) {
     throw Error();
   }
@@ -414,8 +405,7 @@ async function getFolderData(folder, title, maxBookmarksLimit) {
     if (!node.children) {
       const time = new Date("14 Jun 2017 00:00:00 PDT").toUTCString();
       try {
-        const faviconBlob = await getFaviconUrl(node.url);
-        const faviconDataUrl = await blobToDataUrl(faviconBlob);
+        const faviconDataUrl = await getFaviconUrl(node.url);
         const bookmark = {
           link: node.url,
           title: node.title || getMainSiteName(node.url),
@@ -424,7 +414,7 @@ async function getFolderData(folder, title, maxBookmarksLimit) {
         };
         tempArray.push(bookmark);
       } catch (err) {
-        if (err instanceof FetchError && err.code === "404") {
+        if (err.code === "404") {
           const bookmark = {
             link: node.url,
             title: node.title || getMainSiteName(node.url),
@@ -446,13 +436,7 @@ async function getFolderData(folder, title, maxBookmarksLimit) {
         return null;
       }
     }
-    async function getFaviconUrl(url) {
-      const response = await fetch(
-        `https://www.google.com/s2/favicons?domain=${url}`
-      );
-      const blob = await response.blob();
-      return blob;
-    }
+  
     async function blobToDataUrl(blob) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -464,6 +448,13 @@ async function getFolderData(folder, title, maxBookmarksLimit) {
   }
   // console.log(tempArray, title)
   apirequest(tempArray.reverse(), title, maxBookmarksLimit);
+}
+
+async function getFaviconUrl(url) {
+  const favIconBaseURL =
+    "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=";
+  const origin = new URL(url).origin;
+  return `${favIconBaseURL}${origin}`;
 }
 // api call to save bookmarks
 async function apirequest(bookmarks, title, maxBookmarksLimit) {
@@ -535,7 +526,6 @@ async function apirequest(bookmarks, title, maxBookmarksLimit) {
           }
         );
         const data = await res.json();
-        console.log(data);
         if (res.status >= 300 && res.status < 500) {
           throw Error();
         }

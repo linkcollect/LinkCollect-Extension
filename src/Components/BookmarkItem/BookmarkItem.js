@@ -17,6 +17,8 @@ import { getOrigin, nameShortner } from "../../utils/utilty";
 import { useDispatch } from "react-redux";
 import { pinTimelineToggle } from "../../store/collectionsSlice";
 import { togglePin } from "../../api/timelineService";
+import { getCurrentTab } from "../../utils/chromeAPI";
+import { useEffect } from "react";
 
 const BookmarkItem = ({
   id,
@@ -29,13 +31,25 @@ const BookmarkItem = ({
 }) => {
   const [isDelting, setIsDeleting] = useState(false);
   const [copyText, setCopyText] = useState("Copy Link");
+  const [isCurrentTab, setIsCurrentTab] = useState(false);
   const copyImageRef = useRef();
+
+  useEffect(() => {
+    isCurrentTabFunc();
+  }, [url]);
+
 
   const dispatch = useDispatch()
   // Delete bookmark link
   const deletehanlder = async () => {
     await onDelete(id, collectionId);
   };
+
+  const isCurrentTabFunc = async () => {
+    let currentTab = await getCurrentTab();
+    const isTab = currentTab.url === url;
+    setIsCurrentTab(isTab);
+  }
 
   //Copy bookmark link
   const copyLinkHandler = () => {
@@ -60,7 +74,7 @@ const BookmarkItem = ({
   }
 
   return (
-    <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} className="relative bg-bgPrimary p-2 flex hover:rounded-md justify-between border-b border-bgGrey hover:bg-lightBlueBG ">
+    <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} className={`relative p-2 flex hover:rounded-md justify-between border-b border-bgGrey hover:bg-lightBlueBG ${isCurrentTab ? 'bg-lightBlueBG rounded-md' : 'bg-bgPrimary'}`}>
       {(isPinned || hover) &&
       <img key="pin-icon" onMouseEnter={() => setHover(true)} 
         className="absolute z-[9999] top-[3px] left-[-4px] cursor-pointer " 
@@ -94,7 +108,7 @@ const BookmarkItem = ({
             <img ref={copyImageRef} src={CopyIcon} className="w-[20px]" />
           </button>
         </Tooltip>
-        <Tooltip name="Open Link">
+        {/* <Tooltip name="Open Link">
           <Link
             className="bg-textLight rounded-full py-2 px-[8px] flex justify-center items-center"
             to={url}
@@ -102,7 +116,7 @@ const BookmarkItem = ({
           >
             <img src={ShareIcon} className="w-[22px]" />
           </Link>
-        </Tooltip>
+        </Tooltip> */}
         <Tooltip name="Delete the Bookmark">
           <button
             className="bg-textLight rounded-full py-2 px-[8px] flex justify-center items-center"

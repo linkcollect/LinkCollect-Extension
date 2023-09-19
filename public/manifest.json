@@ -1,14 +1,14 @@
 {
   "name": "LinkCollect - Save & Share Bookmarks",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "linkcollect is the simplest way to save & share web links, bookmarks  or tabs from anywhere to anyone",
   "permissions": [
     "storage",
     "tabs",
     "activeTab",
-    "contextMenus",
-    "bookmarks"
+    "contextMenus"
   ],
+  "optional_permissions": ["bookmarks"],
   "host_permissions": [
     "http://*/*",
     "https://*/*",

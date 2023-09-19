@@ -50,7 +50,6 @@ const NewCollection = () => {
       if (image !== "") form.append("image", image);
       const res = await createCollection(form);
       const sortingType = await chrome.storage.local.get(["linkcollect_sorting_type"])
-      console.log(sortingType)
       dispatch(
         addNewCollecton({
           newCollection: res.data.data,
