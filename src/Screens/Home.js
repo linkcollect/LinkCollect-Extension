@@ -55,13 +55,14 @@ const Home = () => {
   const { isAdding, addBookmarkHook } = useAddBookmarks()
   //Filtered Collections
   const filteredData = useMemo(() => {
-    return collection.data?.filter((collection) =>
-      collection.title.toLowerCase().includes(query.toLowerCase())
+    return collection.data?.filter((collection) => 
+      collection.title.toLowerCase().includes(query.toLowerCase()) || collection.description?.toLowerCase().includes(query.toLowerCase())
     );
   }, [query, collection.data]);
   
   // filteredbookmarks
   const filteredBookmarks = useMemo(() => {
+    console.log(collection.data);
     return query.length > 0
       ? collection.data?.map((collection) => ({
           collectionTitle: collection.title,
@@ -70,7 +71,8 @@ const Home = () => {
             ...collection.timelines.filter(
               (timeline) =>
                 timeline.title.toLowerCase().includes(query.toLowerCase()) ||
-                timeline.link.toLowerCase().includes(query.toLowerCase())
+                timeline.link.toLowerCase().includes(query.toLowerCase()) || 
+                timeline.note?.toLowerCase().includes(query.toLowerCase())
             ),
           ],
         }))
