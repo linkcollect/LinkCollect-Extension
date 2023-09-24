@@ -56,27 +56,34 @@ const Home = () => {
   const { isAdding, addBookmarkHook } = useAddBookmarks()
   //Filtered Collections
   const filteredData = useMemo(() => {
+    if (!query.trim()) return collection.data; // Exclude empty or whitespace-only queries
     return collection.data?.filter((collection) => 
-      collection.title.toLowerCase().includes(query.toLowerCase()) || collection.description?.toLowerCase().includes(query.toLowerCase())
+      collection.title.trim().toLowerCase().includes(query.toLowerCase()) || 
+      (collection.description && collection.description.trim().toLowerCase().includes(query.toLowerCase()))
     );
   }, [query, collection.data]);
   
-  // filteredbookmarks
   const filteredBookmarks = useMemo(() => {
-    console.log(collection.data);
-    if (query.length === 0) return collection.data || [];
+    if (!query.trim()) return []; // Return all data if the query is empty or whitespace-only
+  
+    const searchTerms = query.toLowerCase().split(/\s+/); // Split search query into individual words
   
     const sortedCollections = collection.data?.map((collection) => {
       const bookmarks = collection.timelines
-        .filter((timeline) =>
-          timeline.title.toLowerCase().includes(query.toLowerCase()) ||
-          timeline.link.toLowerCase().includes(query.toLowerCase()) ||
-          timeline.note?.toLowerCase().includes(query.toLowerCase())
-        )
+        .filter((timeline) => {
+          const containsAnyTerm = searchTerms.some(term =>
+            timeline.title.toLowerCase().includes(term) ||
+            timeline.link.toLowerCase().includes(term) ||
+            (timeline.note && timeline.note.toLowerCase().includes(term))
+          );
+  
+          return containsAnyTerm;
+        })
         .map((timeline) => ({
           ...timeline,
           weight: calculateWeight(timeline, query),
-        })).sort((a, b) => b.weight - a.weight);
+        }))
+        .sort((a, b) => b.weight - a.weight);
   
       return bookmarks.length > 0
         ? {
@@ -87,9 +94,9 @@ const Home = () => {
         : null;
     });
   
-    console.log(sortedCollections);
     return sortedCollections.filter(Boolean).sort((a, b) => b.timelines[0].weight - a.timelines[0].weight);
   }, [query]);
+  
 
   // this is to REDIRECT TO create new collection
   const createCollectionRedicector = () => {
