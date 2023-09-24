@@ -89,7 +89,7 @@ const Home = () => {
   
     console.log(sortedCollections);
     return sortedCollections.filter(Boolean).sort((a, b) => b.timelines[0].weight - a.timelines[0].weight);
-  }, [query, collection.data]);
+  }, [query]);
 
   // this is to REDIRECT TO create new collection
   const createCollectionRedicector = () => {
