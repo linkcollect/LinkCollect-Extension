@@ -27,6 +27,7 @@ import {
   pinCollectionToggle,
 } from "../store/collectionsSlice";
 import PopupModal from "../Components/PopupModal/PopupModal";
+import { calculateWeight } from "../utils/utilty";
 
 const Home = () => {
   // gloabl collections
@@ -63,21 +64,32 @@ const Home = () => {
   // filteredbookmarks
   const filteredBookmarks = useMemo(() => {
     console.log(collection.data);
-    return query.length > 0
-      ? collection.data?.map((collection) => ({
-          collectionTitle: collection.title,
-          collctionId: collection._id,
-          timelines: [
-            ...collection.timelines.filter(
-              (timeline) =>
-                timeline.title.toLowerCase().includes(query.toLowerCase()) ||
-                timeline.link.toLowerCase().includes(query.toLowerCase()) || 
-                timeline.note?.toLowerCase().includes(query.toLowerCase())
-            ),
-          ],
-        }))
-      : [];
-  });
+    if (query.length === 0) return collection.data || [];
+  
+    const sortedCollections = collection.data?.map((collection) => {
+      const bookmarks = collection.timelines
+        .filter((timeline) =>
+          timeline.title.toLowerCase().includes(query.toLowerCase()) ||
+          timeline.link.toLowerCase().includes(query.toLowerCase()) ||
+          timeline.note?.toLowerCase().includes(query.toLowerCase())
+        )
+        .map((timeline) => ({
+          ...timeline,
+          weight: calculateWeight(timeline, query),
+        })).sort((a, b) => b.weight - a.weight);
+  
+      return bookmarks.length > 0
+        ? {
+            collectionTitle: collection.title,
+            collectionId: collection._id,
+            timelines: bookmarks,
+          }
+        : null;
+    });
+  
+    console.log(sortedCollections);
+    return sortedCollections.filter(Boolean).sort((a, b) => b.timelines[0].weight - a.timelines[0].weight);
+  }, [query, collection.data]);
 
   // this is to REDIRECT TO create new collection
   const createCollectionRedicector = () => {

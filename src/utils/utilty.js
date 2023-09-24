@@ -23,3 +23,13 @@ export const dataSortByType = (data, sortingType)=>{
     }
 
 }
+
+// weight functionality for searchterm sort
+export const calculateWeight = (timeline, query) =>  {
+    const titleMatch = timeline.title.toLowerCase().includes(query.toLowerCase());
+    const linkMatch = timeline.link.toLowerCase().includes(query.toLowerCase());
+    const noteMatch = timeline.note?.toLowerCase().includes(query.toLowerCase());
+  
+    // Assign weights to match types (higher weight means it comes first)
+    return titleMatch ? 3 : linkMatch ? 2 : noteMatch ? 1 : 0;
+  }
