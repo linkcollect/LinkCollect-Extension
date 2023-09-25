@@ -57,10 +57,21 @@ const Home = () => {
   //Filtered Collections
   const filteredData = useMemo(() => {
     if (!query.trim()) return collection.data; // Exclude empty or whitespace-only queries
-    return collection.data?.filter((collection) => 
-      collection.title.trim().toLowerCase().includes(query.toLowerCase()) || 
-      (collection.description && collection.description.trim().toLowerCase().includes(query.toLowerCase()))
+  
+    const searchTerms = query.trim().toLowerCase().split(/\s+/); // Split search query into individual words
+  
+    const sortedCollections = collection.data?.filter((collection) => 
+      searchTerms.some(term =>
+        collection.title.trim().toLowerCase().includes(term) || 
+        (collection.description && collection.description.trim().toLowerCase().includes(term))
+      )
     );
+    sortedCollections.sort((a, b) => {
+      // Compare the lengths of titles in descending order
+      return b.title.length - a.title.length;
+    });
+  
+    return sortedCollections;
   }, [query, collection.data]);
   
   const filteredBookmarks = useMemo(() => {
