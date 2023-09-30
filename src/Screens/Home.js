@@ -78,6 +78,8 @@ const Home = () => {
     if (!query.trim()) return []; // Return all data if the query is empty or whitespace-only
   
     const searchTerms = query.toLowerCase().split(/\s+/); // Split search query into individual words
+    
+    if (query.length === 0) return collection.data || [];
   
     const sortedCollections = collection.data?.map((collection) => {
       const bookmarks = collection.timelines
@@ -106,8 +108,7 @@ const Home = () => {
     });
   
     return sortedCollections.filter(Boolean).sort((a, b) => b.timelines[0].weight - a.timelines[0].weight);
-  }, [query]);
-  
+  }, [query, collection.data]);
 
   // this is to REDIRECT TO create new collection
   const createCollectionRedicector = () => {
