@@ -91,10 +91,10 @@ const BookmarkItem = ({
 
           <div className="flex flex-col ml-2 ">
             <p className="text-[12px] w-full font-bold text-textPrimary">
-              {nameShortner(name, 26)}
+              {nameShortner(name, 33)}
             </p>
             <p className="text-lightText text-xs text-textPrimary">
-              {nameShortner(getOrigin(url), 22)}
+              {nameShortner(getOrigin(url), 27)}
             </p>
           </div>
         </Link>
