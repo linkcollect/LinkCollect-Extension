@@ -367,7 +367,7 @@ const Home = () => {
           <div className="py-1 cursor-pointer text-textPrimary flex justify-center items-center">
             <p
               className={`py-0 text-textSecondary ${
-                displayMessageBool ? "animate-scrollingText" : "hidden"
+                displayMessageBool ? "hidden" : "hidden"
               }`}
 
               // onAnimationEnd={handleAnimationEnd}
