@@ -76,9 +76,7 @@ const Home = () => {
   
   const filteredBookmarks = useMemo(() => {
     if (!query.trim()) return []; // Return all data if the query is empty or whitespace-only
-  
     const searchTerms = query.toLowerCase().split(/\s+/); // Split search query into individual words
-    
     if (query.length === 0) return collection.data || [];
   
     const sortedCollections = collection.data?.map((collection) => {
