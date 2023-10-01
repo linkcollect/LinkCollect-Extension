@@ -1,6 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap');
+
 body{
     /* height: "300px";
     width: "400px"; */
@@ -8,6 +11,7 @@ body{
 }
 * {
     scrollbar-width: thin;
+    font-family: 'Lexend', sans-serif;
   }
   
   /* Chrome, Edge, and Safari */
