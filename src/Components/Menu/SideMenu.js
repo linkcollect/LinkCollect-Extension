@@ -37,11 +37,11 @@ const SideMenu = React.forwardRef(({ onLogout, isOpen },ref) => {
       icon: help,
       link: "https://linkcollect.super.site/help",
     },
-    {
-      name: "Import from Bookmarks",
-      icon: help,
-      onCLickHandler: importBookmarks
-    },
+    // {
+    //   name: "Import from Bookmarks",
+    //   icon: help,
+    //   onCLickHandler: importBookmarks
+    // },
     {
       name: "Logout",
       icon: logoout,
