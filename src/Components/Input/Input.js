@@ -10,7 +10,7 @@ const classMapper = {
     file:cursor-pointer
     `,
   textClass:
-    "mt-1 px-3 py-2 bg-bgSecodary border border-bgGrey text-textPrimary placeholder-textPrimary focus:outline-none block w-full rounded-md sm:text-sm",
+    "mt-1 px-3 py-2 bg-bgSecodary border border-bgGrey text-textSecondary placeholder-textSecondary focus:outline-none block w-full rounded-md sm:text-sm",
 };
 
 const Input = ({
@@ -25,7 +25,7 @@ const Input = ({
 }) => {
   return (
     <label className="block">
-      <span className="text-textSecondary flex justify-between items-end text-[16px] font-light mb[3px]">
+      <span className="text-textPrimary flex justify-between items-end text-[16px] font-light mb[3px]">
         <p>{label}</p>
         {type!=="file" && <small className="text-xs"><span className={`${value?.length>required ? "text-danger":""}`}>{value?.length}</span>/{required}</small>}
       </span>
@@ -41,18 +41,18 @@ const Input = ({
   );
 };
 
-export const Select = ({ name,onInputHandler,options,value }) => {
+export const Select = ({ name, onInputHandler,options,value }) => {
   return (
-    <>
+    <div>
       <label
         htmlFor="privacy"
-        className="block mb-[3px] font-light text-textSecondary text-[16px]"
+        className={`block font-light text-textPrimary text-[16px]`}
       >
         Privacy
       </label>
       <select
         id="pravacy"
-        className="bg-bgSecodary border border-bgGrey text-textPrimary text-normal rounded-lg focus:ring-textSecondary focus:border-textSecondary block w-full p-3"
+        className={`bg-bgSecodary border border-bgGrey text-textSecondary placeholder-textSecondary text-normal rounded-lg focus:ring-textSecondary focus:border-textSecondary block w-full p-3`}
         onChange={onInputHandler}
         name={name}
         value={value}
@@ -61,7 +61,7 @@ export const Select = ({ name,onInputHandler,options,value }) => {
           <option key={index} value={opt.value}>{opt.name}</option>
         ))}
       </select>
-    </>
+    </div>
   );
 };
 

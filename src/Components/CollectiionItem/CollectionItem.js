@@ -71,8 +71,8 @@ const CollectionItem = ({
       <div className="flex">
         <img className="w-[40px]" src={image!="undefined" && image!== undefined ?  image : logo} />
         <div className="flex flex-col ml-4 ">
-          <p className="text-[14px] text-textPrimary font-bold">{nameShortner(name,20)}</p>
-          <p className="text-textPrimary text-[12px]">{timelines.length} Bookmarks</p>
+          <p className="text-[14px] text-textPrimary font-medium">{nameShortner(name,20)}</p>
+          <p className="text-textSecondary text-[12px] font-regular ">{timelines.length} Bookmarks</p>
         </div>
       </div>
     </div>

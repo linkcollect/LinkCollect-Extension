@@ -263,7 +263,7 @@ const root = host.attachShadow({ mode: "open" });
 
 const style = document.createElement("style");
 style.innerText = `
-  @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap')
+  @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap');
   div{
     font-family: 'Lexend', sans-serif;
   }

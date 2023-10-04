@@ -82,7 +82,7 @@ const NewCollection = () => {
         </button>
       </div>
       <div className="bg-bgPrimary bg-bgSecondary p-3 px-5 flex flex-col justify-between items-center h-[73%]">
-        <div className="w-full">
+        <div className="w-full flex flex-col gap-[0.75rem]">
           <Input
             label="Collection Name"
             placeholder="Name your collection"

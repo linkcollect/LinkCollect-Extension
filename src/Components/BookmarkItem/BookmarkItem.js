@@ -90,11 +90,11 @@ const BookmarkItem = ({
           <img src={favicon || logo4} className="w-[30px] h-[30px]" />
 
           <div className="flex flex-col ml-2 ">
-            <p className="text-[12px] w-full font-bold text-textPrimary">
-              {nameShortner(name, 26)}
+            <p className="text-[12px] w-full font-medium text-textPrimary">
+              {nameShortner(name, 33)}
             </p>
-            <p className="text-lightText text-xs text-textPrimary">
-              {nameShortner(getOrigin(url), 22)}
+            <p className="text-lightText text-xs text-textSecondary">
+              {nameShortner(getOrigin(url), 27)}
             </p>
           </div>
         </Link>
