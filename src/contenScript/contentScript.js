@@ -214,6 +214,12 @@ const ContentScript = () => {
           {showNote && (
             <textarea
               style={textArea}
+              onKeyUp={(e) => {
+                e.stopPropagation()
+              }}
+              onKeyDown={(e) => {
+                e.stopPropagation()
+              }}
               onChange={(e) => { 
                 e.stopPropagation()
                 setNote(e.target.value)}
